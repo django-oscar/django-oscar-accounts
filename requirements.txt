@@ -1,0 +1,7 @@
+South==0.7.3
+mock==0.7.2
+coverage==3.5.1
+django-nose==1.0
+nose==1.1.2
+django-extensions==0.8
+django-debug-toolbar==0.9.4
