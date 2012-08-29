@@ -5,3 +5,6 @@ django-nose==1.0
 nose==1.1.2
 django-extensions==0.8
 django-debug-toolbar==0.9.4
+django-dynamic-fixture==1.6.3
+pinocchio==0.3.1
+ipdb==0.7
