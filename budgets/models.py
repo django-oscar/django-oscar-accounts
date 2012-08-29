@@ -33,6 +33,17 @@ class Budget(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_last_transation = models.DateTimeField(null=True)
 
+    def is_active(self):
+        if self.start_date is None and self.end_date is None:
+            return True
+        today = datetime.date.today()
+        if self.start_date and self.end_date is None:
+            return today >= self.start_date
+        if self.start_date is None and self.end_date:
+            return today < self.end_date
+        return self.start_date <= today < self.end_date
+
+
     def balance(self):
         aggregates = self.transactions.aggregate(sum=Sum('amount'))
         sum = aggregates['sum']
@@ -47,6 +58,8 @@ class Budget(models.Model):
     # preserve the zero-sum invariant.
 
     def _debit(self, amount):
+        if not self.is_active():
+            raise exceptions.InactiveBudget("Budget is not active")
         if amount <= 0:
             raise exceptions.InvalidAmount("Debits must use a positive amount")
         if not self.is_debit_permitted(amount):
@@ -58,6 +71,8 @@ class Budget(models.Model):
         self.save()
 
     def _credit(self, amount):
+        if not self.is_active():
+            raise exceptions.InactiveBudget("Budget is not active")
         if amount <= 0:
             raise exceptions.InvalidAmount("Credits must use a positive amount")
         self.transactions.create(amount=amount)

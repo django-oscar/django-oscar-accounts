@@ -1,4 +1,5 @@
 from decimal import Decimal as D
+import datetime
 
 from django.test import TestCase
 from django.contrib.auth.models import User
@@ -57,6 +58,9 @@ class TestABudget(TestCase):
     def setUp(self):
         self.budget = Budget.objects.create()
 
+    def test_defaults_to_being_active(self):
+        self.assertTrue(self.budget.is_active())
+
     def test_raises_an_exception_when_trying_to_exceed_credit_limit(self):
         with self.assertRaises(exceptions.InsufficientBudget):
             self.budget._debit(D('10.00'))
@@ -68,6 +72,22 @@ class TestABudget(TestCase):
     def test_raises_an_exception_when_trying_to_credit_negative_value(self):
         with self.assertRaises(exceptions.InvalidAmount):
             self.budget._credit(D('-10.00'))
+
+
+class TestAnInactiveBudget(TestCase):
+
+    def setUp(self):
+        today = datetime.date.today()
+        self.budget = Budget.objects.create(
+            end_date=today - datetime.timedelta(days=1))
+
+    def test_raises_an_exception_when_trying_to_debit(self):
+        with self.assertRaises(exceptions.InactiveBudget):
+            self.budget._debit(D('1.00'))
+
+    def test_raises_an_exception_when_trying_to_credit(self):
+        with self.assertRaises(exceptions.InactiveBudget):
+            self.budget._credit(D('1.00'))
 
 
 class TestATransferFromCompanyBudgetToCustomer(TestCase):

@@ -8,3 +8,7 @@ class InsufficientBudget(BudgetException):
 
 class InvalidAmount(BudgetException):
     pass
+
+
+class InactiveBudget(BudgetException):
+    pass
