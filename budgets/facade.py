@@ -1,9 +1,9 @@
 from django.db import transaction
 
-from budgets.models import TransactionID
+from budgets import models
 
 
-def transfer(source, destination, amount, user):
+def transfer(source, destination, amount, user, description=None):
     """
     Transfer funds between source budget and destination budget
 
@@ -12,8 +12,7 @@ def transfer(source, destination, amount, user):
     :amount: Amount to transfer
     :user: Authorising user
     """
-    txn_id = TransactionID.new()
     with transaction.commit_on_success():
-        source._debit(txn_id, amount, user)
-        destination._credit(txn_id, amount, user)
-    return txn_id
+        txn = models.Transaction.objects.create(
+            source, destination, amount, user, description)
+        return txn

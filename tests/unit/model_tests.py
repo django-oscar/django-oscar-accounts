@@ -6,7 +6,7 @@ from django.test import TestCase
 from django_dynamic_fixture import G
 
 from budgets import exceptions
-from budgets.models import Budget
+from budgets.models import Budget, Transaction
 
 
 class TestANewZeroCreditLimitBudget(TestCase):
@@ -36,7 +36,7 @@ class TestAFixedCreditLimitBudget(TestCase):
 
     def test_does_not_permit_larger_amounts(self):
         for amt in (D('501'), D('1000')):
-            self.assertTrue(self.budget.is_debit_permitted(amt))
+            self.assertFalse(self.budget.is_debit_permitted(amt))
 
 
 class TestAnUnlimitedCreditLimitBudget(TestCase):
@@ -50,40 +50,46 @@ class TestAnUnlimitedCreditLimitBudget(TestCase):
             self.assertTrue(self.budget.is_debit_permitted(amt))
 
 
-class TestABudget(TestCase):
+class TestATransaction(TestCase):
 
     def setUp(self):
-        self.budget = Budget.objects.create()
         self.user = G(User)
 
-    def test_defaults_to_being_active(self):
-        self.assertTrue(self.budget.is_active())
+    def test_creates_2_budget_transactions(self):
+        source = Budget.objects.create(credit_limit=None)
+        destination = Budget.objects.create()
+        txn = Transaction.objects.create(source, destination,
+                                         D('10.00'), self.user)
+        self.assertEqual(2, txn.budget_transactions.all().count())
 
-    def test_raises_an_exception_when_trying_to_exceed_credit_limit(self):
+    def test_raises_an_exception_when_trying_to_exceed_credit_limit_of_source(self):
+        source = Budget.objects.create(credit_limit=D('10.00'))
+        destination = Budget.objects.create()
         with self.assertRaises(exceptions.InsufficientBudget):
-            self.budget._debit(1, D('10.00'), self.user)
+            Transaction.objects.create(source, destination,
+                                       D('20.00'), self.user)
 
     def test_raises_an_exception_when_trying_to_debit_negative_value(self):
+        source = Budget.objects.create(credit_limit=None)
+        destination = Budget.objects.create()
         with self.assertRaises(exceptions.InvalidAmount):
-            self.budget._debit(1, D('-10.00'), self.user)
+            Transaction.objects.create(source, destination,
+                                       D('-20.00'), self.user)
 
-    def test_raises_an_exception_when_trying_to_credit_negative_value(self):
-        with self.assertRaises(exceptions.InvalidAmount):
-            self.budget._credit(1, D('-10.00'), self.user)
-
-
-class TestAnInactiveBudget(TestCase):
-
-    def setUp(self):
+    def test_raises_an_exception_when_trying_to_use_inactive_source(self):
         today = datetime.date.today()
-        self.budget = Budget.objects.create(
+        source = Budget.objects.create(credit_limit=None,
             end_date=today - datetime.timedelta(days=1))
-        self.user = G(User)
-
-    def test_raises_an_exception_when_trying_to_debit(self):
+        destination = Budget.objects.create()
         with self.assertRaises(exceptions.InactiveBudget):
-            self.budget._debit(1, D('1.00'), self.user)
+            Transaction.objects.create(source, destination,
+                                       D('20.00'), self.user)
 
-    def test_raises_an_exception_when_trying_to_credit(self):
+    def test_raises_an_exception_when_trying_to_use_inactive_destination(self):
+        today = datetime.date.today()
+        source = Budget.objects.create(credit_limit=None)
+        destination = Budget.objects.create(
+            end_date=today - datetime.timedelta(days=1))
         with self.assertRaises(exceptions.InactiveBudget):
-            self.budget._credit(1, D('1.00'), self.user)
+            Transaction.objects.create(source, destination,
+                                       D('20.00'), self.user)
