@@ -5,7 +5,11 @@ Budgets
 .. warning::
     This is a work in progress
 
-This package provides managed budgets for Oscar.  It uses double-ledger
+This package provides managed budgets for Oscar.  It uses a `double-entry
+bookkeeping system`_ where every transaction changes two accounts.
+
+.. _`double-entry bookkeeping system`: http://en.wikipedia.org/wiki/Double-entry_bookkeeping_system
+
 accounting to ensure all transaction have a source and destination.
 
 Features:
