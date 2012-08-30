@@ -6,7 +6,7 @@ from django.test import TestCase
 from django_dynamic_fixture import G
 
 from budgets import exceptions
-from budgets.models import Budget, Transaction
+from budgets.models import Budget, Transaction, BudgetTransaction
 
 
 class TestANewZeroCreditLimitBudget(TestCase):
@@ -93,3 +93,40 @@ class TestATransaction(TestCase):
         with self.assertRaises(exceptions.InactiveBudget):
             Transaction.objects.create(source, destination,
                                        D('20.00'), self.user)
+
+    def test_cannot_be_deleted(self):
+        source = Budget.objects.create(credit_limit=None)
+        destination = Budget.objects.create()
+        txn = Transaction.objects.create(source, destination,
+                                         D('20.00'), self.user)
+        with self.assertRaises(RuntimeError):
+            txn.delete()
+
+    def test_records_static_user_information_in_case_user_is_deleted(self):
+        user = G(User, username="barry")
+        source = Budget.objects.create(credit_limit=None)
+        destination = Budget.objects.create()
+        txn = Transaction.objects.create(source, destination,
+                                   D('20.00'), user)
+        self.assertEqual('barry', txn.authorisor_username)
+        user.delete()
+        txn = Transaction.objects.get(id=txn.id)
+        self.assertEqual('barry', txn.authorisor_username)
+
+
+class TestABudgetTransaction(TestCase):
+
+    def test_cannot_be_deleted(self):
+        budget_txn = G(BudgetTransaction)
+        with self.assertRaises(RuntimeError):
+            budget_txn.delete()
+
+    def test_is_not_deleted_when_the_authorisor_is_deleted(self):
+        user = G(User)
+        source = Budget.objects.create(credit_limit=None)
+        destination = Budget.objects.create()
+        txn = Transaction.objects.create(source, destination,
+                                   D('20.00'), user)
+        self.assertEqual(2, txn.budget_transactions.all().count())
+        user.delete()
+        self.assertEqual(2, txn.budget_transactions.all().count())

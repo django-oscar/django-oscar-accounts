@@ -106,12 +106,26 @@ class Transaction(models.Model):
     # also record some audit information.
     user = models.ForeignKey('auth.User', related_name="budget_transactions",
                              null=True, on_delete=models.SET_NULL)
+    username = models.CharField(max_length=128)
 
     date_created = models.DateTimeField(auto_now_add=True)
 
     # Use a custom manager that extends the create method to also create the
     # budget transactions.
     objects = TransactionManager()
+
+    def delete(self, *args, **kwargs):
+        raise RuntimeError("Transaction cannot be deleted")
+
+    def save(self, *args, **kwargs):
+        self.username = self.user.username
+        return super(Transaction, self).save(*args, **kwargs)
+
+    @property
+    def authorisor_username(self):
+        if self.user:
+            return self.user.username
+        return self.username
 
 
 class BudgetTransaction(models.Model):
@@ -133,3 +147,6 @@ class BudgetTransaction(models.Model):
 
     class Meta:
         unique_together = ('transaction', 'budget')
+
+    def delete(self, *args, **kwargs):
+        raise RuntimeError("Transaction cannot be deleted")
