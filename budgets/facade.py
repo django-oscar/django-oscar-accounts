@@ -1,3 +1,5 @@
+from django.db import transaction
+
 from budgets.models import TransactionID
 
 
@@ -11,6 +13,7 @@ def transfer(source, destination, amount, user):
     :user: Authorising user
     """
     txn_id = TransactionID.new()
-    source._debit(txn_id, amount, user)
-    destination._credit(txn_id, amount, user)
+    with transaction.commit_on_success():
+        source._debit(txn_id, amount, user)
+        destination._credit(txn_id, amount, user)
     return txn_id
