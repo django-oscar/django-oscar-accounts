@@ -23,6 +23,9 @@ class TestANewZeroCreditLimitBudget(TestCase):
     def test_has_zero_balance(self):
         self.assertEqual(D('0.00'), self.budget.balance())
 
+    def test_has_zero_transactions(self):
+        self.assertEqual(0, self.budget.num_transactions())
+
 
 class TestAFixedCreditLimitBudget(TestCase):
 
