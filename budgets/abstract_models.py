@@ -25,6 +25,12 @@ class Budget(models.Model):
     code = models.CharField(max_length=128, unique=True, null=True,
                             blank=True)
 
+    # Track the status of a budget - this is often used so that expired budgets
+    # can have their money transferred back to some parent account and then be
+    # closed.
+    OPEN, CLOSED = 'Open', 'Closed'
+    status = models.CharField(max_length=32, default=OPEN)
+
     # This is the limit to which the budget can do into debt.  The default is
     # zero which means the budget cannot run a negative balance.
     credit_limit = models.DecimalField(decimal_places=2, max_digits=12,
@@ -81,6 +87,13 @@ class Budget(models.Model):
         available = self.balance() + self.credit_limit
         return amount <= available
 
+    def is_open(self):
+        return self.status == self.__class__.OPEN
+
+    def close(self):
+        self.status = self.__class__.CLOSED
+        self.save()
+
 
 class TransactionManager(models.Manager):
 
@@ -107,7 +120,8 @@ class TransactionManager(models.Manager):
 
     def verify_transaction(self, source, destination, amount):
         """
-        Test whether the proporsed transaction is permitted.
+        Test whether the proposed transaction is permitted.  Raise an exception
+        if it is not.
         """
         if amount <= 0:
             raise exceptions.InvalidAmount("Debits must use a positive amount")
@@ -115,6 +129,10 @@ class TransactionManager(models.Manager):
             raise exceptions.InactiveBudget("Source budget is inactive")
         if not destination.is_active():
             raise exceptions.InactiveBudget("Destination budget is inactive")
+        if not source.is_open():
+            raise exceptions.ClosedBudget("Source budget has been closed")
+        if not destination.is_open():
+            raise exceptions.ClosedBudget("Destination budget has been closed")
         if not source.is_debit_permitted(amount):
             msg = "Unable to debit %.2f from budget #%d:"
             raise exceptions.InsufficientBudget(

@@ -9,6 +9,19 @@ from budgets import exceptions
 from budgets.models import Budget, Transaction, BudgetTransaction
 
 
+class TestABudget(TestCase):
+
+    def setUp(self):
+        self.budget = Budget()
+
+    def test_is_open_by_default(self):
+        self.assertEqual(Budget.OPEN, self.budget.status)
+
+    def test_can_be_closed(self):
+        self.budget.close()
+        self.assertEqual(Budget.CLOSED, self.budget.status)
+
+
 class TestANewZeroCreditLimitBudget(TestCase):
 
     def setUp(self):
@@ -103,6 +116,22 @@ class TestATransaction(TestCase):
         destination = Budget.objects.create(
             end_date=today - datetime.timedelta(days=1))
         with self.assertRaises(exceptions.InactiveBudget):
+            Transaction.objects.create(source, destination,
+                                       D('20.00'), self.user)
+
+    def test_raises_an_exception_when_trying_to_use_closed_source(self):
+        source = Budget.objects.create(credit_limit=None)
+        source.close()
+        destination = Budget.objects.create()
+        with self.assertRaises(exceptions.ClosedBudget):
+            Transaction.objects.create(source, destination,
+                                       D('20.00'), self.user)
+
+    def test_raises_an_exception_when_trying_to_use_closed_destination(self):
+        source = Budget.objects.create(credit_limit=None)
+        destination = Budget.objects.create()
+        destination.close()
+        with self.assertRaises(exceptions.ClosedBudget):
             Transaction.objects.create(source, destination,
                                        D('20.00'), self.user)
 

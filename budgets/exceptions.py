@@ -12,3 +12,7 @@ class InvalidAmount(BudgetException):
 
 class InactiveBudget(BudgetException):
     pass
+
+
+class ClosedBudget(BudgetException):
+    pass
