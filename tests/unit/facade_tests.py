@@ -17,7 +17,7 @@ class TestASimpleTransfer(TestCase):
         self.source = Budget.objects.create(credit_limit=None)
         self.destination = Budget.objects.create()
         self.txn = facade.transfer(self.source, self.destination, D('100'),
-                              self.user, "Give money to customer")
+                                   self.user, "Give money to customer")
 
     def test_records_the_authorising_user(self):
         self.assertEqual(self.user, self.txn.user)
@@ -46,6 +46,14 @@ class TestASimpleTransfer(TestCase):
     def test_creates_a_debit_transaction(self):
         source_txn = self.txn.budget_transactions.get(budget=self.source)
         self.assertEqual(D('-100.00'), source_txn.amount)
+
+
+class TestAnAnonymousTransaction(TestCase):
+
+    def test_doesnt_explode(self):
+        source = Budget.objects.create(credit_limit=None)
+        destination = Budget.objects.create()
+        facade.transfer(source, destination, D('1'))
 
 
 class TestErrorHandling(TransactionTestCase):

@@ -97,7 +97,7 @@ class Budget(models.Model):
 
 class TransactionManager(models.Manager):
 
-    def create(self, source, destination, amount, user, description=None):
+    def create(self, source, destination, amount, user=None, description=None):
         """
         Create a new transaction
         """
@@ -175,7 +175,9 @@ class Transaction(models.Model):
         raise RuntimeError("Transaction cannot be deleted")
 
     def save(self, *args, **kwargs):
-        self.username = self.user.username
+        # Store audit information about authorising user (if one is set)
+        if self.user:
+            self.username = self.user.username
         return super(Transaction, self).save(*args, **kwargs)
 
     @property

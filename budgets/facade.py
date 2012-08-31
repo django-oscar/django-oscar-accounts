@@ -6,7 +6,7 @@ from budgets import exceptions
 logger = logging.getLogger('budgets')
 
 
-def transfer(source, destination, amount, user, description=None):
+def transfer(source, destination, amount, user=None, description=None):
     """
     Transfer funds between source budget and destination budget.
 
