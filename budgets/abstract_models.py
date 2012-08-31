@@ -2,6 +2,7 @@ from decimal import Decimal as D
 import datetime
 
 from django.db import models
+from django.db import transaction
 from django.db.models import Sum
 
 from budgets import exceptions
@@ -87,13 +88,22 @@ class TransactionManager(models.Manager):
         """
         Create a new transaction
         """
+        # Write out three rows to the database.  We use a transaction
+        # to ensure that all 3 get written out correctly.
         self.verify_transaction(source, destination, amount)
-        txn = self.get_query_set().create(user=user, description=description)
-        txn.budget_transactions.create(
-            budget=source, amount=-amount)
-        txn.budget_transactions.create(
-            budget=destination, amount=amount)
-        return txn
+        with transaction.commit_on_success():
+            txn = self.get_query_set().create(user=user,
+                                              description=description)
+            txn.budget_transactions.create(
+                budget=source, amount=-amount)
+            txn.budget_transactions.create(
+                budget=destination, amount=amount)
+            return self._wrap(txn)
+
+    def _wrap(self, obj):
+        # Dumb method that is here only so that it can be mocked to test the
+        # transaction behaviour.
+        return obj
 
     def verify_transaction(self, source, destination, amount):
         """
