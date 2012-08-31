@@ -7,6 +7,14 @@ from django.db.models import Sum
 from budgets import exceptions
 
 
+class ExpiredBudgetManager(models.Manager):
+
+    def get_query_set(self):
+        today = datetime.date.today()
+        qs = super(ExpiredBudgetManager, self).get_query_set()
+        return qs.filter(end_date__lte=today)
+
+
 class Budget(models.Model):
     name = models.CharField(max_length=128, unique=True, null=True,
                             blank=True)
@@ -33,6 +41,9 @@ class Budget(models.Model):
     secondary_users = models.ManyToManyField('auth.User', blank=True)
 
     date_created = models.DateTimeField(auto_now_add=True)
+
+    objects = models.Manager()
+    expired = ExpiredBudgetManager()
 
     class Meta:
         abstract = True

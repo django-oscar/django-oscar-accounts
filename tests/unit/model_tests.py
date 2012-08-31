@@ -53,6 +53,15 @@ class TestAnUnlimitedCreditLimitBudget(TestCase):
             self.assertTrue(self.budget.is_debit_permitted(amt))
 
 
+class TestBudgetManager(TestCase):
+
+    def test_has_expired_filter(self):
+        today = datetime.date.today()
+        Budget.objects.create(end_date=today - datetime.timedelta(days=1))
+        budgets = Budget.expired.all()
+        self.assertEqual(1, budgets.count())
+
+
 class TestATransaction(TestCase):
 
     def setUp(self):
