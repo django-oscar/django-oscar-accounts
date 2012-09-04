@@ -1,18 +1,18 @@
-class BudgetException(Exception):
+class AccountException(Exception):
     pass
 
 
-class InsufficientBudget(BudgetException):
+class InsufficientFunds(AccountException):
     pass
 
 
-class InvalidAmount(BudgetException):
+class InvalidAmount(AccountException):
     pass
 
 
-class InactiveBudget(BudgetException):
+class InactiveAccount(AccountException):
     pass
 
 
-class ClosedBudget(BudgetException):
+class ClosedAccount(AccountException):
     pass

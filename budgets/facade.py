@@ -8,30 +8,32 @@ logger = logging.getLogger('budgets')
 
 def transfer(source, destination, amount, user=None, description=None):
     """
-    Transfer funds between source budget and destination budget.
+    Transfer funds between source and destination accounts.
 
-    Will raise a budget.exceptions.BudgetException if anything goes wrong.
+    Will raise a budget.exceptions.AccountException if anything goes wrong.
 
-    :source: Budget to debit
-    :destination: Budget to credit
+    :source: Account to debit
+    :destination: Account to credit
     :amount: Amount to transfer
     :user: Authorising user
     :description: Description of transaction
     """
-    msg = "Transfer of %.2f from budget #%d to budget #%d"
+    msg = "Transfer of %.2f from account #%d to account #%d"
     if user:
         msg += " authorised by user #%d (%s)" % (user.id, user.username,)
     if description:
         msg += " '%s'" % description
     try:
-        txn = models.Transaction.objects.create(
+        transfer = models.Transfer.objects.create(
             source, destination, amount, user, description)
-    except exceptions.BudgetException, e:
+    except exceptions.AccountException, e:
         logger.warning("%s - failed: '%s'", msg, e)
         raise
     except Exception, e:
         logger.error("%s - failed: '%s'", msg, e)
-        raise exceptions.BudgetException("Unable to complete transfer: %s" % e)
+        raise exceptions.AccountException(
+            "Unable to complete transfer: %s" % e)
     else:
-        logger.info("%s - successful, transaction: %s", msg, txn.reference)
-        return txn
+        logger.info("%s - successful, transaction: %s", msg,
+                    transfer.reference)
+        return transfer

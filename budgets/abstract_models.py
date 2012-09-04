@@ -8,34 +8,34 @@ from django.db.models import Sum
 from budgets import exceptions
 
 
-class ExpiredBudgetManager(models.Manager):
+class ExpiredAccountManager(models.Manager):
 
     def get_query_set(self):
         today = datetime.date.today()
-        qs = super(ExpiredBudgetManager, self).get_query_set()
+        qs = super(ExpiredAccountManager, self).get_query_set()
         return qs.filter(end_date__lte=today)
 
 
-class Budget(models.Model):
+class Account(models.Model):
     name = models.CharField(max_length=128, unique=True, null=True,
                             blank=True)
 
     # Some accounts will be categorised
     category = models.CharField(max_length=256, null=True)
 
-    # Some budgets are not linked to a specific user but are activated by
+    # Some account are not linked to a specific user but are activated by
     # entering a code at checkout.
     code = models.CharField(max_length=128, unique=True, null=True,
                             blank=True)
 
-    # Track the status of a budget - this is often used so that expired budgets
+    # Track the status of a account - this is often used so that expired account
     # can have their money transferred back to some parent account and then be
     # closed.
     OPEN, CLOSED = 'Open', 'Closed'
     status = models.CharField(max_length=32, default=OPEN)
 
-    # This is the limit to which the budget can do into debt.  The default is
-    # zero which means the budget cannot run a negative balance.
+    # This is the limit to which the account can do into debt.  The default is
+    # zero which means the account cannot run a negative balance.
     credit_limit = models.DecimalField(decimal_places=2, max_digits=12,
                                        default=D('0.00'), null=True)
 
@@ -43,27 +43,27 @@ class Budget(models.Model):
     balance = models.DecimalField(decimal_places=2, max_digits=12,
                                   default=D('0.00'), null=True)
 
-    # Budgets can have an date range when they can be used.
+    # Accounts can have an date range when they can be used.
     start_date = models.DateField(null=True, blank=True)
     end_date = models.DateField(null=True, blank=True)
 
-    # Each budget can have multiple users who can use it for transactions.  In
+    # Each account can have multiple users who can use it for transactions.  In
     # many cases, there will only be one user though and so we use a 'primary'
     # user for this scenario.
-    primary_user = models.ForeignKey('auth.User', related_name="budgets",
+    primary_user = models.ForeignKey('auth.User', related_name="accounts",
                                      null=True, blank=True)
     secondary_users = models.ManyToManyField('auth.User', blank=True)
 
     date_created = models.DateTimeField(auto_now_add=True)
 
     objects = models.Manager()
-    expired = ExpiredBudgetManager()
+    expired = ExpiredAccountManager()
 
     class Meta:
         abstract = True
 
     def __unicode__(self):
-        name = self.name if self.name else "Anonymous budget"
+        name = self.name if self.name else "Anonymous account"
         if self.credit_limit is not None:
             name += " (credit limit: %.2f)" % self.credit_limit
         else:
@@ -106,33 +106,34 @@ class Budget(models.Model):
         self.save()
 
 
-class TransactionManager(models.Manager):
+class PostingManager(models.Manager):
 
     def create(self, source, destination, amount, user=None, description=None):
         """
-        Create a new transaction
+        Create a new transfer
         """
-        # Write out transaction (which involves multiple writes).  We use a
-        # transaction to ensure that all get written out correctly.
-        self.verify_transaction(source, destination, amount)
+        # Write out transfer (which involves multiple writes).  We use a
+        # database transaction to ensure that all get written out correctly.
+        self.verify_transfer(source, destination, amount)
         with transaction.commit_on_success():
-            txn = self.get_query_set().create(user=user,
-                                              description=description)
-            txn.budget_transactions.create(
-                budget=source, amount=-amount)
-            txn.budget_transactions.create(
-                budget=destination, amount=amount)
-            # Update the cached balances
+            transfer = self.get_query_set().create(user=user,
+                                                   description=description)
+            # Create transaction records for audit trail
+            transfer.transactions.create(
+                account=source, amount=-amount)
+            transfer.transactions.create(
+                account=destination, amount=amount)
+            # Update the cached balances on the accounts
             source.update_balance()
             destination.update_balance()
-            return self._wrap(txn)
+            return self._wrap(transfer)
 
     def _wrap(self, obj):
         # Dumb method that is here only so that it can be mocked to test the
         # transaction behaviour.
         return obj
 
-    def verify_transaction(self, source, destination, amount):
+    def verify_transfer(self, source, destination, amount):
         """
         Test whether the proposed transaction is permitted.  Raise an exception
         if it is not.
@@ -140,40 +141,43 @@ class TransactionManager(models.Manager):
         if amount <= 0:
             raise exceptions.InvalidAmount("Debits must use a positive amount")
         if not source.is_active():
-            raise exceptions.InactiveBudget("Source budget is inactive")
+            raise exceptions.InactiveAccount("Source account is inactive")
         if not destination.is_active():
-            raise exceptions.InactiveBudget("Destination budget is inactive")
+            raise exceptions.InactiveAccount("Destination account is inactive")
         if not source.is_open():
-            raise exceptions.ClosedBudget("Source budget has been closed")
+            raise exceptions.ClosedAccount("Source account has been closed")
         if not destination.is_open():
-            raise exceptions.ClosedBudget("Destination budget has been closed")
+            raise exceptions.ClosedAccount(
+                "Destination account has been closed")
         if not source.is_debit_permitted(amount):
-            msg = "Unable to debit %.2f from budget #%d:"
-            raise exceptions.InsufficientBudget(
+            msg = "Unable to debit %.2f from account #%d:"
+            raise exceptions.InsufficientFunds(
                 msg % (amount, source.id))
 
 
-class Transaction(models.Model):
+class Transfer(models.Model):
     """
-    A transaction.
+    A transfer of funds between two accounts.
 
-    Each transaction links to TWO budget transactions
+    This object records the meta-data about the transfer such as a reference
+    number for it and who was the authorisor.  The financial details are help
+    within the transactions.  Each transfer links to TWO account transactions
     """
-    # Optional description of what this transaction was
+    # Optional description of what this transfer was
     description = models.CharField(max_length=256, null=True)
 
     # We record who the user was who authorised this transaction.  As
     # transactions should never be deleted, we allow this field to be null and
     # also record some audit information.
-    user = models.ForeignKey('auth.User', related_name="budget_transactions",
+    user = models.ForeignKey('auth.User', related_name="transfers",
                              null=True, on_delete=models.SET_NULL)
     username = models.CharField(max_length=128)
 
     date_created = models.DateTimeField(auto_now_add=True)
 
     # Use a custom manager that extends the create method to also create the
-    # budget transactions.
-    objects = TransactionManager()
+    # account transactions.
+    objects = PostingManager()
 
     @property
     def reference(self):
@@ -186,13 +190,13 @@ class Transaction(models.Model):
         abstract = True
 
     def delete(self, *args, **kwargs):
-        raise RuntimeError("Transaction cannot be deleted")
+        raise RuntimeError("Transfers cannot be deleted")
 
     def save(self, *args, **kwargs):
         # Store audit information about authorising user (if one is set)
         if self.user:
             self.username = self.user.username
-        return super(Transaction, self).save(*args, **kwargs)
+        return super(Transfer, self).save(*args, **kwargs)
 
     @property
     def authorisor_username(self):
@@ -201,26 +205,22 @@ class Transaction(models.Model):
         return self.username
 
 
-class BudgetTransaction(models.Model):
-    # Each transfer creates two transaction instances.  They should both have
-    # the same txn ID.
-    transaction = models.ForeignKey('budgets.Transaction',
-                                    related_name="budget_transactions")
-
+class Transaction(models.Model):
     # Every transfer of money should create two rows in this table.
-    # (a) the debit from the source budget
-    # (b) the credit to the destination budget
-    budget = models.ForeignKey('budgets.Budget', related_name='transactions')
+    # (a) the debit from the source account
+    # (b) the credit to the destination account
+    transfer = models.ForeignKey('budgets.Transfer',
+                               related_name="transactions")
+    account = models.ForeignKey('budgets.Account', related_name='transactions')
 
-    # The sum of this field over the whole table should always be 0
+    # The sum of this field over the whole table should always be 0.
     # Credits should be positive while debits should be negative
     amount = models.DecimalField(decimal_places=2, max_digits=12)
-
     date_created = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        unique_together = ('transaction', 'budget')
+        unique_together = ('transfer', 'account')
         abstract = True
 
     def delete(self, *args, **kwargs):
-        raise RuntimeError("Transaction cannot be deleted")
+        raise RuntimeError("Transactions cannot be deleted")
