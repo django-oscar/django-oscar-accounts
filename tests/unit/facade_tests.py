@@ -72,14 +72,14 @@ class TestErrorHandling(TransactionTestCase):
         self.assertEqual(0, Transfer.objects.all().count())
         self.assertEqual(0, Transaction.objects.all().count())
 
-    def test_budget_exception_raised_for_invalid_transfer(self):
+    def test_account_exception_raised_for_invalid_transfer(self):
         user = G(User)
         source = Account.objects.create()
         destination = Account.objects.create()
         with self.assertRaises(exceptions.AccountException):
             facade.transfer(source, destination, D('100'), user)
 
-    def test_budget_exception_raised_for_runtime_error(self):
+    def test_account_exception_raised_for_runtime_error(self):
         user = G(User)
         source = Account.objects.create(credit_limit=None)
         destination = Account.objects.create()
