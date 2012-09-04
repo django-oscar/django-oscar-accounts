@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 from setuptools import setup, find_packages
 
-from budgets import VERSION
+from accounts import VERSION
 
-setup(name='django-oscar-budgets',
+setup(name='django-oscar-accounts',
       version=VERSION,
       author="David Winterbottom",
       author_email="david.winterbottom@tangentlabs.co.uk",
-      description="Budgets module for django-oscar",
+      description="Accounts for django-oscar",
       long_description=open('README.rst').read(),
       license=open('LICENSE').read(),
       packages=find_packages(exclude=['sandbox*', 'tests*']),

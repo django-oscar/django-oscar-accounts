@@ -2,6 +2,10 @@ class AccountException(Exception):
     pass
 
 
+class AccountNotEmpty(AccountException):
+    pass
+
+
 class InsufficientFunds(AccountException):
     pass
 

@@ -6,8 +6,8 @@ from django.test import TestCase, TransactionTestCase
 from django_dynamic_fixture import G
 import mock
 
-from budgets.models import Account, Transfer, Transaction
-from budgets import facade, exceptions
+from accounts.models import Account, Transfer, Transaction
+from accounts import facade, exceptions
 
 
 class TestASimpleTransfer(TestCase):
@@ -63,7 +63,7 @@ class TestErrorHandling(TransactionTestCase):
         source = Account.objects.create(credit_limit=None)
         destination = Account.objects.create()
         with mock.patch(
-            'budgets.abstract_models.PostingManager._wrap') as mock_method:
+            'accounts.abstract_models.PostingManager._wrap') as mock_method:
             mock_method.side_effect = RuntimeError()
             try:
                 facade.transfer(source, destination, D('100'), user)
@@ -84,7 +84,7 @@ class TestErrorHandling(TransactionTestCase):
         source = Account.objects.create(credit_limit=None)
         destination = Account.objects.create()
         with mock.patch(
-            'budgets.abstract_models.PostingManager._wrap') as mock_method:
+            'accounts.abstract_models.PostingManager._wrap') as mock_method:
             mock_method.side_effect = RuntimeError()
             with self.assertRaises(exceptions.AccountException):
                 facade.transfer(source, destination, D('100'), user)

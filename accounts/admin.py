@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from budgets import models
+from accounts import models
 
 
 class AccountAdmin(admin.ModelAdmin):

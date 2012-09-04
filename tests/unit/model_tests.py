@@ -5,8 +5,8 @@ from django.contrib.auth.models import User
 from django.test import TestCase
 from django_dynamic_fixture import G
 
-from budgets import exceptions
-from budgets.models import Account, Transfer, Transaction
+from accounts import exceptions
+from accounts.models import Account, Transfer, Transaction
 
 
 class TestAnAccount(TestCase):
@@ -20,6 +20,17 @@ class TestAnAccount(TestCase):
     def test_can_be_closed(self):
         self.account.close()
         self.assertEqual(Account.CLOSED, self.account.status)
+
+
+class TestAnAccountWithFunds(TestCase):
+
+    def setUp(self):
+        self.account = Account()
+        self.account.balance = D('100.00')
+
+    def test_cannot_be_closed(self):
+        with self.assertRaises(exceptions.AccountNotEmpty):
+            self.account.close()
 
 
 class TestANewZeroCreditLimitAccount(TestCase):

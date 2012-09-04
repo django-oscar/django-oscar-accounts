@@ -30,7 +30,7 @@ if not settings.configured:
                 'django.contrib.sessions',
                 'django.contrib.sites',
                 'django.contrib.flatpages',
-                'budgets',
+                'accounts',
                 'south',
                 ] + get_core_apps(),
             MIDDLEWARE_CLASSES=(
@@ -69,7 +69,7 @@ def run_tests(*test_args):
     # Run tests
     test_runner = NoseTestSuiteRunner(verbosity=1)
 
-    c = coverage(source=['budgets'], omit=['*migrations*', '*tests*'])
+    c = coverage(source=['accounts'], omit=['*migrations*', '*tests*'])
     c.start()
     num_failures = test_runner.run_tests(test_args)
     c.stop()

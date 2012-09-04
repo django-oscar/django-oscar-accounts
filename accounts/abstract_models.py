@@ -5,7 +5,7 @@ from django.db import models
 from django.db import transaction
 from django.db.models import Sum
 
-from budgets import exceptions
+from accounts import exceptions
 
 
 class ExpiredAccountManager(models.Manager):
@@ -102,6 +102,9 @@ class Account(models.Model):
         return self.status == self.__class__.OPEN
 
     def close(self):
+        # Only account with zero balance can be closed
+        if self.balance > 0:
+            raise exceptions.AccountNotEmpty()
         self.status = self.__class__.CLOSED
         self.save()
 
@@ -209,9 +212,9 @@ class Transaction(models.Model):
     # Every transfer of money should create two rows in this table.
     # (a) the debit from the source account
     # (b) the credit to the destination account
-    transfer = models.ForeignKey('budgets.Transfer',
+    transfer = models.ForeignKey('accounts.Transfer',
                                related_name="transactions")
-    account = models.ForeignKey('budgets.Account', related_name='transactions')
+    account = models.ForeignKey('accounts.Account', related_name='transactions')
 
     # The sum of this field over the whole table should always be 0.
     # Credits should be positive while debits should be negative

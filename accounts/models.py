@@ -1,4 +1,4 @@
-from budgets import abstract_models
+from accounts import abstract_models
 
 
 class Account(abstract_models.Account):

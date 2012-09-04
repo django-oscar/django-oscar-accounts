@@ -1,16 +1,16 @@
 import logging
 
-from budgets import models
-from budgets import exceptions
+from accounts import models
+from accounts import exceptions
 
-logger = logging.getLogger('budgets')
+logger = logging.getLogger('accounts')
 
 
 def transfer(source, destination, amount, user=None, description=None):
     """
     Transfer funds between source and destination accounts.
 
-    Will raise a budget.exceptions.AccountException if anything goes wrong.
+    Will raise a accounts.exceptions.AccountException if anything goes wrong.
 
     :source: Account to debit
     :destination: Account to credit
