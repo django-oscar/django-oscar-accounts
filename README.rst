@@ -2,13 +2,22 @@
 Budgets
 =======
 
-.. warning::
-    This is a work in progress
+This package provides managed budgets for `Oscar`_.  A managed budget is an
+allocation of money that can be used as a payment source for orders.  Budgets
+can be used to implement:
 
-This package provides managed budgets for Oscar.  It uses a `double-entry
-bookkeeping system`_ where every transaction is recorded twice (once for the
-source and once for the destination).
+* Giftcard schemes
+* Loyalty schemes
+* User "credits" that are allocated by sales reps to their customers (more of a
+  B2B thing)
 
+It uses a `double-entry bookkeeping system`_ where every transaction is recorded
+twice (once for the source and once for the destination).
+
+Despite having 'oscar' in the name, this package does not import Oscar's classes
+and so can be used standalone.
+
+.. _`Oscar`: https://github.com/tangentlabs/django-oscar
 .. _`double-entry bookkeeping system`: http://en.wikipedia.org/wiki/Double-entry_bookkeeping_system
 
 Features:
@@ -65,6 +74,8 @@ Transfer funds using the facade::
 
 If the proposed transfer is invalid, an exception will be raised.  All
 exceptions are subclasses of ``budgets.exceptions.BudgetException``.
+
+Client code should only 
 
 Contributing
 ------------
