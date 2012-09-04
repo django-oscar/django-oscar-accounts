@@ -33,10 +33,10 @@ class TestASimpleTransfer(TestCase):
         self.assertEqual(D('0.00'), aggregates['sum'])
 
     def test_debits_the_source_budget(self):
-        self.assertEqual(D('-100.00'), self.source.balance())
+        self.assertEqual(D('-100.00'), self.source.balance)
 
     def test_credits_the_destination_budget(self):
-        self.assertEqual(D('100.00'), self.destination.balance())
+        self.assertEqual(D('100.00'), self.destination.balance)
 
     def test_creates_a_credit_transaction(self):
         destination_txn = self.txn.budget_transactions.get(

@@ -34,7 +34,7 @@ class TestANewZeroCreditLimitBudget(TestCase):
         self.assertFalse(self.budget.is_debit_permitted(D('1.00')))
 
     def test_has_zero_balance(self):
-        self.assertEqual(D('0.00'), self.budget.balance())
+        self.assertEqual(D('0.00'), self.budget.balance)
 
     def test_has_zero_transactions(self):
         self.assertEqual(0, self.budget.num_transactions())

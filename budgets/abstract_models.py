@@ -20,6 +20,9 @@ class Budget(models.Model):
     name = models.CharField(max_length=128, unique=True, null=True,
                             blank=True)
 
+    # Some accounts will be categorised
+    category = models.CharField(max_length=256, null=True)
+
     # Some budgets are not linked to a specific user but are activated by
     # entering a code at checkout.
     code = models.CharField(max_length=128, unique=True, null=True,
@@ -35,6 +38,10 @@ class Budget(models.Model):
     # zero which means the budget cannot run a negative balance.
     credit_limit = models.DecimalField(decimal_places=2, max_digits=12,
                                        default=D('0.00'), null=True)
+
+    # For performance reasons, we keep a cached balance
+    balance = models.DecimalField(decimal_places=2, max_digits=12,
+                                  default=D('0.00'), null=True)
 
     # Budgets can have an date range when they can be used.
     start_date = models.DateField(null=True, blank=True)
@@ -73,7 +80,11 @@ class Budget(models.Model):
             return today < self.end_date
         return self.start_date <= today < self.end_date
 
-    def balance(self):
+    def update_balance(self):
+        self.balance = self._balance()
+        self.save()
+
+    def _balance(self):
         aggregates = self.transactions.aggregate(sum=Sum('amount'))
         sum = aggregates['sum']
         return D('0.00') if sum is None else sum
@@ -84,7 +95,7 @@ class Budget(models.Model):
     def is_debit_permitted(self, amount):
         if self.credit_limit is None:
             return True
-        available = self.balance() + self.credit_limit
+        available = self.balance + self.credit_limit
         return amount <= available
 
     def is_open(self):
@@ -101,8 +112,8 @@ class TransactionManager(models.Manager):
         """
         Create a new transaction
         """
-        # Write out three rows to the database.  We use a transaction
-        # to ensure that all 3 get written out correctly.
+        # Write out transaction (which involves multiple writes).  We use a
+        # transaction to ensure that all get written out correctly.
         self.verify_transaction(source, destination, amount)
         with transaction.commit_on_success():
             txn = self.get_query_set().create(user=user,
@@ -111,6 +122,9 @@ class TransactionManager(models.Manager):
                 budget=source, amount=-amount)
             txn.budget_transactions.create(
                 budget=destination, amount=amount)
+            # Update the cached balances
+            source.update_balance()
+            destination.update_balance()
             return self._wrap(txn)
 
     def _wrap(self, obj):
