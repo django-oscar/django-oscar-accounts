@@ -1,9 +1,9 @@
-=======
-Budgets
-=======
+===========================
+Managed accounts for Django
+===========================
 
-This package provides managed budgets for `Oscar`_.  A managed budget is an
-allocation of money that can be used as a payment source for orders.  Budgets
+This package provides managed accounts for `Oscar`_.  A managed account is an
+allocation of money that can be used as a payment source for orders.  Accounts
 can be used to implement:
 
 * Giftcard schemes
@@ -12,7 +12,9 @@ can be used to implement:
   B2B thing)
 
 It uses a `double-entry bookkeeping system`_ where every transaction is recorded
-twice (once for the source and once for the destination).
+twice (once for the source and once for the destination).  This ensures the
+books always balance and there is full audit trail of all transactional
+activity.
 
 Despite having 'oscar' in the name, this package does not import Oscar's classes
 and so can be used standalone.
@@ -22,58 +24,58 @@ and so can be used standalone.
 
 Features:
 
-* Budgets can have:
+* Accounts can have:
   - No users assigned
   - A single "primary" user
   - A set of users assigned
-* A user can have multiple budgets
-* A budget can have a start and end date to allow its usage in a limited time
+* A user can have multiple accounts
+* A account can have a start and end date to allow its usage in a limited time
   window
-* A budget has a credit limit which defaults to zero.  Budgets can be set up
+* A account has a credit limit which defaults to zero.  Accounts can be set up
   with no credit limit.
 
 Installation
 ------------
 
-Install using pip and add ``budgets`` to ``INSTALLED_APPS``.  Run syncdb and
+Install using pip and add ``accounts`` to ``INSTALLED_APPS``.  Run syncdb and
 you're away.
 
 API
 ---
 
-Create budget instances using the manager::
+Create account instances using the manager::
 
     from decimal import Decimal
     import datetime
 
     from django.contrib.auth.models import User
 
-    from budgets import models
+    from accounts import models
 
-    anonymous_budget = models.Budget.objects.create()
+    anonymous_account = models.Account.objects.create()
     barry = User.objects.get(username="barry")
-    user_budget = models.Budget.objects.create(primary_user=barry)
+    user_account = models.Account.objects.create(primary_user=barry)
     
-    no_credit_limit_budget = models.Budget.objects.create(credit_limit=None)
-    credit_limit_budget = models.Budget.objects.create(credit_limit=Decimal('1000.00'))
+    no_credit_limit_account = models.Account.objects.create(credit_limit=None)
+    credit_limit_account = models.Account.objects.create(credit_limit=Decimal('1000.00'))
 
     today = datetime.date.today()
     next_week = today + datetime.timedelta(days=7)
-    date_limited_budget = models.Budget.objects.create(
+    date_limited_account = models.Account.objects.create(
         start_date=today, end_date=next_week)
 
 Transfer funds using the facade::
 
-    from budgets import facade
+    from accounts import facade
 
     staff_member = User.objects.get(username="staff")
-    facade.transfer(source=no_credit_limit_budget,
-                    destination=user_budget,
+    facade.transfer(source=no_credit_limit_account,
+                    destination=user_account,
                     amount=Decimal('10.00'),
                     user=staff_member)
 
 If the proposed transfer is invalid, an exception will be raised.  All
-exceptions are subclasses of ``budgets.exceptions.BudgetException``.
+exceptions are subclasses of ``accounts.exceptions.AccountException``.
 
 Client code should only 
 
