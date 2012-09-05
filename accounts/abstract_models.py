@@ -43,7 +43,8 @@ class Account(models.Model):
     balance = models.DecimalField(decimal_places=2, max_digits=12,
                                   default=D('0.00'), null=True)
 
-    # Accounts can have an date range when they can be used.
+    # Accounts can have an date range when they can be used as a source.  You
+    # can still transfer into accounts when they are not active.
     start_date = models.DateField(null=True, blank=True)
     end_date = models.DateField(null=True, blank=True)
 
@@ -110,11 +111,13 @@ class Account(models.Model):
 
 
 class PostingManager(models.Manager):
+    """
+    Custom manager to provide a new 'create' method to create a new transfer.
+
+    Apparently, finance people refer to "posting a transaction"; hence why this
+    """
 
     def create(self, source, destination, amount, user=None, description=None):
-        """
-        Create a new transfer
-        """
         # Write out transfer (which involves multiple writes).  We use a
         # database transaction to ensure that all get written out correctly.
         self.verify_transfer(source, destination, amount)
@@ -145,8 +148,6 @@ class PostingManager(models.Manager):
             raise exceptions.InvalidAmount("Debits must use a positive amount")
         if not source.is_active():
             raise exceptions.InactiveAccount("Source account is inactive")
-        if not destination.is_active():
-            raise exceptions.InactiveAccount("Destination account is inactive")
         if not source.is_open():
             raise exceptions.ClosedAccount("Source account has been closed")
         if not destination.is_open():

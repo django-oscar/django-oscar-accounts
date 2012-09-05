@@ -2,8 +2,8 @@
 Managed accounts for Django
 ===========================
 
-This package provides managed accounts for `Oscar`_.  A managed account is an
-allocation of money that can be used as a payment source for orders.  Accounts
+This package provides managed accounts for Django.  A managed account is an
+allocation of money that can be debited and credited.  Accounts
 can be used to implement:
 
 * Giftcard schemes
@@ -11,28 +11,33 @@ can be used to implement:
 * User "credits" that are allocated by sales reps to their customers (more of a
   B2B thing)
 
-It uses a `double-entry bookkeeping system`_ where every transaction is recorded
+Basically anything that involves tracking the movement of funds within a closed
+system.
+
+It uses `double-entry bookkeeping`_ where every transaction is recorded
 twice (once for the source and once for the destination).  This ensures the
 books always balance and there is full audit trail of all transactional
 activity.
 
-Despite having 'oscar' in the name, this package does not import Oscar's classes
+Despite having 'Oscar' in the name, this package does not import Oscar's classes
 and so can be used standalone.
 
 .. _`Oscar`: https://github.com/tangentlabs/django-oscar
-.. _`double-entry bookkeeping system`: http://en.wikipedia.org/wiki/Double-entry_bookkeeping_system
+.. _`double-entry bookkeeping`: http://en.wikipedia.org/wiki/Double-entry_bookkeeping_system
 
 Features:
 
+* A account has a credit limit which defaults to zero.  Accounts can be set up
+  with no credit limit so that they are a 'source' of money within the system.
+  At least one account must be set up without a credit limit.
 * Accounts can have:
   - No users assigned
-  - A single "primary" user
+  - A single "primary" user - this is the most common case
   - A set of users assigned
 * A user can have multiple accounts
 * A account can have a start and end date to allow its usage in a limited time
   window
-* A account has a credit limit which defaults to zero.  Accounts can be set up
-  with no credit limit.
+* Accounts can be categorised
 
 Installation
 ------------
@@ -53,6 +58,7 @@ Create account instances using the manager::
     from accounts import models
 
     anonymous_account = models.Account.objects.create()
+
     barry = User.objects.get(username="barry")
     user_account = models.Account.objects.create(primary_user=barry)
     
@@ -77,7 +83,8 @@ Transfer funds using the facade::
 If the proposed transfer is invalid, an exception will be raised.  All
 exceptions are subclasses of ``accounts.exceptions.AccountException``.
 
-Client code should only 
+Client code should only use the ``accounts.models.Budget`` class and the
+``accounts.facade.transfer`` function.  Nothing else should be required.
 
 Contributing
 ------------
@@ -89,5 +96,3 @@ Fork repo, set-up virtualenv and run::
 Run tests with::
     
     ./runtests.py
-
-Got nuts.
