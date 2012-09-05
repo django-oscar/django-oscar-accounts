@@ -7,6 +7,7 @@ class AccountAdmin(admin.ModelAdmin):
     list_display = ['id', 'name', 'primary_user', 'credit_limit',
                     'start_date', 'end_date', 'is_active', 'balance',
                     'date_created']
+    readonly_fields = ('balance',)
 
 
 class TransferAdmin(admin.ModelAdmin):

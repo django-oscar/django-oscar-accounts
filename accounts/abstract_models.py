@@ -224,12 +224,17 @@ class Transaction(models.Model):
     # (b) the credit to the destination account
     transfer = models.ForeignKey('accounts.Transfer',
                                  related_name="transactions")
-    account = models.ForeignKey('accounts.Account', related_name='transactions')
+    account = models.ForeignKey('accounts.Account',
+                                related_name='transactions')
 
     # The sum of this field over the whole table should always be 0.
     # Credits should be positive while debits should be negative
     amount = models.DecimalField(decimal_places=2, max_digits=12)
     date_created = models.DateTimeField(auto_now_add=True)
+
+    def __unicode__(self):
+        return u"Ref: %s, amount: %.2f" % (
+            self.transfer.reference, self.amount)
 
     class Meta:
         unique_together = ('transfer', 'account')
