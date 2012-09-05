@@ -75,16 +75,23 @@ Transfer funds using the facade::
     from accounts import facade
 
     staff_member = User.objects.get(username="staff")
-    facade.transfer(source=no_credit_limit_account,
-                    destination=user_account,
-                    amount=Decimal('10.00'),
-                    user=staff_member)
+    trans = facade.transfer(source=no_credit_limit_account,
+                            destination=user_account,
+                            amount=Decimal('10.00'),
+                            user=staff_member)
+
+Reverse transfers::
+
+    facade.reverse(trans, user=staff_member, 
+                   description="Just an example")
 
 If the proposed transfer is invalid, an exception will be raised.  All
-exceptions are subclasses of ``accounts.exceptions.AccountException``.
-
+exceptions are subclasses of ``accounts.exceptions.AccountException``.  Your
+client code should look for exceptions of this type and handle them
+appropriately.
+ 
 Client code should only use the ``accounts.models.Budget`` class and the
-``accounts.facade.transfer`` function.  Nothing else should be required.
+two functions from ``accounts.facade`` - nothing else should be required.
 
 Contributing
 ------------

@@ -10,7 +10,42 @@ from accounts.models import Account, Transfer, Transaction
 from accounts import facade, exceptions
 
 
-class TestASimpleTransfer(TestCase):
+class TestReversingATransfer(TestCase):
+
+    def setUp(self):
+        self.user = G(User)
+        self.source = Account.objects.create(credit_limit=None)
+        self.destination = Account.objects.create()
+        self.transfer = facade.transfer(self.source, self.destination,
+                                        D('100'), self.user, "Give money to customer")
+        self.reverse = facade.reverse(self.transfer, self.user,
+                                      "Oops! Return money")
+
+    def test_creates_4_transactions(self):
+        self.assertEqual(4, Transaction.objects.all().count())
+
+    def test_creates_2_transfers(self):
+        self.assertEqual(2, Transfer.objects.all().count())
+
+    def test_leaves_both_balances_unchanged(self):
+        self.assertEqual(D('0.00'), self.source.balance)
+        self.assertEqual(D('0.00'), self.destination.balance)
+
+    def test_records_the_authorising_user(self):
+        self.assertEqual(self.user, self.reverse.user)
+
+    def test_records_the_transfer_message(self):
+        self.assertEqual("Oops! Return money", self.reverse.description)
+
+    def test_records_the_correct_accounts(self):
+        self.assertEqual(self.source, self.reverse.destination)
+        self.assertEqual(self.destination, self.reverse.source)
+
+    def test_records_the_correct_amount(self):
+        self.assertEqual(D('100'), self.reverse.amount)
+
+
+class TestATransfer(TestCase):
 
     def setUp(self):
         self.user = G(User)

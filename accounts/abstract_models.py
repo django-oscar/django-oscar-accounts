@@ -224,7 +224,7 @@ class Transaction(models.Model):
     # (a) the debit from the source account
     # (b) the credit to the destination account
     transfer = models.ForeignKey('accounts.Transfer',
-                               related_name="transactions")
+                                 related_name="transactions")
     account = models.ForeignKey('accounts.Account', related_name='transactions')
 
     # The sum of this field over the whole table should always be 0.
