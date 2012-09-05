@@ -15,8 +15,8 @@ class TransferAdmin(admin.ModelAdmin):
 
 
 class TransactionAdmin(admin.ModelAdmin):
-    list_display = ['id', 'transaction', 'account', 'amount', 'date_created']
-    readonly_fields = ('transaction', 'account', 'amount', 'date_created')
+    list_display = ['id', 'transfer', 'account', 'amount', 'date_created']
+    readonly_fields = ('transfer', 'account', 'amount', 'date_created')
 
 
 admin.site.register(models.Account, AccountAdmin)
