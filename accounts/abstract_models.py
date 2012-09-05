@@ -122,8 +122,12 @@ class PostingManager(models.Manager):
         # database transaction to ensure that all get written out correctly.
         self.verify_transfer(source, destination, amount)
         with transaction.commit_on_success():
-            transfer = self.get_query_set().create(user=user,
-                                                   description=description)
+            transfer = self.get_query_set().create(
+                source=source,
+                destination=destination,
+                amount=amount,
+                user=user,
+                description=description)
             # Create transaction records for audit trail
             transfer.transactions.create(
                 account=source, amount=-amount)
@@ -167,6 +171,12 @@ class Transfer(models.Model):
     number for it and who was the authorisor.  The financial details are help
     within the transactions.  Each transfer links to TWO account transactions
     """
+    source = models.ForeignKey('accounts.Account',
+                               related_name='source_transfers')
+    destination = models.ForeignKey('accounts.Account',
+                                    related_name='destination_transfers')
+    amount = models.DecimalField(decimal_places=2, max_digits=12)
+
     # Optional description of what this transfer was
     description = models.CharField(max_length=256, null=True)
 

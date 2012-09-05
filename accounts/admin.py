@@ -10,8 +10,10 @@ class AccountAdmin(admin.ModelAdmin):
 
 
 class TransferAdmin(admin.ModelAdmin):
-    list_display = ['id', 'user', 'description', 'date_created']
-    readonly_fields = ('description', 'user', 'username', 'date_created')
+    list_display = ['reference', 'amount', 'source', 'destination',
+                    'user', 'description', 'date_created']
+    readonly_fields = ('amount', 'source', 'destination', 'description',
+                       'user', 'username', 'date_created')
 
 
 class TransactionAdmin(admin.ModelAdmin):

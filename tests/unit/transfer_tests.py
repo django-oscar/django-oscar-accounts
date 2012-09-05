@@ -13,19 +13,22 @@ class TestASuccessfulTransfer(TestCase):
 
     def setUp(self):
         self.user = G(User, username="barry")
-        self.source = Account.objects.create(credit_limit=None)
-        self.destination = Account.objects.create()
-        self.transfer = Transfer.objects.create(self.source, self.destination,
+        source = Account.objects.create(credit_limit=None)
+        destination = Account.objects.create()
+        self.transfer = Transfer.objects.create(source, destination,
                                                 D('10.00'), self.user)
 
     def test_creates_2_transactions(self):
         self.assertEqual(2, self.transfer.transactions.all().count())
 
+    def test_records_the_transferred_amount(self):
+        self.assertEqual(D('10.00'), self.transfer.amount)
+
     def test_updates_source_balance(self):
-        self.assertEqual(-D('10.00'), self.source.balance)
+        self.assertEqual(-D('10.00'), self.transfer.source.balance)
 
     def test_updates_destination_balance(self):
-        self.assertEqual(D('10.00'), self.destination.balance)
+        self.assertEqual(D('10.00'), self.transfer.destination.balance)
 
     def test_cannot_be_deleted(self):
         with self.assertRaises(RuntimeError):
