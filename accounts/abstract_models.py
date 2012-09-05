@@ -43,8 +43,9 @@ class Account(models.Model):
     balance = models.DecimalField(decimal_places=2, max_digits=12,
                                   default=D('0.00'), null=True)
 
-    # Accounts can have an date range when they can be used as a source.  You
-    # can still transfer into accounts when they are not active.
+    # Accounts can have an date range to indicate when they are 'active'.  Note
+    # that these dates are ignored when creating a transfer.  It is up to your
+    # client code to use them to enforce business logic.
     start_date = models.DateField(null=True, blank=True)
     end_date = models.DateField(null=True, blank=True)
 
@@ -150,8 +151,6 @@ class PostingManager(models.Manager):
         """
         if amount <= 0:
             raise exceptions.InvalidAmount("Debits must use a positive amount")
-        if not source.is_active():
-            raise exceptions.InactiveAccount("Source account is inactive")
         if not source.is_open():
             raise exceptions.ClosedAccount("Source account has been closed")
         if not destination.is_open():

@@ -56,6 +56,21 @@ class TestATransferToAnInactiveAccount(TestCase):
             self.fail("Transfer failed: %s" % e)
 
 
+class TestATransferFromAnInactiveAccount(TestCase):
+
+    def test_is_permitted(self):
+        self.user = G(User)
+        today = datetime.date.today()
+        source = Account.objects.create(credit_limit=None,
+            end_date=today - datetime.timedelta(days=1))
+        destination = Account.objects.create()
+        try:
+            Transfer.objects.create(source, destination,
+                                    D('20.00'), self.user)
+        except exceptions.AccountException, e:
+            self.fail("Transfer failed: %s" % e)
+
+
 class TestAnAttemptedTransfer(TestCase):
 
     def setUp(self):
@@ -74,15 +89,6 @@ class TestAnAttemptedTransfer(TestCase):
         with self.assertRaises(exceptions.InvalidAmount):
             Transfer.objects.create(source, destination,
                                     D('-20.00'), self.user)
-
-    def test_raises_an_exception_when_trying_to_use_inactive_source(self):
-        today = datetime.date.today()
-        source = Account.objects.create(credit_limit=None,
-            end_date=today - datetime.timedelta(days=1))
-        destination = Account.objects.create()
-        with self.assertRaises(exceptions.InactiveAccount):
-            Transfer.objects.create(source, destination,
-                                    D('20.00'), self.user)
 
     def test_raises_an_exception_when_trying_to_use_closed_source(self):
         source = Account.objects.create(credit_limit=None)
