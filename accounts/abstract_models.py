@@ -82,9 +82,10 @@ class Account(models.Model):
             return today < self.end_date
         return self.start_date <= today < self.end_date
 
-    def update_balance(self):
+    def save(self, *args, **kwargs):
+        # Ensure the balance is always correct when saving
         self.balance = self._balance()
-        self.save()
+        return super(Account, self).save(*args, **kwargs)
 
     def _balance(self):
         aggregates = self.transactions.aggregate(sum=Sum('amount'))
@@ -135,8 +136,8 @@ class PostingManager(models.Manager):
             transfer.transactions.create(
                 account=destination, amount=amount)
             # Update the cached balances on the accounts
-            source.update_balance()
-            destination.update_balance()
+            source.save()
+            destination.save()
             return self._wrap(transfer)
 
     def _wrap(self, obj):
