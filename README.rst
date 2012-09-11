@@ -17,10 +17,11 @@ system.
 It uses `double-entry bookkeeping`_ where every transaction is recorded
 twice (once for the source and once for the destination).  This ensures the
 books always balance and there is full audit trail of all transactional
-activity.
+activity.  Your finance people will thank you.
 
 Despite having 'Oscar' in the name, this package does not import Oscar's classes
-and so can be used standalone.
+and so can be used standalone.  At some point, it may provide helper modules for
+making integration with Oscar easier.
 
 .. _`Oscar`: https://github.com/tangentlabs/django-oscar
 .. _`double-entry bookkeeping`: http://en.wikipedia.org/wiki/Double-entry_bookkeeping_system
@@ -35,7 +36,7 @@ Features:
   - A single "primary" user - this is the most common case
   - A set of users assigned
 * A user can have multiple accounts
-* A account can have a start and end date to allow its usage in a limited time
+* An account can have a start and end date to allow its usage in a limited time
   window
 * Accounts can be categorised
 
@@ -92,6 +93,38 @@ appropriately.
  
 Client code should only use the ``accounts.models.Budget`` class and the
 two functions from ``accounts.facade`` - nothing else should be required.
+
+Error handling
+--------------
+
+Note that the transfer operation is wrapped in its own database transaction to
+ensure that only complete transfers are written out.  When using Django's
+transaction middleware, you need to be careful.  If you have an unhandled
+exception,  then account transfers will still be committed even though nothing
+else will be.  To handle this, you need to make sure that, if an exception
+occurs during your post-payment code, then you roll-back any transfers.
+
+Here's a toy example::
+
+    from accounts import facade
+
+    def submit(self, order_total):
+        # Take payment first
+        transfer = facade.transfer(self.get_user_account(),
+                                   self.get_merchant_account(),
+                                   order_total)
+        # Create order models
+        try:
+            self.place_order()
+        except Exception, e:
+            # Something went wrong placing the order.  Roll-back the previous
+            # transfer
+            facade.reverse(transfer)
+
+In this situation, you'll end up with two transfers being created but no order.
+While this isn't ideal, it's the best way of handling exceptions that occur
+during order placement.
+
 
 Contributing
 ------------
