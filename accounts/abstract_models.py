@@ -218,6 +218,7 @@ class Transfer(models.Model):
 
     class Meta:
         abstract = True
+        ordering = ('-date_created',)
 
     def delete(self, *args, **kwargs):
         raise RuntimeError("Transfers cannot be deleted")

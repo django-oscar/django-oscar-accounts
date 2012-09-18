@@ -74,7 +74,7 @@
 		<tbody>
 			{% for txn in account.transactions.all %}
 			<tr>
-				<td>{{ txn.transfer }}</td>
+				<td><a href="{% url transfers-list %}">{{ txn.transfer }}</a></td>
 				<td>{{ txn.amount|currency }}</td>
 				<td>{{ txn.date_created }}</td>
 			</tr>

@@ -5,8 +5,10 @@ from django.db.models import get_model
 from django.contrib import messages
 from django.utils.translation import ugettext_lazy as _
 
-Account = get_model('accounts', 'Account')
 from accounts import forms, facade
+
+Account = get_model('accounts', 'Account')
+Transfer = get_model('accounts', 'Transfer')
 
 
 class ListView(generic.ListView):
@@ -35,3 +37,9 @@ class DetailView(generic.DetailView):
     model = Account
     context_object_name = 'account'
     template_name = 'dashboard/accounts/account_detail.html'
+
+
+class TransferListView(generic.ListView):
+    model = Transfer
+    context_object_name = 'transfers'
+    template_name = 'dashboard/accounts/transfer_list.html'
