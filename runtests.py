@@ -49,8 +49,10 @@ if not settings.configured:
                     'ENGINE': 'haystack.backends.simple_backend.SimpleEngine',
                 },
             },
+            ROOT_URLCONF='tests.urls',
             TEMPLATE_DIRS = (OSCAR_MAIN_TEMPLATE_DIR,),
             SITE_ID=1,
+            ACCOUNTS_SOURCE_NAME='Merchant',
             NOSE_ARGS=['-s', '--with-spec', '-x'],
             **extra_settings
         )
