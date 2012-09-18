@@ -129,6 +129,8 @@ Settings
 --------
 
 ACCOUNTS_SOURCE_NAME = 'Merchant'
+ACCOUNTS_MIN_INITIAL_VALUE = 'Merchant' (default- = 0
+ACCOUNTS_MAX_INITIAL_VALUE = 'Merchant' (deafult = unlimit)
 
 
 Contributing
