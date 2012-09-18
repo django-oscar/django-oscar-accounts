@@ -1,9 +1,20 @@
 import logging
 
+from django.conf import settings
+
 from accounts import models
 from accounts import exceptions
 
 logger = logging.getLogger('accounts')
+
+
+def source():
+    """
+    Return the 'source' account that is used to transfer funds to customer
+    accounts
+    """
+    return models.Account.objects.get(
+        name=settings.ACCOUNTS_SOURCE_NAME)
 
 
 def transfer(source, destination, amount, user=None, description=None):

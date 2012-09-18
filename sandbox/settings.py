@@ -207,3 +207,5 @@ HAYSTACK_CONNECTIONS = {
         'ENGINE': 'haystack.backends.simple_backend.SimpleEngine',
     },
 }
+
+ACCOUNTS_SOURCE_NAME = 'Merchant account'

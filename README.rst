@@ -125,6 +125,11 @@ In this situation, you'll end up with two transfers being created but no order.
 While this isn't ideal, it's the best way of handling exceptions that occur
 during order placement.
 
+Settings
+--------
+
+ACCOUNTS_SOURCE_NAME = 'Merchant'
+
 
 Contributing
 ------------

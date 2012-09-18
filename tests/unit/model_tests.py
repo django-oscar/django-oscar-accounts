@@ -21,6 +21,11 @@ class TestAnAccount(TestCase):
         self.account.close()
         self.assertEqual(Account.CLOSED, self.account.status)
 
+    def test_always_saves_the_code_as_uppercase(self):
+        self.account.code = 'abc'
+        self.account.save()
+        self.assertEquals('ABC', self.account.code)
+
 
 class TestAnAccountWithFunds(TestCase):
 
@@ -104,8 +109,6 @@ class TestAccountActiveManager(TestCase):
             start_date=today,
             end_date=today + datetime.timedelta(days=1))
         accounts = Account.active.all()
-        for a in accounts:
-            print a
         self.assertEqual(2, accounts.count())
 
 

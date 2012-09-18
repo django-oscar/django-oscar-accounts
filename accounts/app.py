@@ -13,11 +13,14 @@ register(node, 100)
 class DatacashDashboardApplication(Application):
     name = None
     list_view = views.ListView
+    create_view = views.CreateView
 
     def get_urls(self):
         urlpatterns = patterns('',
             url(r'^$', self.list_view.as_view(),
                 name='accounts-list'),
+            url(r'^create/$', self.create_view.as_view(),
+                name='accounts-create'),
         )
         return self.post_process_urls(urlpatterns)
 

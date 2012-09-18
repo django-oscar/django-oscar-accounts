@@ -96,6 +96,8 @@ class Account(models.Model):
         return self.start_date <= today < self.end_date
 
     def save(self, *args, **kwargs):
+        if self.code:
+            self.code = self.code.upper()
         # Ensure the balance is always correct when saving
         self.balance = self._balance()
         return super(Account, self).save(*args, **kwargs)
