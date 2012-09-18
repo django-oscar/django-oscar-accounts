@@ -27,10 +27,6 @@
 
 {% block dashboard_content %}
 
-	<div class="sub-header">
-		<h2>{% trans "Transfers" %}</h2>
-	</div>
-
 	{% if transfers %}
 		<table class="table table-striped table-bordered">
 			<tr>
@@ -44,7 +40,7 @@
 			</tr>
 			{% for transfer in transfers %}
 			<tr>
-				<td>{{ transfer.reference }}</td>
+				<td><a href="{% url transfers-detail transfer.id %}">{{ transfer.reference }}</a></td>
 				<td><a href="{% url accounts-detail transfer.source.id %}">{{ transfer.source }}</a></td>
 				<td><a href="{% url accounts-detail transfer.destination.id %}">{{ transfer.destination }}</a></td>
 				<td>{{ transfer.amount|currency }}</td>

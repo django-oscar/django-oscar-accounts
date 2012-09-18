@@ -18,9 +18,12 @@ class DatacashDashboardApplication(Application):
     list_view = views.ListView
     create_view = views.CreateView
     detail_view = views.DetailView
+
     transfer_list_view = views.TransferListView
+    transfer_detail_view = views.TransferDetailView
 
     def get_urls(self):
+        # TODO - make consistent
         urlpatterns = patterns('',
             url(r'^$', self.list_view.as_view(),
                 name='accounts-list'),
@@ -30,6 +33,9 @@ class DatacashDashboardApplication(Application):
                 name='accounts-detail'),
             url(r'^transfers/$', self.transfer_list_view.as_view(),
                 name='transfers-list'),
+            url(r'^transfers/(?P<pk>\d+)/$',
+                self.transfer_detail_view.as_view(),
+                name='transfers-detail'),
         )
         return self.post_process_urls(urlpatterns)
 

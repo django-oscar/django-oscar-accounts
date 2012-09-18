@@ -43,3 +43,9 @@ class TransferListView(generic.ListView):
     model = Transfer
     context_object_name = 'transfers'
     template_name = 'dashboard/accounts/transfer_list.html'
+
+
+class TransferDetailView(generic.DetailView):
+    model = Transfer
+    context_object_name = 'transfer'
+    template_name = 'dashboard/accounts/transfer_detail.html'
