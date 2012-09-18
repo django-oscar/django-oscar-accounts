@@ -4,3 +4,7 @@ install:
 
 test:
 	./runtests.py
+
+sandbox: install
+	sandbox/manage.py syncdb --noinput
+	sandbox/manage.py loaddata sandbox/fixtures/users.json
