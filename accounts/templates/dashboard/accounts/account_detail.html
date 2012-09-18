@@ -35,6 +35,10 @@
 			<td>{{ account.name }}</td>
 		</tr>
 		<tr>
+			<th>Description</th>
+			<td>{{ account.description|default:"-" }}</td>
+		</tr>
+		<tr>
 			<th>Code</th>
 			<td>{{ account.code|default:"-" }}</td>
 		</tr>

@@ -31,6 +31,7 @@ class ExpiredAccountManager(models.Manager):
 class Account(models.Model):
     name = models.CharField(max_length=128, unique=True, null=True,
                             blank=True)
+    description = models.TextField(null=True, blank=True)
 
     # Some accounts will be categorised
     category = models.CharField(max_length=256, null=True)
