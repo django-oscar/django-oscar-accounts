@@ -212,3 +212,4 @@ from decimal import Decimal as D
 ACCOUNTS_SOURCE_NAME = 'Merchant account'
 ACCOUNTS_MIN_INITIAL_VALUE = D('30.00')
 ACCOUNTS_MAX_INITIAL_VALUE = D('300.00')
+#ACCOUNTS_CATEGORIES = ('Fruit', 'Veg', 'Meat')
