@@ -4,14 +4,15 @@ from django.contrib import admin
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.conf.urls.static import static
 from django.views.generic import TemplateView
-
 from oscar.app import application
+
+from accounts.app import application as accounts_app
 
 admin.autodiscover()
 
 urlpatterns = patterns('',
     (r'^admin/', include(admin.site.urls)),
-    #(r'^dashboard/paypal/payflow/', include(paypal_application.urls)),
+    (r'^dashboard/accounts/', include(accounts_app.urls)),
     (r'', include(application.urls)),
 )
 if settings.DEBUG:
