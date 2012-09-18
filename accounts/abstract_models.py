@@ -2,6 +2,7 @@ from decimal import Decimal as D
 import datetime
 
 from django.db import models
+from django.utils.translation import ugettext_lazy as _
 from django.db import transaction
 from django.db.models import Sum
 
@@ -79,12 +80,11 @@ class Account(models.Model):
         abstract = True
 
     def __unicode__(self):
-        name = self.name if self.name else "Anonymous account"
-        if self.credit_limit is not None:
-            name += " (credit limit: %.2f)" % self.credit_limit
-        else:
-            name += " (unlimited credit)"
-        return name
+        if self.name:
+            return self.name
+        if self.code:
+            return _("Code account - %s") % self.code
+        return _("Anonymous account")
 
     def is_active(self):
         if self.start_date is None and self.end_date is None:
@@ -110,6 +110,10 @@ class Account(models.Model):
 
     def num_transactions(self):
         return self.transactions.all().count()
+
+    @property
+    def has_credit_limit(self):
+        return self.credit_limit is not None
 
     def is_debit_permitted(self, amount):
         if self.credit_limit is None:
