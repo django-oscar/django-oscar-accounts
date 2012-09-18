@@ -8,12 +8,24 @@ from django.db.models import Sum
 from accounts import exceptions
 
 
+class ActiveAccountManager(models.Manager):
+
+    def get_query_set(self):
+        today = datetime.date.today()
+        qs = super(ActiveAccountManager, self).get_query_set()
+        return qs.filter(
+            models.Q(start_date__lte=today) |
+            models.Q(start_date=None)).filter(
+                models.Q(end_date__gte=today) |
+                models.Q(end_date=None))
+
+
 class ExpiredAccountManager(models.Manager):
 
     def get_query_set(self):
         today = datetime.date.today()
         qs = super(ExpiredAccountManager, self).get_query_set()
-        return qs.filter(end_date__lte=today)
+        return qs.filter(end_date__lt=today)
 
 
 class Account(models.Model):
@@ -28,9 +40,9 @@ class Account(models.Model):
     code = models.CharField(max_length=128, unique=True, null=True,
                             blank=True)
 
-    # Track the status of a account - this is often used so that expired account
-    # can have their money transferred back to some parent account and then be
-    # closed.
+    # Track the status of a account - this is often used so that expired
+    # account can have their money transferred back to some parent account and
+    # then be closed.
     OPEN, CLOSED = 'Open', 'Closed'
     status = models.CharField(max_length=32, default=OPEN)
 
@@ -59,6 +71,7 @@ class Account(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
 
     objects = models.Manager()
+    active = ActiveAccountManager()
     expired = ExpiredAccountManager()
 
     class Meta:

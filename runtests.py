@@ -51,7 +51,7 @@ if not settings.configured:
             },
             TEMPLATE_DIRS = (OSCAR_MAIN_TEMPLATE_DIR,),
             SITE_ID=1,
-            NOSE_ARGS=['-s', '--with-spec'],
+            NOSE_ARGS=['-s', '--with-spec', '-x'],
             **extra_settings
         )
 

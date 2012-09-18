@@ -93,6 +93,9 @@ class TestAnAnonymousTransaction(TestCase):
 
 class TestErrorHandling(TransactionTestCase):
 
+    def tearDown(self):
+        Account.objects.all().delete()
+
     def test_no_transaction_created_when_exception_raised(self):
         user = G(User)
         source = Account.objects.create(credit_limit=None)

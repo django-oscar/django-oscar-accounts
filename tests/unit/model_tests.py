@@ -77,13 +77,36 @@ class TestAnUnlimitedCreditLimitAccount(TestCase):
             self.assertTrue(self.account.is_debit_permitted(amt))
 
 
-class TestAccountManager(TestCase):
+class TestAccountExpiredManager(TestCase):
 
-    def test_has_expired_filter(self):
+    def test_includes_only_expired_accounts(self):
         today = datetime.date.today()
         Account.objects.create(end_date=today - datetime.timedelta(days=1))
+        Account.objects.create(end_date=today + datetime.timedelta(days=1))
         accounts = Account.expired.all()
         self.assertEqual(1, accounts.count())
+
+    def test_excludes_accounts_that_end_on_filter_date(self):
+        today = datetime.date.today()
+        Account.objects.create(end_date=today)
+        accounts = Account.expired.all()
+        self.assertEqual(0, accounts.count())
+
+
+class TestAccountActiveManager(TestCase):
+
+    def test_includes_only_active_accounts(self):
+        accounts = Account.active.all()
+        today = datetime.date.today()
+        Account.objects.create(end_date=today - datetime.timedelta(days=1))
+        Account.objects.create(end_date=today + datetime.timedelta(days=1))
+        Account.objects.create(
+            start_date=today,
+            end_date=today + datetime.timedelta(days=1))
+        accounts = Account.active.all()
+        for a in accounts:
+            print a
+        self.assertEqual(2, accounts.count())
 
 
 class TestATransaction(TestCase):
