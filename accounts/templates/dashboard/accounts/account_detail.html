@@ -1,0 +1,80 @@
+{% extends 'dashboard/layout.html' %}
+{% load currency_filters %}
+{% load i18n %}
+
+{% block title %}
+{% trans "Account" %} #{{ account.id }} | {{ block.super }}
+{% endblock %}
+
+{% block breadcrumbs %}
+<ul class="breadcrumb">
+    <li>
+		<a href="{% url dashboard:index %}">{% trans "Dashboard" %}</a>
+        <span class="divider">/</span>
+    </li>
+    <li>
+		<a href="{% url accounts-list %}">{% trans "Accounts" %}</a>
+        <span class="divider">/</span>
+    </li>
+	<li class="active"><a href=".">{% trans "Account" %} #{{ account.id }}</a></li>
+</ul>
+{% endblock %}
+
+{% block header %}
+<div class="page-header">
+	<h1>{{ account }}</h1>
+</div>
+{% endblock header %}
+
+{% block dashboard_content %}
+
+<table id="" class="table">
+	<tbody>
+		<tr>
+			<th>Name</th>
+			<td>{{ account.name }}</td>
+		</tr>
+		<tr>
+			<th>Code</th>
+			<td>{{ account.code|default:"-" }}</td>
+		</tr>
+		<tr>
+			<th>Balance</th>
+			<td>{{ account.balance|currency }}</td>
+		</tr>
+		<tr>
+			<th>Start date</th>
+			<td>{{ account.start_date|default:"-" }}</td>
+		</tr>
+		<tr>
+			<th>End date</th>
+			<td>{{ account.end_date|default:"-" }}</td>
+		</tr>
+	</tbody>
+</table>
+
+<h2>Transactions</h2>
+{% if account.transactions.all.count %}
+	<table id="" class="table">
+		<thead>
+			<tr>
+				<th>Transfer</th>
+				<th>Amount</th>
+				<th>Date</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for txn in account.transactions.all %}
+			<tr>
+				<td>{{ txn.transfer }}</td>
+				<td>{{ txn.amount|currency }}</td>
+				<td>{{ txn.date_created }}</td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+{% else %}
+	<p>No transfers.</p>
+{% endif %}
+
+{% endblock dashboard_content %}

@@ -29,3 +29,9 @@ class CreateView(generic.CreateView):
                         user=self.request.user)
         messages.success(self.request, _("New account created"))
         return http.HttpResponseRedirect(reverse('accounts-list'))
+
+
+class DetailView(generic.DetailView):
+    model = Account
+    context_object_name = 'account'
+    template_name = 'dashboard/accounts/account_detail.html'

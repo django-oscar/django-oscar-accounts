@@ -14,6 +14,7 @@ class DatacashDashboardApplication(Application):
     name = None
     list_view = views.ListView
     create_view = views.CreateView
+    detail_view = views.DetailView
 
     def get_urls(self):
         urlpatterns = patterns('',
@@ -21,6 +22,8 @@ class DatacashDashboardApplication(Application):
                 name='accounts-list'),
             url(r'^create/$', self.create_view.as_view(),
                 name='accounts-create'),
+            url(r'^(?P<pk>\d+)/$', self.detail_view.as_view(),
+                name='accounts-detail'),
         )
         return self.post_process_urls(urlpatterns)
 
