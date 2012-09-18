@@ -17,7 +17,7 @@ class DatacashDashboardApplication(Application):
     name = None
     list_view = views.ListView
     create_view = views.CreateView
-    detail_view = views.DetailView
+    account_view = views.AccountTransactionsView
 
     transfer_list_view = views.TransferListView
     transfer_detail_view = views.TransferDetailView
@@ -29,7 +29,7 @@ class DatacashDashboardApplication(Application):
                 name='accounts-list'),
             url(r'^create/$', self.create_view.as_view(),
                 name='accounts-create'),
-            url(r'^(?P<pk>\d+)/$', self.detail_view.as_view(),
+            url(r'^(?P<pk>\d+)/$', self.account_view.as_view(),
                 name='accounts-detail'),
             url(r'^transfers/$', self.transfer_list_view.as_view(),
                 name='transfers-list'),

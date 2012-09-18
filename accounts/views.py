@@ -1,6 +1,7 @@
 from django.views import generic
 from django.core.urlresolvers import reverse
 from django import http
+from django.shortcuts import get_object_or_404
 from django.db.models import get_model
 from django.contrib import messages
 from django.utils.translation import ugettext_lazy as _
@@ -9,6 +10,7 @@ from accounts import forms, facade
 
 Account = get_model('accounts', 'Account')
 Transfer = get_model('accounts', 'Transfer')
+Transaction = get_model('accounts', 'Transaction')
 
 
 class ListView(generic.ListView):
@@ -28,15 +30,29 @@ class CreateView(generic.CreateView):
         account = form.save()
         amount = form.cleaned_data['initial_amount']
         facade.transfer(facade.source(), account, amount,
-                        user=self.request.user)
+                        user=self.request.user,
+                        description=_("Creation of account"))
         messages.success(self.request, _("New account created"))
         return http.HttpResponseRedirect(reverse('accounts-list'))
 
 
-class DetailView(generic.DetailView):
-    model = Account
-    context_object_name = 'account'
+class AccountTransactionsView(generic.ListView):
+    model = Transaction
+    context_object_name = 'transactions'
     template_name = 'dashboard/accounts/account_detail.html'
+
+    def get(self, request, *args, **kwargs):
+        self.account = get_object_or_404(Account, id=kwargs['pk'])
+        return super(AccountTransactionsView, self).get(
+            request, *args, **kwargs)
+
+    def get_queryset(self):
+        return self.account.transactions.all().order_by('-date_created')
+
+    def get_context_data(self, **kwargs):
+        ctx = super(AccountTransactionsView, self).get_context_data(**kwargs)
+        ctx['account'] = self.account
+        return ctx
 
 
 class TransferListView(generic.ListView):
