@@ -78,6 +78,7 @@
 			<tr>
 				<th>{% trans "Transfer" %}</th>
 				<th>{% trans "Amount" %}</th>
+				<th>{% trans "Description" %}</th>
 				<th>{% trans "Date" %}</th>
 			</tr>
 		</thead>
@@ -86,6 +87,7 @@
 			<tr>
 				<td><a href="{% url transfers-detail txn.transfer.id %}">{{ txn.transfer }}</a></td>
 				<td>{{ txn.amount|currency }}</td>
+				<td>{{ txn.transfer.description }}</td>
 				<td>{{ txn.date_created }}</td>
 			</tr>
 			{% endfor %}

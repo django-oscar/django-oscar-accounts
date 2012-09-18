@@ -17,6 +17,41 @@ def source():
         name=settings.ACCOUNTS_SOURCE_NAME)
 
 
+def sales_account():
+    """
+    Return the 'destination' account
+    """
+    return models.Account.objects.get(
+        name=settings.ACCOUNTS_SALES_NAME)
+
+
+def expired_account():
+    return models.Account.objects.get(
+        name=settings.ACCOUNTS_EXPIRED_NAME)
+
+
+def close_expired_accounts():
+    """
+    Close expired accounts and transfer any remaining balance to an expiration
+    account.
+    """
+    accounts = models.Account.expired.filter(
+        status=models.Account.OPEN)
+    logger.info("Found %d accounts to close", accounts.count())
+    destination = expired_account()
+    for account in accounts:
+        balance = account.balance
+        try:
+            transfer(account, destination,
+                     balance, description="Closing account")
+        except exceptions.AccountException, e:
+            logger.error("Unable to close account #%d - %s", account.id, e)
+        else:
+            logger.info(("Account #%d successfully expired - %d transferred "
+                         "to sales account"), account.id, balance)
+            account.close()
+
+
 def transfer(source, destination, amount, user=None, description=None):
     """
     Transfer funds between source and destination accounts.
