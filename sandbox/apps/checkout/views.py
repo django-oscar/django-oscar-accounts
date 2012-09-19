@@ -15,6 +15,8 @@ class PaymentDetailsView(views.PaymentDetailsView):
     def get_context_data(self, **kwargs):
         ctx = super(PaymentDetailsView, self).get_context_data(**kwargs)
 
+        # If account form has been submitted, validate it and show the
+        # allocation form if the account has non-zero balance
         if 'code' in self.request.GET:
             form = forms.AccountForm(self.request.GET)
             if form.is_valid():
@@ -33,15 +35,16 @@ class PaymentDetailsView(views.PaymentDetailsView):
         return ctx
 
     def post(self, request, *args, **kwargs):
-        # Look for allocation parameteter
+        # Intercept POST requests to look for attempts to allocate to an
+        # account, or remove an allocation.
         action = self.request.POST.get('action', None)
         if action == 'allocate':
-            return self.allocate_from_account(request)
+            return self.add_allocation(request)
         elif action == 'remove_allocation':
             return self.remove_allocation(request)
         return super(PaymentDetailsView, self).post(request, *args, **kwargs)
 
-    def allocate_from_account(self, request):
+    def add_allocation(self, request):
         # We have two forms to validate, first check the account form
         account_form = forms.AccountForm(self.request.POST)
         if not account_form.is_valid():
@@ -92,12 +95,6 @@ class PaymentDetailsView(views.PaymentDetailsView):
     # The below methods could be put onto a customised version of
     # oscar.apps.checkout.utils.CheckoutSessionData.  They are kept here for
     # simplicity
-
-    def get_amount_allocated(self):
-        total = D('0.00')
-        for amount in self.get_account_allocations().values():
-            total += amount
-        return total
 
     def get_account_allocations(self):
         return self.checkout_session._get('accounts', 'allocations',
