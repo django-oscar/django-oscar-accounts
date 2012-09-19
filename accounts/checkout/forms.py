@@ -29,7 +29,7 @@ class AccountForm(forms.Form):
 
 
 class AllocationForm(forms.Form):
-    amount = forms.DecimalField(label=_("Allocation"))
+    amount = forms.DecimalField(label=_("Allocation"), min_value=D('0.01'))
 
     def __init__(self, order_total_incl_tax, account, allocations,
                  *args, **kwargs):
