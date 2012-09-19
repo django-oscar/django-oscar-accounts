@@ -61,7 +61,12 @@
 	</form>
 {% endif %}
 
+
+{% if to_allocate == 0 %}
+<a href="{% url checkout:preview %}" class="btn btn-primary btn-large">Continue</a>
+{% else %}
 <p>Order total: {{ order_total_incl_tax|currency }}.  You need to allocate another
 	{{ to_allocate|currency }}</p>
+{% endif %}
 
 {% endblock %}

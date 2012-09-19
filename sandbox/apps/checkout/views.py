@@ -60,6 +60,7 @@ class PaymentDetailsView(views.PaymentDetailsView):
         if not allocation_form.is_valid():
             ctx = self.get_context_data()
             ctx['allocation_form'] = allocation_form
+            ctx['account_form'] = account_form
             return self.render_to_response(ctx)
 
         # Allocation is valid - record in session and reload page
