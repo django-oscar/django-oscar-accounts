@@ -1,6 +1,8 @@
 from decimal import Decimal as D
 
 from oscar.apps.checkout import views
+from oscar.apps.payment import exceptions
+from oscar.apps.payment.models import SourceType, Source
 from django.contrib import messages
 from django import http
 from django.core.urlresolvers import reverse
@@ -8,9 +10,12 @@ from django.utils.translation import ugettext_lazy as _
 
 from accounts.checkout import forms
 from accounts.checkout.allocation import Allocations
+from accounts.checkout import gateway
 
 
 class PaymentDetailsView(views.PaymentDetailsView):
+
+    # Override core methods
 
     def get_context_data(self, **kwargs):
         ctx = super(PaymentDetailsView, self).get_context_data(**kwargs)
@@ -43,6 +48,28 @@ class PaymentDetailsView(views.PaymentDetailsView):
         elif action == 'remove_allocation':
             return self.remove_allocation(request)
         return super(PaymentDetailsView, self).post(request, *args, **kwargs)
+
+    def handle_payment(self, order_number, total, **kwargs):
+        # Override payment method to use accounts to pay for the order
+        allocations = self.get_account_allocations()
+        if allocations.total != total:
+            raise exceptions.UnableToTakePayment(
+                "Your account allocations do not cover the order total")
+
+        gateway.redeem(order_number, self.request.user, allocations)
+
+        # If we get here, payment was successful.  We record the payment
+        # sources and event to complete the audit trail for this order
+        source_type, __ = SourceType.objects.get_or_create(
+            name="Account")
+        for code, amount in allocations.items():
+            source = Source(
+                source_type=source_type,
+                amount_debited=amount, reference=code)
+            self.add_payment_source(source)
+        self.add_payment_event("Settle", total)
+
+    # Custom form-handling methods
 
     def add_allocation(self, request):
         # We have two forms to validate, first check the account form
