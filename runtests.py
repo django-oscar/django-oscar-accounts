@@ -44,15 +44,17 @@ if not settings.configured:
             ),
             DEBUG=False,
             SOUTH_TESTS_MIGRATE=False,
-            HAYSTACK_CONNECTIONS = {
+            HAYSTACK_CONNECTIONS={
                 'default': {
                     'ENGINE': 'haystack.backends.simple_backend.SimpleEngine',
                 },
             },
             ROOT_URLCONF='tests.urls',
-            TEMPLATE_DIRS = (OSCAR_MAIN_TEMPLATE_DIR,),
+            TEMPLATE_DIRS=(OSCAR_MAIN_TEMPLATE_DIR,),
             SITE_ID=1,
             ACCOUNTS_SOURCE_NAME='Merchant',
+            ACCOUNTS_SALES_NAME='Merchant',
+            ACCOUNTS_EXPIRED_NAME='Merchant',
             NOSE_ARGS=['-s', '--with-spec', '-x'],
             **extra_settings
         )

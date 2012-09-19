@@ -6,7 +6,8 @@ from django.db.models import get_model
 from django.contrib import messages
 from django.utils.translation import ugettext_lazy as _
 
-from accounts import forms, facade
+from accounts.dashboard import forms
+from accounts import facade
 
 Account = get_model('accounts', 'Account')
 Transfer = get_model('accounts', 'Transfer')

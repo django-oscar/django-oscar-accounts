@@ -3,7 +3,7 @@ from django.contrib import admin
 
 from oscar.app import shop
 
-from accounts.app import application as accounts_app
+from accounts.dashboard.app import application as accounts_app
 
 admin.autodiscover()
 

@@ -5,7 +5,7 @@ from django.utils.translation import ugettext_lazy as _
 from oscar.core.application import Application
 from oscar.apps.dashboard.nav import register, Node
 
-from accounts import views
+from accounts.dashboard import views
 
 node = Node(_('Accounts'))
 node.add_child(Node(_('Code accounts'), 'accounts-list'))

@@ -6,7 +6,7 @@ from django.conf.urls.static import static
 from django.views.generic import TemplateView
 from oscar.app import application
 
-from accounts.app import application as accounts_app
+from accounts.dashboard.app import application as accounts_app
 
 admin.autodiscover()
 
