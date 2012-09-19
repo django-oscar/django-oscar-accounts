@@ -7,6 +7,7 @@ from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
 
 from accounts.checkout import forms
+from accounts.checkout.allocation import Allocations
 
 
 class PaymentDetailsView(views.PaymentDetailsView):
@@ -23,9 +24,11 @@ class PaymentDetailsView(views.PaymentDetailsView):
         else:
             form = forms.AccountForm()
         ctx['account_form'] = form
-        ctx['account_allocations'] = self.get_account_allocations()
-        allocated = self.get_amount_allocated()
-        ctx['to_allocate'] = ctx['order_total_incl_tax'] - allocated
+
+        # Add existing allocations to context
+        allocations = self.get_account_allocations()
+        ctx['account_allocations'] = allocations
+        ctx['to_allocate'] = ctx['order_total_incl_tax'] - allocations.total
 
         return ctx
 
@@ -71,20 +74,18 @@ class PaymentDetailsView(views.PaymentDetailsView):
             if key.startswith('remove_'):
                 code = key.replace('remove_', '')
         allocations = self.get_account_allocations()
-        if code not in allocations:
-            messages.error(request, _("No allocation found with code"))
+        if not allocations.contains(code):
+            messages.error(
+                request, _("No allocation found with code '%s'") % code)
         else:
-            del allocations[code]
+            allocations.remove(code)
+            self.set_account_allocations(allocations)
             messages.success(request, _("Allocation removed"))
         return http.HttpResponseRedirect(reverse('checkout:payment-details'))
 
     def store_allocation_in_session(self, form):
         allocations = self.get_account_allocations()
-        code = form.account.code
-        if code in allocations:
-            allocations[code] += form.cleaned_data['amount']
-        else:
-            allocations[code] = form.cleaned_data['amount']
+        allocations.add(form.account.code, form.cleaned_data['amount'])
         self.set_account_allocations(allocations)
 
     # The below methods could be put onto a customised version of
@@ -98,7 +99,8 @@ class PaymentDetailsView(views.PaymentDetailsView):
         return total
 
     def get_account_allocations(self):
-        return self.checkout_session._get('accounts', 'allocations', {})
+        return self.checkout_session._get('accounts', 'allocations',
+                                          Allocations())
 
     def set_account_allocations(self, allocations):
         return self.checkout_session._set('accounts',
