@@ -37,6 +37,7 @@
 				<th>{% trans "End date" %}</th>
 				<th>{% trans "Start date" %}</th>
 				<th>{% trans "Balance" %}</th>
+				<th>{% trans "Num transactions" %}</th>
 				<th>{% trans "Date created" %}</th>
 				<th></th>
 			</tr>
@@ -48,6 +49,7 @@
 				<td>{{ account.start_date|default:"-" }}</td>
 				<td>{{ account.end_date|default:"-" }}</td>
 				<td>{{ account.balance|currency }}</td>
+				<td>{{ account.num_transactions }}</td>
 				<td>{{ account.date_created }}</td>
 				<td>
 					<a href="{% url accounts-detail account.id %}" class="btn">Transactions</a>

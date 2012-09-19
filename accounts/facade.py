@@ -32,12 +32,12 @@ def expired_account():
 
 def close_expired_accounts():
     """
-    Close expired accounts and transfer any remaining balance to an expiration
-    account.
+    Close expired, open accounts and transfer any remaining balance to an
+    expiration account.
     """
     accounts = models.Account.expired.filter(
         status=models.Account.OPEN)
-    logger.info("Found %d accounts to close", accounts.count())
+    logger.info("Found %d open accounts to close", accounts.count())
     destination = expired_account()
     for account in accounts:
         balance = account.balance

@@ -87,7 +87,7 @@
 			<tr>
 				<td><a href="{% url transfers-detail txn.transfer.id %}">{{ txn.transfer }}</a></td>
 				<td>{{ txn.amount|currency }}</td>
-				<td>{{ txn.transfer.description }}</td>
+				<td>{{ txn.transfer.description|default:"-" }}</td>
 				<td>{{ txn.date_created }}</td>
 			</tr>
 			{% endfor %}
@@ -97,7 +97,7 @@
 		{% include "catalogue/partials/pagination.html" %}
 	{% endif %}
 {% else %}
-	<p>{% trans "No transfers." %}</p>
+	<p>{% trans "No transactions." %}</p>
 {% endif %}
 
 {% endblock dashboard_content %}
