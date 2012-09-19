@@ -1,0 +1,67 @@
+{% extends 'oscar/checkout/payment_details.html' %}
+{% load currency_filters %}
+
+{% block payment_details %}
+<div class="sub-header">
+	<h2>Enter payment details</h2>
+</div>
+
+{% if not allocation_form %}
+    {# 1. Initial load of page - show form to look up account #}
+	<form action="." method="get">
+		{% include 'partials/form_fields.html' with form=account_form %}
+		<button type="submit" class="btn btn-primary">Check balance</button>
+	</form>
+{% else %}
+	{# 2. An account has been found - choose allocation #}
+	{% with account=allocation_form.account %}
+	<p>The account with code {{ account.code }} has a balance of {{ account.balance|currency }}.
+		{% if account.end_date %}This account expires on {{ account.end_date }}.{% endif %}
+	</p>
+	{% endwith %}
+	<p>The order total is {{ order_total_incl_tax|currency }}.</p>
+	<form action="." method="post">
+		{% csrf_token %}
+		{# Include account form hidden #}
+		<div style="display:none">
+			{{ account_form.as_p }}
+		</div>
+		<input type="hidden" name="action" value="allocate" />
+		{% include 'partials/form_fields.html' with form=allocation_form %}
+		<button type="submit" class="btn btn-primary">Allocate</button> or
+		<a href="{% url checkout:payment-details %}">cancel</a>.
+	</form>
+{% endif %}
+
+{% if account_allocations %}
+	<h3>Allocations</h2>
+	<form action="." method="post">
+		{% csrf_token %}
+		<input type="hidden" name="action" value="remove_allocation" />
+		<table id="" class="table">
+			<thead>
+				<tr>
+					<th>Account code</th>
+					<th>Allocation</th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for code, amount in account_allocations.items %}
+					<tr>
+						<td>{{ code }}</td> 
+						<td>{{ amount|currency }}</td>
+						<td>
+							<button type="submit" class="btn" name="remove_{{ allocation.0 }}">Remove</button>
+						</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</form>
+{% endif %}
+
+<p>Order total: {{ order_total_incl_tax|currency }}.  You need to allocate another
+	{{ to_allocate|currency }}</p>
+
+{% endblock %}
