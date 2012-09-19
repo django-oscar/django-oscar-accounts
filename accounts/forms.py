@@ -29,7 +29,7 @@ class NewAccountForm(forms.ModelForm):
 
     class Meta:
         model = Account
-        exclude = ['status', 'credit_limit', 'balance',
+        exclude = ['status', 'credit_limit', 'balance', 'product_range',
                    'primary_user', 'secondary_users']
         if not CATEGORIES:
             exclude.append('category')

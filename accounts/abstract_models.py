@@ -30,17 +30,23 @@ class ExpiredAccountManager(models.Manager):
 
 
 class Account(models.Model):
+    # Metadata
     name = models.CharField(max_length=128, unique=True, null=True,
                             blank=True)
     description = models.TextField(null=True, blank=True)
-
-    # Some accounts will be categorised
     category = models.CharField(max_length=256, null=True)
 
     # Some account are not linked to a specific user but are activated by
     # entering a code at checkout.
     code = models.CharField(max_length=128, unique=True, null=True,
                             blank=True)
+
+    # Each account can have multiple users who can use it for transactions.  In
+    # many cases, there will only be one user though and so we use a 'primary'
+    # user for this scenario.
+    primary_user = models.ForeignKey('auth.User', related_name="accounts",
+                                     null=True, blank=True)
+    secondary_users = models.ManyToManyField('auth.User', blank=True)
 
     # Track the status of a account - this is often used so that expired
     # account can have their money transferred back to some parent account and
@@ -53,7 +59,7 @@ class Account(models.Model):
     credit_limit = models.DecimalField(decimal_places=2, max_digits=12,
                                        default=D('0.00'), null=True)
 
-    # For performance reasons, we keep a cached balance
+    # For performance, we keep a cached balance
     balance = models.DecimalField(decimal_places=2, max_digits=12,
                                   default=D('0.00'), null=True)
 
@@ -63,12 +69,9 @@ class Account(models.Model):
     start_date = models.DateField(null=True, blank=True)
     end_date = models.DateField(null=True, blank=True)
 
-    # Each account can have multiple users who can use it for transactions.  In
-    # many cases, there will only be one user though and so we use a 'primary'
-    # user for this scenario.
-    primary_user = models.ForeignKey('auth.User', related_name="accounts",
-                                     null=True, blank=True)
-    secondary_users = models.ManyToManyField('auth.User', blank=True)
+    # Accounts are sometimes restricted to only work on a specific range of
+    # products
+    product_range = models.ForeignKey('offer.Range', null=True, blank=True)
 
     date_created = models.DateTimeField(auto_now_add=True)
 
