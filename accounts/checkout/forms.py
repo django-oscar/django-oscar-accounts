@@ -25,6 +25,9 @@ class AccountForm(forms.Form):
         if not self.account.is_open():
             raise forms.ValidationError(_(
                 "This account is no longer open"))
+        if not self.account.balance == D('0.00'):
+            raise forms.ValidationError(_(
+                "This account is empty"))
         return code
 
 
