@@ -15,13 +15,13 @@ class PaymentDetailsView(views.PaymentDetailsView):
         ctx = super(PaymentDetailsView, self).get_context_data(**kwargs)
 
         if 'code' in self.request.GET:
-            form = forms.BalanceForm(self.request.GET)
+            form = forms.AccountForm(self.request.GET)
             if form.is_valid():
                 ctx['allocation_form'] = forms.AllocationForm(
                     ctx['order_total_incl_tax'], form.account,
                     self.get_account_allocations())
         else:
-            form = forms.BalanceForm()
+            form = forms.AccountForm()
         ctx['account_form'] = form
         ctx['account_allocations'] = self.get_account_allocations()
         allocated = self.get_amount_allocated()
@@ -40,7 +40,7 @@ class PaymentDetailsView(views.PaymentDetailsView):
 
     def allocate_from_account(self, request):
         # We have two forms to validate, first check the account form
-        account_form = forms.BalanceForm(self.request.POST)
+        account_form = forms.AccountForm(self.request.POST)
         if not account_form.is_valid():
             # Only manipulation can get us here
             messages.error(request,

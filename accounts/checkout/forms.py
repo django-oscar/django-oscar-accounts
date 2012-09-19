@@ -8,7 +8,7 @@ from oscar.templatetags.currency_filters import currency
 Account = get_model('accounts', 'Account')
 
 
-class BalanceForm(forms.Form):
+class AccountForm(forms.Form):
     code = forms.CharField(label=_("Account code"))
 
     def clean_code(self):
