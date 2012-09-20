@@ -14,13 +14,13 @@ Transfer = get_model('accounts', 'Transfer')
 Transaction = get_model('accounts', 'Transaction')
 
 
-class ListView(generic.ListView):
+class AccountListView(generic.ListView):
     model = Account
     context_object_name = 'accounts'
     template_name = 'dashboard/accounts/account_list.html'
 
 
-class CreateView(generic.CreateView):
+class AccountCreateView(generic.CreateView):
     model = Account
     context_object_name = 'account'
     template_name = 'dashboard/accounts/account_form.html'
@@ -35,6 +35,16 @@ class CreateView(generic.CreateView):
                         description=_("Creation of account"))
         messages.success(self.request, _("New account created"))
         return http.HttpResponseRedirect(reverse('accounts-list'))
+
+
+class AccountFreezeView(generic.UpdateView):
+    model = Account
+    template_name = 'dashboard/accounts/account_freeze.html'
+    form_class = forms.FreezeAccountForm
+
+    def get_success_url(self):
+        messages.success(self.request, _("Account frozen"))
+        return reverse('accounts-list')
 
 
 class AccountTransactionsView(generic.ListView):

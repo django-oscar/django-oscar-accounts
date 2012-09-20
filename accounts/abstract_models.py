@@ -51,7 +51,7 @@ class Account(models.Model):
     # Track the status of a account - this is often used so that expired
     # account can have their money transferred back to some parent account and
     # then be closed.
-    OPEN, CLOSED = 'Open', 'Closed'
+    OPEN, FROZEN, CLOSED = 'Open', 'Frozen',  'Closed'
     status = models.CharField(max_length=32, default=OPEN)
 
     # This is the limit to which the account can do into debt.  The default is

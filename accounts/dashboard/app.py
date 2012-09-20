@@ -13,24 +13,26 @@ node.add_child(Node(_('Transfers'), 'transfers-list'))
 register(node, 100)
 
 
-class DatacashDashboardApplication(Application):
+class AccountsDashboardApplication(Application):
     name = None
-    list_view = views.ListView
-    create_view = views.CreateView
-    account_view = views.AccountTransactionsView
+    account_list_view = views.AccountListView
+    account_create_view = views.AccountCreateView
+    account_transactions_view = views.AccountTransactionsView
+    account_freeze_view = views.AccountFreezeView
 
     transfer_list_view = views.TransferListView
     transfer_detail_view = views.TransferDetailView
 
     def get_urls(self):
-        # TODO - make consistent
         urlpatterns = patterns('',
-            url(r'^$', self.list_view.as_view(),
+            url(r'^$', self.account_list_view.as_view(),
                 name='accounts-list'),
-            url(r'^create/$', self.create_view.as_view(),
+            url(r'^create/$', self.account_create_view.as_view(),
                 name='accounts-create'),
-            url(r'^(?P<pk>\d+)/$', self.account_view.as_view(),
+            url(r'^(?P<pk>\d+)/$', self.account_transactions_view.as_view(),
                 name='accounts-detail'),
+            url(r'^(?P<pk>\d+)/freeze/$', self.account_freeze_view.as_view(),
+                name='accounts-freeze'),
             url(r'^transfers/$', self.transfer_list_view.as_view(),
                 name='transfers-list'),
             url(r'^transfers/(?P<pk>\d+)/$',
@@ -43,4 +45,4 @@ class DatacashDashboardApplication(Application):
         return staff_member_required
 
 
-application = DatacashDashboardApplication()
+application = AccountsDashboardApplication()

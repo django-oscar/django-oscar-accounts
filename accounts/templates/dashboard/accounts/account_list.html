@@ -53,6 +53,7 @@
 				<td>{{ account.date_created }}</td>
 				<td>
 					<a href="{% url accounts-detail account.id %}" class="btn">Transactions</a>
+					<a href="{% url accounts-freeze account.id %}" class="btn btn-danger">Freeze</a>
 				</td>
 			</tr>
 			{% endfor %}

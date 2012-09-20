@@ -33,3 +33,17 @@ class NewAccountForm(forms.ModelForm):
                    'primary_user', 'secondary_users']
         if not CATEGORIES:
             exclude.append('category')
+
+
+class FreezeAccountForm(forms.ModelForm):
+    status = forms.CharField(widget=forms.widgets.HiddenInput)
+
+    def __init__(self, *args, **kwargs):
+        kwargs['initial']['status'] = Account.FROZEN
+        super(FreezeAccountForm, self).__init__(*args, **kwargs)
+
+    class Meta:
+        model = Account
+        exclude = ['name', 'description', 'category', 'code', 'start_date',
+                   'end_date', 'credit_limit', 'balance', 'product_range',
+                   'primary_user', 'secondary_users']
