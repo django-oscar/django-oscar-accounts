@@ -1,0 +1,63 @@
+{% extends "layout.html" %}
+{% load currency_filters %}
+{% load i18n %}
+
+{% block title %}
+{% trans 'Check my balance' %} | {{ block.super }}
+{% endblock %}
+
+{% block breadcrumbs %}
+<ul class="breadcrumb">
+    <li>
+        <a href="{% url promotions:home %}">{% trans 'Home' %}</a>
+        <span class="divider">/</span>
+    </li>
+    <li class="active"><a href=".">{% trans 'Accounts' %}</a></li>
+</ul>
+{% endblock %}
+
+{% block header %}
+<div class="page-header">
+    <h1>{% trans 'Check balance of giftcard' %}</h1>
+</div>
+{% endblock header %}
+
+{% block content %}
+
+<form action="." method="get">
+	{% include 'partials/form_fields.html' %}
+	<button type="submit" class="btn btn-large">Fetch account details</button>
+</form>
+
+{% if account %}
+	<table id="" class="table">
+		<tbody>
+			<tr>
+				<th>Code</th>
+				<td>{{ account.code }}</td>
+			</tr>
+			<tr>
+				<th>Balance</th>
+				<td>{{ account.balance|currency }}</td>
+			</tr>
+			<tr>
+				<th>Status</th>
+				<td>{{ account.status }}</td>
+			</tr>
+			{% if account.start_date %}
+			<tr>
+				<th>Start date</th>
+				<td>{{ account.start_date }}</td>
+			</tr>
+			{% endif %}
+			{% if account.end_date %}
+			<tr>
+				<th>End date</th>
+				<td>{{ account.end_date }}</td>
+			</tr>
+			{% endif %}
+		</tbody>
+	</table>
+{% endif %}
+
+{% endblock %}

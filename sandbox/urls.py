@@ -7,11 +7,14 @@ from django.views.generic import TemplateView
 
 from apps.app import application
 from accounts.dashboard.app import application as accounts_app
+from accounts.views import AccountBalanceView
 
 admin.autodiscover()
 
 urlpatterns = patterns('',
     (r'^admin/', include(admin.site.urls)),
+    url(r'^giftcard-balance/', AccountBalanceView.as_view(),
+        name="account-balance"),
     (r'^dashboard/accounts/', include(accounts_app.urls)),
     (r'', include(application.urls)),
 )
