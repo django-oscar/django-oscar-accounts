@@ -7,6 +7,7 @@ allocation of money that can be debited and credited.  Accounts
 can be used to implement:
 
 * Giftcard schemes
+* Web accounts
 * Loyalty schemes
 * User "credits" that are allocated by sales reps to their customers (more of a
   B2B thing)
@@ -19,11 +20,6 @@ twice (once for the source and once for the destination).  This ensures the
 books always balance and there is full audit trail of all transactional
 activity.  Your finance people will thank you.
 
-Despite having 'Oscar' in the name, this package does not import Oscar's classes
-and so can be used standalone.  At some point, it may provide helper modules for
-making integration with Oscar easier.
-
-.. _`Oscar`: https://github.com/tangentlabs/django-oscar
 .. _`double-entry bookkeeping`: http://en.wikipedia.org/wiki/Double-entry_bookkeeping_system
 
 Features:
@@ -43,8 +39,26 @@ Features:
 Installation
 ------------
 
-Install using pip and add ``accounts`` to ``INSTALLED_APPS``.  Run syncdb and
-you're away.
+Install using pip and add ``accounts`` to ``INSTALLED_APPS``.  Add the following
+settings:
+
+* ``ACCOUNTS_SOURCE_NAME`` - The name of the 'source' account which is used to
+  transfer funds to other accounts (it has no credit limit).
+* ``ACCOUNTS_SALES_NAME`` - The name of the 'sales' account which is the
+  recipient of any funds used to pay for orders
+* ``ACCOUNTS_EXPIRED_NAME`` - The name of the 'expired' account which is the
+  recipient of any funds left if accounts that expire.  A cronjob is used to
+  close expired accounts.
+
+Running syncdb will create the appropriate tables and create accounts for based
+on the above 3 settings.
+
+You should also set-up a cronjob that calls::
+
+    ./manage.py close_expired_accounts
+
+to close any expired accounts and transfer their funds to the 'expired'
+account.
 
 API
 ---
@@ -128,10 +142,13 @@ during order placement.
 Settings
 --------
 
-ACCOUNTS_SOURCE_NAME = 'Merchant'
-ACCOUNTS_MIN_INITIAL_VALUE = 'Merchant' (default- = 0
-ACCOUNTS_MAX_INITIAL_VALUE = 'Merchant' (deafult = unlimit)
-
+* ``ACCOUNTS_SOURCE_NAME`` The name of the 'source' account
+* ``ACCOUNTS_SALES_NAME`` The name of the 'sales' account
+* ``ACCOUNTS_EXPIRED_NAME`` The name of the 'expired' account
+* ``ACCOUNTS_MIN_INITIAL_VALUE`` The minimum value that can be used to create an
+  account (or for a top-up)
+* ``ACCOUNTS_MAX_INITIAL_VALUE`` The maximum value that can be transferred to an
+  account.
 
 Contributing
 ------------
