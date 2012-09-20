@@ -69,6 +69,15 @@ class AccountFreezeView(generic.UpdateView):
         return reverse('accounts-list')
 
 
+class AccountThawView(generic.UpdateView):
+    model = Account
+    template_name = 'dashboard/accounts/account_thaw.html'
+    form_class = forms.ThawAccountForm
+
+    def get_success_url(self):
+        messages.success(self.request, _("Account re-opened"))
+        return reverse('accounts-list')
+
 class AccountTransactionsView(generic.ListView):
     model = Transaction
     context_object_name = 'transactions'
