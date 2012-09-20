@@ -28,48 +28,7 @@
 
 {% block dashboard_content %}
 
-<table id="" class="table">
-	<tbody>
-		<tr>
-			<th>{% trans "Name" %}</th>
-			<td>{{ account.name }}</td>
-		</tr>
-		<tr>
-			<th>{% trans "Description" %}</th>
-			<td>{{ account.description|default:"-" }}</td>
-		</tr>
-		<tr>
-			<th>{% trans "Code" %}</th>
-			<td>{{ account.code|default:"-" }}</td>
-		</tr>
-		<tr>
-			<th>{% trans "Category" %}</th>
-			<td>{{ account.category|default:"-" }}</td>
-		</tr>
-		<tr>
-			<th>{% trans "Balance" %}</th>
-			<td>{{ account.balance|currency }}</td>
-		</tr>
-		<tr>
-			<th>{% trans "Credit limit" %}</th>
-			<td>
-				{% if not account.has_credit_limit %}
-					{% trans "No limit" %}
-				{% else %}
-					{{ account.credit_limit|currency }}
-				{% endif %}
-			</td>
-		</tr>
-		<tr>
-			<th>{% trans "Start date" %}</th>
-			<td>{{ account.start_date|default:"-" }}</td>
-		</tr>
-		<tr>
-			<th>{% trans "End date" %}</th>
-			<td>{{ account.end_date|default:"-" }}</td>
-		</tr>
-	</tbody>
-</table>
+{% include 'dashboard/accounts/partials/account_detail.html' %}
 
 <h2>{% trans "Transactions" %}</h2>
 {% if transactions %}

@@ -62,3 +62,21 @@ class FreezeAccountForm(ChangeStatusForm):
 
 class ThawAccountForm(ChangeStatusForm):
     new_status = Account.OPEN
+
+
+class TopUpAccountForm(forms.Form):
+    amount = forms.DecimalField(
+        min_value=getattr(settings, 'ACCOUNTS_MIN_INITIAL_VALUE', D('0.00')),
+        max_value=getattr(settings, 'ACCOUNTS_MAX_INITIAL_VALUE', None),
+        decimal_places=2)
+
+    def __init__(self, *args, **kwargs):
+        self.account = kwargs.pop('instance')
+        super(TopUpAccountForm, self).__init__(*args, **kwargs)
+
+    def clean(self):
+        if self.account.is_closed():
+            raise forms.ValidationError(_("Account is closed"))
+        elif self.account.is_frozen():
+            raise forms.ValidationError(_("Account is frozen"))
+        return self.cleaned_data

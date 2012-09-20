@@ -127,6 +127,9 @@ class Account(models.Model):
     def is_open(self):
         return self.status == self.__class__.OPEN
 
+    def is_closed(self):
+        return self.status == self.__class__.CLOSED
+
     def is_frozen(self):
         return self.status == self.__class__.FROZEN
 

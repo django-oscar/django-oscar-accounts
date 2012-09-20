@@ -5,6 +5,7 @@ from django.shortcuts import get_object_or_404
 from django.db.models import get_model
 from django.contrib import messages
 from django.utils.translation import ugettext_lazy as _
+from oscar.templatetags.currency_filters import currency
 
 from accounts.dashboard import forms
 from accounts import facade
@@ -74,9 +75,26 @@ class AccountThawView(generic.UpdateView):
     template_name = 'dashboard/accounts/account_thaw.html'
     form_class = forms.ThawAccountForm
 
+
+class AccountTopUpView(generic.UpdateView):
+    model = Account
+    template_name = 'dashboard/accounts/account_top_up.html'
+    form_class = forms.TopUpAccountForm
+
+    def form_valid(self, form):
+        account = self.object
+        amount = form.cleaned_data['amount']
+        facade.transfer(facade.source(), account, amount,
+                        user=self.request.user,
+                        description=_("Top-up account"))
+        messages.success(
+            self.request, _("%s added to account") % currency(amount))
+        return http.HttpResponseRedirect(reverse('accounts-list'))
+
     def get_success_url(self):
         messages.success(self.request, _("Account re-opened"))
         return reverse('accounts-list')
+
 
 class AccountTransactionsView(generic.ListView):
     model = Transaction
