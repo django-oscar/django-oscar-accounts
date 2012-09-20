@@ -23,13 +23,13 @@ class PaymentDetailsView(views.PaymentDetailsView):
         # If account form has been submitted, validate it and show the
         # allocation form if the account has non-zero balance
         if 'code' in self.request.GET:
-            form = forms.AccountForm(self.request.GET)
+            form = forms.ValidAccountForm(self.request.GET)
             if form.is_valid():
                 ctx['allocation_form'] = forms.AllocationForm(
                     ctx['order_total_incl_tax'], form.account,
                     self.get_account_allocations())
         else:
-            form = forms.AccountForm()
+            form = forms.ValidAccountForm()
         ctx['account_form'] = form
 
         # Add existing allocations to context
@@ -73,7 +73,7 @@ class PaymentDetailsView(views.PaymentDetailsView):
 
     def add_allocation(self, request):
         # We have two forms to validate, first check the account form
-        account_form = forms.AccountForm(self.request.POST)
+        account_form = forms.ValidAccountForm(self.request.POST)
         if not account_form.is_valid():
             # Only manipulation can get us here
             messages.error(request,
