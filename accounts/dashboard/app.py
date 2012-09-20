@@ -17,6 +17,7 @@ class AccountsDashboardApplication(Application):
     name = None
     account_list_view = views.AccountListView
     account_create_view = views.AccountCreateView
+    account_update_view = views.AccountUpdateView
     account_transactions_view = views.AccountTransactionsView
     account_freeze_view = views.AccountFreezeView
 
@@ -29,6 +30,8 @@ class AccountsDashboardApplication(Application):
                 name='accounts-list'),
             url(r'^create/$', self.account_create_view.as_view(),
                 name='accounts-create'),
+            url(r'^(?P<pk>\d+)/update/$', self.account_update_view.as_view(),
+                name='accounts-update'),
             url(r'^(?P<pk>\d+)/$', self.account_transactions_view.as_view(),
                 name='accounts-detail'),
             url(r'^(?P<pk>\d+)/freeze/$', self.account_freeze_view.as_view(),

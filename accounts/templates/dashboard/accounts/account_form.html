@@ -3,7 +3,7 @@
 {% load i18n %}
 
 {% block title %}
-{% trans "Accounts" %} | {{ block.super }}
+{{ title }} | {% trans "Accounts" %} | {{ block.super }}
 {% endblock %}
 
 {% block breadcrumbs %}
@@ -16,13 +16,13 @@
 		<a href="{% url accounts-list %}">{% trans "Accounts" %}</a>
         <span class="divider">/</span>
     </li>
-	<li class="active"><a href=".">{% trans "Create a new account" %}</a></li>
+	<li class="active"><a href=".">{{ title }}</a></li>
 </ul>
 {% endblock %}
 
 {% block header %}
 <div class="page-header">
-	<h1>{% trans "Create a new account" %}</h1>
+	<h1>{{ title }}</h1>
 </div>
 {% endblock header %}
 

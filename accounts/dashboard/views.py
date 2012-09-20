@@ -26,6 +26,11 @@ class AccountCreateView(generic.CreateView):
     template_name = 'dashboard/accounts/account_form.html'
     form_class = forms.NewAccountForm
 
+    def get_context_data(self, **kwargs):
+        ctx = super(AccountCreateView, self).get_context_data(**kwargs)
+        ctx['title'] = _("Create a new account")
+        return ctx
+
     def form_valid(self, form):
         # Create new account and make a transfer from the global source account
         account = form.save()
@@ -34,6 +39,23 @@ class AccountCreateView(generic.CreateView):
                         user=self.request.user,
                         description=_("Creation of account"))
         messages.success(self.request, _("New account created"))
+        return http.HttpResponseRedirect(reverse('accounts-list'))
+
+
+class AccountUpdateView(generic.UpdateView):
+    model = Account
+    context_object_name = 'account'
+    template_name = 'dashboard/accounts/account_form.html'
+    form_class = forms.UpdateAccountForm
+
+    def get_context_data(self, **kwargs):
+        ctx = super(AccountUpdateView, self).get_context_data(**kwargs)
+        ctx['title'] = _("Update '%s' account") % self.object.name
+        return ctx
+
+    def form_valid(self, form):
+        form.save()
+        messages.success(self.request, _("Account saved"))
         return http.HttpResponseRedirect(reverse('accounts-list'))
 
 

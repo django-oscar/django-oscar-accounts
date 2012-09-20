@@ -33,6 +33,7 @@
 			<tr>
 				<th>{% trans "Name" %}</th>
 				<th>{% trans "Code" %}</th>
+				<th>{% trans "Status" %}</th>
 				<th>{% trans "Category" %}</th>
 				<th>{% trans "End date" %}</th>
 				<th>{% trans "Start date" %}</th>
@@ -42,9 +43,11 @@
 				<th></th>
 			</tr>
 			{% for account in accounts %}
-			<tr>
+			{# When we're using bootstrap 2.1, we can use table row colors #}
+			<tr {% if account.is_frozen %}style="color: #aaa"{% endif %}>
 				<td>{{ account.name }}</td>
 				<td>{{ account.code|default:"-" }}</td>
+				<td>{{ account.status }}</td>
 				<td>{{ account.category|default:"-" }}</td>
 				<td>{{ account.start_date|default:"-" }}</td>
 				<td>{{ account.end_date|default:"-" }}</td>
@@ -52,8 +55,11 @@
 				<td>{{ account.num_transactions }}</td>
 				<td>{{ account.date_created }}</td>
 				<td>
+					<a href="{% url accounts-update account.id %}" class="btn">Edit</a>
 					<a href="{% url accounts-detail account.id %}" class="btn">Transactions</a>
+					{% if not account.is_frozen %}
 					<a href="{% url accounts-freeze account.id %}" class="btn btn-danger">Freeze</a>
+					{% endif %}
 				</td>
 			</tr>
 			{% endfor %}
