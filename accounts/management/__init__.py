@@ -12,16 +12,12 @@ def ensure_core_accounts_exists(sender, **kwargs):
 
 def create_sales_account():
     name = getattr(settings, 'ACCOUNTS_SALES_NAME')
-    __, created = models.Account.objects.get_or_create(name=name)
-    if created:
-        print "Created sales account '%s'" % name
+    models.Account.objects.get_or_create(name=name)
 
 
 def create_expired_account():
     name = getattr(settings, 'ACCOUNTS_EXPIRED_NAME')
-    __, created = models.Account.objects.get_or_create(name=name)
-    if created:
-        print "Created expired account '%s'" % name
+    models.Account.objects.get_or_create(name=name)
 
 
 def create_source_account():
@@ -33,10 +29,7 @@ def create_source_account():
     if models.Account.objects.all().count() > 0:
         return
     name = getattr(settings, 'ACCOUNTS_SOURCE_NAME')
-    __, created = models.Account.objects.get_or_create(name=name,
-                                                       credit_limit=None)
-    if created:
-        print "Created source account '%s'" % name
+    models.Account.objects.get_or_create(name=name, credit_limit=None)
 
 
 post_syncdb.connect(ensure_core_accounts_exists, sender=models)
