@@ -19,6 +19,51 @@ class AccountListView(generic.ListView):
     model = Account
     context_object_name = 'accounts'
     template_name = 'dashboard/accounts/account_list.html'
+    form_class = forms.SearchForm
+    description = _("All accounts")
+
+    def get_context_data(self, **kwargs):
+        ctx = super(AccountListView, self).get_context_data(**kwargs)
+        ctx['form'] = self.form
+        ctx['queryset_description'] = self.description
+        return ctx
+
+    def get_queryset(self):
+        queryset = self.model.objects.all()
+        if 'code' not in self.request.GET:
+            # Form not submitted
+            self.form = self.form_class()
+            return queryset
+
+        self.form = self.form_class(self.request.GET)
+        if not self.form.is_valid():
+            # Form submitted but invalid
+            return queryset
+
+        # Form valid - build queryset and description
+        data = self.form.cleaned_data
+        desc_template = _(
+            "%(status)s accounts %(code_filter)s %(name_filter)s")
+        desc_ctx = {
+            'status': "All",
+            'code_filter': "",
+            'name_filter': "",
+        }
+        if data['name']:
+            queryset = queryset.filter(name__icontains=data['name'])
+            desc_ctx['name_filter'] = _(
+                " with name matching '%s'") % data['name']
+        if data['code']:
+            queryset = queryset.filter(code=data['code'])
+            desc_ctx['code_filter'] = _(
+                " with code '%s'") % data['code']
+        if data['status']:
+            queryset = queryset.filter(status=data['status'])
+            desc_ctx['status'] = data['status']
+
+        self.description = desc_template % desc_ctx
+
+        return queryset
 
 
 class AccountCreateView(generic.CreateView):

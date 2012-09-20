@@ -10,6 +10,17 @@ Account = get_model('accounts', 'Account')
 CATEGORIES = getattr(settings, 'ACCOUNTS_CATEGORIES', ())
 
 
+class SearchForm(forms.Form):
+    name = forms.CharField(required=False)
+    code = forms.CharField(required=False)
+    STATUS_CHOICES = (
+        ('', "------"),
+        (Account.OPEN, _("Open")),
+        (Account.FROZEN, _("Frozen")),
+        (Account.CLOSED, _("Closed")))
+    status = forms.ChoiceField(choices=STATUS_CHOICES, required=False)
+
+
 class EditAccountForm(forms.ModelForm):
     name = forms.CharField(label=_("Name"), required=True)
     code = forms.RegexField(

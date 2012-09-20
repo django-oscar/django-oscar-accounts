@@ -25,7 +25,17 @@
 {% block dashboard_content %}
 
 	<div class="sub-header">
-		<h2>{% trans "All accounts" %}</h2>
+		<h2>{% trans "Search" %}</h2>
+	</div>
+
+	<form method="get" action=".">
+		{% include 'partials/form_fields.html' %}
+		<button type="submit" class="btn btn-primary">Search</button>
+		or <a href="{% url accounts-list %}">reset</a>.
+	</form>
+
+	<div class="sub-header">
+		<h2>{{ queryset_description }}</h2>
 	</div>
 
 	{% if accounts.count %}
