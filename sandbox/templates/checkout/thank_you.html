@@ -1,0 +1,15 @@
+{% extends 'oscar/checkout/thank_you.html' %}
+{% load i18n %}
+{% load currency_filters %}
+
+{% block payment_info %}
+<div class="well well-success">
+	<h3>{% trans "Payment" %}</h3>
+	<p>Account allocations</p>
+	<ul>
+	{% for source in order.sources.all %}
+	<li>{{ source.amount_debited|currency }} from account with code {{ source.reference }}</li>
+	{% endfor %}
+	</ul>
+</div>
+{% endblock %}
