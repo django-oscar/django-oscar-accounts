@@ -13,7 +13,7 @@
         <span class="divider">/</span>
     </li>
     <li>
-		<a href="{% url accounts-list %}">{% trans "Accounts" %}</a>
+		<a href="{% url code-accounts-list %}">{% trans "Accounts" %}</a>
         <span class="divider">/</span>
     </li>
 	<li class="active"><a href=".">{{ title }}</a></li>
@@ -33,7 +33,7 @@
 	<div class="form-actions">
 		<button class="btn btn-primary btn-large" type="submit">{% trans "Save" %}</button> 
 		{% trans "or" %}
-		<a href="{% url accounts-list %}">{% trans "cancel" %}</a>
+		<a href="{% url code-accounts-list %}">{% trans "cancel" %}</a>
 	</div>
 </form>
 

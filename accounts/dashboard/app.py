@@ -1,24 +1,26 @@
 from django.conf.urls.defaults import patterns, url
 from django.contrib.admin.views.decorators import staff_member_required
 from django.utils.translation import ugettext_lazy as _
-from django.conf import settings
 
 from oscar.core.application import Application
 from oscar.apps.dashboard.nav import register, Node
 
 from accounts.dashboard import views
 
-node = Node(settings.ACCOUNTS_UNIT_NAME + 's')
-node.add_child(Node(_('Giftcards'), 'accounts-list'))
+node = Node(_("Accounts"))
+node.add_child(Node(_('Giftcards'), 'code-accounts-list'))
 node.add_child(Node(_('Transfers'), 'transfers-list'))
 register(node, 100)
 
 
 class AccountsDashboardApplication(Application):
     name = None
-    account_list_view = views.AccountListView
-    account_create_view = views.AccountCreateView
-    account_update_view = views.AccountUpdateView
+
+    # Code-account views
+    code_account_list_view = views.CodeAccountListView
+    code_account_create_view = views.CodeAccountCreateView
+    code_account_update_view = views.CodeAccountUpdateView
+
     account_transactions_view = views.AccountTransactionsView
     account_freeze_view = views.AccountFreezeView
     account_thaw_view = views.AccountThawView
@@ -29,12 +31,12 @@ class AccountsDashboardApplication(Application):
 
     def get_urls(self):
         urlpatterns = patterns('',
-            url(r'^$', self.account_list_view.as_view(),
-                name='accounts-list'),
-            url(r'^create/$', self.account_create_view.as_view(),
-                name='accounts-create'),
-            url(r'^(?P<pk>\d+)/update/$', self.account_update_view.as_view(),
-                name='accounts-update'),
+            url(r'^code-accounts/$', self.code_account_list_view.as_view(),
+                name='code-accounts-list'),
+            url(r'^code-accounts/create/$', self.code_account_create_view.as_view(),
+                name='code-accounts-create'),
+            url(r'^code-accounts/(?P<pk>\d+)/update/$', self.code_account_update_view.as_view(),
+                name='code-accounts-update'),
             url(r'^(?P<pk>\d+)/$', self.account_transactions_view.as_view(),
                 name='accounts-detail'),
             url(r'^(?P<pk>\d+)/freeze/$', self.account_freeze_view.as_view(),

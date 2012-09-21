@@ -17,7 +17,7 @@ Transfer = get_model('accounts', 'Transfer')
 Transaction = get_model('accounts', 'Transaction')
 
 
-class AccountListView(generic.ListView):
+class CodeAccountListView(generic.ListView):
     model = Account
     context_object_name = 'accounts'
     template_name = 'dashboard/accounts/account_list.html'
@@ -25,7 +25,7 @@ class AccountListView(generic.ListView):
     description = _("All %ss") % settings.ACCOUNTS_UNIT_NAME
 
     def get_context_data(self, **kwargs):
-        ctx = super(AccountListView, self).get_context_data(**kwargs)
+        ctx = super(CodeAccountListView, self).get_context_data(**kwargs)
         ctx['form'] = self.form
         ctx['title'] = "%ss" % settings.ACCOUNTS_UNIT_NAME
         ctx['unit_name'] = settings.ACCOUNTS_UNIT_NAME
@@ -74,14 +74,14 @@ class AccountListView(generic.ListView):
         return queryset
 
 
-class AccountCreateView(generic.CreateView):
+class CodeAccountCreateView(generic.CreateView):
     model = Account
     context_object_name = 'account'
     template_name = 'dashboard/accounts/account_form.html'
     form_class = forms.NewAccountForm
 
     def get_context_data(self, **kwargs):
-        ctx = super(AccountCreateView, self).get_context_data(**kwargs)
+        ctx = super(CodeAccountCreateView, self).get_context_data(**kwargs)
         ctx['title'] = _("Create a new %s") % settings.ACCOUNTS_UNIT_NAME
         return ctx
 
@@ -89,7 +89,7 @@ class AccountCreateView(generic.CreateView):
         return AccountType.objects.get(name="Giftcards")
 
     def get_form_kwargs(self):
-        kwargs = super(AccountCreateView, self).get_form_kwargs()
+        kwargs = super(CodeAccountCreateView, self).get_form_kwargs()
         kwargs['account_type'] = self.get_account_type()
         return kwargs
 
@@ -112,14 +112,14 @@ class AccountCreateView(generic.CreateView):
             reverse('accounts-detail', kwargs={'pk': account.id}))
 
 
-class AccountUpdateView(generic.UpdateView):
+class CodeAccountUpdateView(generic.UpdateView):
     model = Account
     context_object_name = 'account'
     template_name = 'dashboard/accounts/account_form.html'
     form_class = forms.UpdateAccountForm
 
     def get_context_data(self, **kwargs):
-        ctx = super(AccountUpdateView, self).get_context_data(**kwargs)
+        ctx = super(CodeAccountUpdateView, self).get_context_data(**kwargs)
         ctx['title'] = _("Update '%s' account") % self.object.name
         return ctx
 
