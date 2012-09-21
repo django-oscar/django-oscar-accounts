@@ -33,7 +33,7 @@
 	{% if account.is_open %}
 	<form action="." method="post">
 		{% csrf_token %}
-		{{ form.as_p }}
+		{% include 'partials/form_fields.html' %}
 		<button type="submit" class="btn btn-large btn-success">{% trans "Save" %}</button>
 	</form>
 	{% else %}

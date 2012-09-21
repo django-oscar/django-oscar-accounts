@@ -5,6 +5,8 @@ from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.db.models import get_model
 
+from oscar.templatetags.currency_filters import currency
+
 Account = get_model('accounts', 'Account')
 
 
@@ -31,8 +33,8 @@ class EditAccountForm(forms.ModelForm):
 
 class NewAccountForm(EditAccountForm):
     initial_amount = forms.DecimalField(
-        min_value=getattr(settings, 'ACCOUNTS_MIN_INITIAL_VALUE', D('0.00')),
-        max_value=getattr(settings, 'ACCOUNTS_MAX_INITIAL_VALUE', None),
+        min_value=getattr(settings, 'ACCOUNTS_MIN_LOAD_VALUE', D('0.00')),
+        max_value=getattr(settings, 'ACCOUNTS_MAX_ACCOUNT_VALUE', None),
         decimal_places=2)
 
     def __init__(self, account_type, *args, **kwargs):
@@ -76,13 +78,22 @@ class ThawAccountForm(ChangeStatusForm):
 
 class TopUpAccountForm(forms.Form):
     amount = forms.DecimalField(
-        min_value=getattr(settings, 'ACCOUNTS_MIN_INITIAL_VALUE', D('0.00')),
-        max_value=getattr(settings, 'ACCOUNTS_MAX_INITIAL_VALUE', None),
+        min_value=getattr(settings, 'ACCOUNTS_MIN_LOAD_VALUE', D('0.00')),
+        max_value=getattr(settings, 'ACCOUNTS_MAX_ACCOUNT_VALUE', None),
         decimal_places=2)
 
     def __init__(self, *args, **kwargs):
         self.account = kwargs.pop('instance')
         super(TopUpAccountForm, self).__init__(*args, **kwargs)
+
+    def clean_amount(self):
+        amt = self.cleaned_data['amount']
+        max_amount = settings.ACCOUNTS_MAX_ACCOUNT_VALUE - self.account.balance
+        if amt > max_amount:
+            raise forms.ValidationError(_(
+                "The maximum permitted top-up amount is %s") % (
+                    currency(max_amount)))
+        return amt
 
     def clean(self):
         if self.account.is_closed():
