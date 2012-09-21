@@ -21,11 +21,9 @@ class TestAStaffMember(WebTest):
         list_page = self.app.get(reverse('accounts-list'), user=self.staff)
         create_page = list_page.click("Create a new account")
         create_page.form['name'] = 'Test account'
-        create_page.form['code'] = 'test'
         create_page.form['initial_amount'] = '120.00'
         response = create_page.form.submit()
         self.assertEqual(302, response.status_code)
 
         acc = models.Account.objects.get(name='Test account')
-        self.assertEqual('TEST', acc.code)
         self.assertEqual(D('120.00'), acc.balance)

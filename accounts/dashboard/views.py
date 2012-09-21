@@ -8,7 +8,7 @@ from django.utils.translation import ugettext_lazy as _
 from oscar.templatetags.currency_filters import currency
 
 from accounts.dashboard import forms
-from accounts import facade
+from accounts import facade, codes
 
 Account = get_model('accounts', 'Account')
 Transfer = get_model('accounts', 'Transfer')
@@ -79,13 +79,21 @@ class AccountCreateView(generic.CreateView):
 
     def form_valid(self, form):
         # Create new account and make a transfer from the global source account
-        account = form.save()
+        account = form.save(commit=False)
+        code = codes.generate()
+        account.code = code
+        account.save()
+
         amount = form.cleaned_data['initial_amount']
         facade.transfer(facade.source(), account, amount,
                         user=self.request.user,
                         description=_("Creation of account"))
-        messages.success(self.request, _("New account created"))
-        return http.HttpResponseRedirect(reverse('accounts-list'))
+        messages.success(
+            self.request,
+            _("New account created with code '%s'") % code)
+
+        return http.HttpResponseRedirect(
+            reverse('accounts-detail', kwargs={'pk': account.id}))
 
 
 class AccountUpdateView(generic.UpdateView):
@@ -100,9 +108,10 @@ class AccountUpdateView(generic.UpdateView):
         return ctx
 
     def form_valid(self, form):
-        form.save()
+        account = form.save()
         messages.success(self.request, _("Account saved"))
-        return http.HttpResponseRedirect(reverse('accounts-list'))
+        return http.HttpResponseRedirect(
+            reverse('accounts-detail', kwargs={'pk': account.id}))
 
 
 class AccountFreezeView(generic.UpdateView):

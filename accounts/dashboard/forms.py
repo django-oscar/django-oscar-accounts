@@ -23,10 +23,6 @@ class SearchForm(forms.Form):
 
 class EditAccountForm(forms.ModelForm):
     name = forms.CharField(label=_("Name"), required=True)
-    code = forms.RegexField(
-        label=_("Code"), required=True,
-        regex=r'^[a-zA-Z0-9]{4,}$', help_text=_(
-            "Codes must be 4 or more characters, no spaces"))
 
     if CATEGORIES:
         choices = [(c, _(c)) for c in CATEGORIES]
@@ -35,7 +31,7 @@ class EditAccountForm(forms.ModelForm):
 
     class Meta:
         model = Account
-        exclude = ['status', 'credit_limit', 'balance', 'product_range',
+        exclude = ['status', 'code', 'credit_limit', 'balance', 'product_range',
                    'primary_user', 'secondary_users']
         if not CATEGORIES:
             exclude.append('category')
