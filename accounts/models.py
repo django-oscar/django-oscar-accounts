@@ -15,3 +15,7 @@ class Transfer(abstract_models.Transfer):
 
 class Transaction(abstract_models.Transaction):
     pass
+
+
+class IPAddressRecord(abstract_models.IPAddressRecord):
+    pass

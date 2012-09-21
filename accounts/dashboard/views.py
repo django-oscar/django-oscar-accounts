@@ -137,7 +137,7 @@ class AccountFreezeView(generic.UpdateView):
 
     def get_success_url(self):
         messages.success(self.request, _("Account frozen"))
-        return reverse('accounts-list')
+        return reverse('code-accounts-list')
 
 
 class AccountThawView(generic.UpdateView):
@@ -159,11 +159,11 @@ class AccountTopUpView(generic.UpdateView):
                         description=_("Top-up account"))
         messages.success(
             self.request, _("%s added to account") % currency(amount))
-        return http.HttpResponseRedirect(reverse('accounts-list'))
+        return http.HttpResponseRedirect(reverse('code-accounts-list'))
 
     def get_success_url(self):
         messages.success(self.request, _("Account re-opened"))
-        return reverse('accounts-list')
+        return reverse('code-accounts-list')
 
 
 class AccountTransactionsView(generic.ListView):

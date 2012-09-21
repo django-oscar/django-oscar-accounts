@@ -291,3 +291,59 @@ class Transaction(models.Model):
 
     def delete(self, *args, **kwargs):
         raise RuntimeError("Transactions cannot be deleted")
+
+
+class IPAddressRecord(models.Model):
+    ip_address = models.IPAddressField(unique=True)
+    total_failures = models.PositiveIntegerField(default=0)
+    consecutive_failures = models.PositiveIntegerField(default=0)
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_last_failure = models.DateTimeField(null=True)
+
+    # Above this threshold, you have to wait for the cooling off period
+    # between attempts
+    FREEZE_THRESHOLD = 3
+
+    # Above this threshold, you are blocked indefinitely
+    BLOCK_THRESHOLD = 10
+
+    # Blocking period (in seconds)
+    COOLING_OFF_PERIOD = 5 * 60
+
+    class Meta:
+        abstract = True
+
+    def increment_failures(self):
+        self.total_failures += 1
+        self.consecutive_failures += 1
+        self.date_last_failure = datetime.datetime.now()
+        self.save()
+
+    def increment_blocks(self):
+        self.total_blocks += 1
+        self.save()
+
+    def reset(self):
+        self.consecutive_failures = 0
+        self.save()
+
+    def is_blocked(self):
+        if self.consecutive_failures < self.FREEZE_THRESHOLD:
+            return False
+
+        if self.total_failures > self.BLOCK_THRESHOLD:
+            return True
+
+        # You must have more than the freeze threshold number of
+        # consecutive failures before any blocking kicks in.
+        if self.consecutive_failures >= self.FREEZE_THRESHOLD:
+            return True
+
+        # If you've had several consecutive failures, we impose a miniumum
+        # period between each allowed request.
+        now = datetime.datetime.now()
+        time_since_last_failure = now - self.date_last_failure
+        if time_since_last_failure.seconds < self.COOLING_OFF_PERIOD:
+            return True
+
+        return False

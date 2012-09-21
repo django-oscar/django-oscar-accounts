@@ -1,12 +1,13 @@
 import logging
 
-from django.conf import settings
+from django.db.models import get_model
 
-from accounts import models
-from accounts import exceptions
+from accounts import exceptions, core
+
+Account = get_model('accounts', 'Account')
+Transfer = get_model('accounts', 'Transfer')
 
 logger = logging.getLogger('accounts')
-
 
 
 def close_expired_accounts():
@@ -14,10 +15,10 @@ def close_expired_accounts():
     Close expired, open accounts and transfer any remaining balance to an
     expiration account.
     """
-    accounts = models.Account.expired.filter(
-        status=models.Account.OPEN)
+    accounts = Account.expired.filter(
+        status=Account.OPEN)
     logger.info("Found %d open accounts to close", accounts.count())
-    destination = expired_account()
+    destination = core.lapsed_account()
     for account in accounts:
         balance = account.balance
         try:
@@ -49,7 +50,7 @@ def transfer(source, destination, amount, user=None, description=None):
     if description:
         msg += " '%s'" % description
     try:
-        transfer = models.Transfer.objects.create(
+        transfer = Transfer.objects.create(
             source, destination, amount, user, description)
     except exceptions.AccountException, e:
         logger.warning("%s - failed: '%s'", msg, e)
@@ -74,7 +75,7 @@ def reverse(transfer, user=None, description=None):
     if description:
         msg += " '%s'" % description
     try:
-        transfer = models.Transfer.objects.create(
+        transfer = Transfer.objects.create(
             source=transfer.destination,
             destination=transfer.source,
             amount=transfer.amount, user=user, description=description)

@@ -2,7 +2,7 @@ from django.db.models import get_model
 from django.utils.translation import ugettext_lazy as _
 from oscar.apps.payment.exceptions import UnableToTakePayment
 
-from accounts import facade, exceptions
+from accounts import facade, exceptions, core
 
 Account = get_model('accounts', 'Account')
 Transfer = get_model('accounts', 'Transfer')
@@ -18,7 +18,7 @@ def redeem(order_number, user, allocations):
     # may have changed status since the allocations were written to the
     # session.
     transfers = []
-    destination = facade.sales_account()
+    destination = core.redemptions_account()
     for code, amount in allocations.items():
         try:
             account = Account.objects.get(code=code)

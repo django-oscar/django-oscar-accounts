@@ -63,7 +63,7 @@ class ChangeStatusForm(forms.ModelForm):
 
     class Meta:
         model = Account
-        exclude = ['name', 'description', 'category', 'code', 'start_date',
+        exclude = ['name', 'account_type', 'description', 'category', 'code', 'start_date',
                    'end_date', 'credit_limit', 'balance', 'product_range',
                    'primary_user', 'secondary_users']
 

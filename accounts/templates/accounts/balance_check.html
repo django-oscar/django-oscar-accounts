@@ -24,11 +24,15 @@
 
 {% block content %}
 
-<form action="." method="post">
-	{% csrf_token %}
-	{% include 'partials/form_fields.html' %}
-	<button type="submit" class="btn btn-large">Fetch account details</button>
-</form>
+{% if is_blocked %}
+	<p>{% trans "Your IP address is currently blocked.  Please try again later." %}</p>
+{% else %}
+	<form action="." method="post">
+		{% csrf_token %}
+		{% include 'partials/form_fields.html' %}
+		<button type="submit" class="btn btn-large">Fetch account details</button>
+	</form>
+{% endif %}
 
 {% if account %}
 	<table id="" class="table">
