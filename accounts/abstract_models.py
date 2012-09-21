@@ -5,6 +5,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.db import transaction
 from django.db.models import Sum
+from treebeard.mp_tree import MP_Node
 
 from accounts import exceptions
 
@@ -29,12 +30,29 @@ class ExpiredAccountManager(models.Manager):
         return qs.filter(end_date__lt=today)
 
 
+class AccountType(MP_Node):
+    code = models.CharField(max_length=128, unique=True, null=True)
+    name = models.CharField(max_length=128)
+
+    class Meta:
+        abstract = True
+
+    def __unicode__(self):
+        return self.name
+
+    @property
+    def full_name(self):
+        names = [a.name for a in self.get_ancestors()]
+        names.append(self.name)
+        return " / ".join(names)
+
+
 class Account(models.Model):
     # Metadata
     name = models.CharField(max_length=128, unique=True, null=True,
                             blank=True)
     description = models.TextField(null=True, blank=True)
-    category = models.CharField(max_length=256, null=True)
+    account_type = models.ForeignKey('AccountType', related_name='accounts')
 
     # Some account are not linked to a specific user but are activated by
     # entering a code at checkout.

@@ -20,8 +20,8 @@
 			<td>{{ account.code|default:"-" }}</td>
 		</tr>
 		<tr>
-			<th>{% trans "Category" %}</th>
-			<td>{{ account.category|default:"-" }}</td>
+			<th>{% trans "Account type" %}</th>
+			<td>{{ account.account_type.full_name }}</td>
 		</tr>
 		<tr>
 			<th>{% trans "Balance" %}</th>

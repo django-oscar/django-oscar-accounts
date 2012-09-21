@@ -14,8 +14,8 @@ class TestReversingATransfer(TestCase):
 
     def setUp(self):
         self.user = G(User)
-        self.source = Account.objects.create(credit_limit=None)
-        self.destination = Account.objects.create()
+        self.source = G(Account, credit_limit=None)
+        self.destination = G(Account)
         self.transfer = facade.transfer(self.source, self.destination,
                                         D('100'), self.user, "Give money to customer")
         self.reverse = facade.reverse(self.transfer, self.user,
@@ -49,8 +49,8 @@ class TestATransfer(TestCase):
 
     def setUp(self):
         self.user = G(User)
-        self.source = Account.objects.create(credit_limit=None)
-        self.destination = Account.objects.create()
+        self.source = G(Account, credit_limit=None)
+        self.destination = G(Account)
         self.transfer = facade.transfer(self.source, self.destination, D('100'),
                                         self.user, "Give money to customer")
 
@@ -86,8 +86,8 @@ class TestATransfer(TestCase):
 class TestAnAnonymousTransaction(TestCase):
 
     def test_doesnt_explode(self):
-        source = Account.objects.create(credit_limit=None)
-        destination = Account.objects.create()
+        source = G(Account, credit_limit=None)
+        destination = G(Account)
         facade.transfer(source, destination, D('1'))
 
 
@@ -98,8 +98,8 @@ class TestErrorHandling(TransactionTestCase):
 
     def test_no_transaction_created_when_exception_raised(self):
         user = G(User)
-        source = Account.objects.create(credit_limit=None)
-        destination = Account.objects.create()
+        source = G(Account, credit_limit=None)
+        destination = G(Account)
         with mock.patch(
             'accounts.abstract_models.PostingManager._wrap') as mock_method:
             mock_method.side_effect = RuntimeError()
@@ -112,15 +112,15 @@ class TestErrorHandling(TransactionTestCase):
 
     def test_account_exception_raised_for_invalid_transfer(self):
         user = G(User)
-        source = Account.objects.create()
-        destination = Account.objects.create()
+        source = G(Account)
+        destination = G(Account)
         with self.assertRaises(exceptions.AccountException):
             facade.transfer(source, destination, D('100'), user)
 
     def test_account_exception_raised_for_runtime_error(self):
         user = G(User)
-        source = Account.objects.create(credit_limit=None)
-        destination = Account.objects.create()
+        source = G(Account, credit_limit=None)
+        destination = G(Account)
         with mock.patch(
             'accounts.abstract_models.PostingManager._wrap') as mock_method:
             mock_method.side_effect = RuntimeError()

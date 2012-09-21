@@ -1,5 +1,6 @@
 from django.views import generic
 from django.core.urlresolvers import reverse
+from django.conf import settings
 from django import http
 from django.shortcuts import get_object_or_404
 from django.db.models import get_model
@@ -8,8 +9,9 @@ from django.utils.translation import ugettext_lazy as _
 from oscar.templatetags.currency_filters import currency
 
 from accounts.dashboard import forms
-from accounts import facade, codes
+from accounts import facade, codes, core
 
+AccountType = get_model('accounts', 'AccountType')
 Account = get_model('accounts', 'Account')
 Transfer = get_model('accounts', 'Transfer')
 Transaction = get_model('accounts', 'Transaction')
@@ -20,16 +22,21 @@ class AccountListView(generic.ListView):
     context_object_name = 'accounts'
     template_name = 'dashboard/accounts/account_list.html'
     form_class = forms.SearchForm
-    description = _("All accounts")
+    description = _("All %ss") % settings.ACCOUNTS_UNIT_NAME
 
     def get_context_data(self, **kwargs):
         ctx = super(AccountListView, self).get_context_data(**kwargs)
         ctx['form'] = self.form
+        ctx['title'] = "%ss" % settings.ACCOUNTS_UNIT_NAME
+        ctx['unit_name'] = settings.ACCOUNTS_UNIT_NAME
         ctx['queryset_description'] = self.description
         return ctx
 
     def get_queryset(self):
-        queryset = self.model.objects.all()
+        account_type = AccountType.objects.get(
+            name="Giftcards")
+        queryset = self.model.objects.filter(
+            account_type=account_type)
         if 'code' not in self.request.GET:
             # Form not submitted
             self.form = self.form_class()
@@ -43,8 +50,9 @@ class AccountListView(generic.ListView):
         # Form valid - build queryset and description
         data = self.form.cleaned_data
         desc_template = _(
-            "%(status)s accounts %(code_filter)s %(name_filter)s")
+            "%(status)s %(unit)ss %(code_filter)s %(name_filter)s")
         desc_ctx = {
+            'unit': settings.ACCOUNTS_UNIT_NAME.lower(),
             'status': "All",
             'code_filter': "",
             'name_filter': "",
@@ -74,8 +82,16 @@ class AccountCreateView(generic.CreateView):
 
     def get_context_data(self, **kwargs):
         ctx = super(AccountCreateView, self).get_context_data(**kwargs)
-        ctx['title'] = _("Create a new account")
+        ctx['title'] = _("Create a new %s") % settings.ACCOUNTS_UNIT_NAME
         return ctx
+
+    def get_account_type(self):
+        return AccountType.objects.get(name="Giftcards")
+
+    def get_form_kwargs(self):
+        kwargs = super(AccountCreateView, self).get_form_kwargs()
+        kwargs['account_type'] = self.get_account_type()
+        return kwargs
 
     def form_valid(self, form):
         # Create new account and make a transfer from the global source account
@@ -85,7 +101,7 @@ class AccountCreateView(generic.CreateView):
         account.save()
 
         amount = form.cleaned_data['initial_amount']
-        facade.transfer(facade.source(), account, amount,
+        facade.transfer(core.unpaid_source_account(), account, amount,
                         user=self.request.user,
                         description=_("Creation of account"))
         messages.success(

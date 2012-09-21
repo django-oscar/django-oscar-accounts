@@ -19,7 +19,7 @@ class TestAStaffMember(WebTest):
 
     def test_can_create_a_new_account(self):
         list_page = self.app.get(reverse('accounts-list'), user=self.staff)
-        create_page = list_page.click("Create a new account")
+        create_page = list_page.click(linkid="create_new_account")
         create_page.form['name'] = 'Test account'
         create_page.form['initial_amount'] = '120.00'
         response = create_page.form.submit()

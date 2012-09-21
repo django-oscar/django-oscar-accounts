@@ -1,14 +1,15 @@
 from django.conf.urls.defaults import patterns, url
 from django.contrib.admin.views.decorators import staff_member_required
 from django.utils.translation import ugettext_lazy as _
+from django.conf import settings
 
 from oscar.core.application import Application
 from oscar.apps.dashboard.nav import register, Node
 
 from accounts.dashboard import views
 
-node = Node(_('Accounts'))
-node.add_child(Node(_('Code accounts'), 'accounts-list'))
+node = Node(settings.ACCOUNTS_UNIT_NAME + 's')
+node.add_child(Node(_('Giftcards'), 'accounts-list'))
 node.add_child(Node(_('Transfers'), 'transfers-list'))
 register(node, 100)
 

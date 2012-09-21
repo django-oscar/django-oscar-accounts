@@ -1,6 +1,10 @@
 from accounts import abstract_models
 
 
+class AccountType(abstract_models.AccountType):
+    pass
+
+
 class Account(abstract_models.Account):
     pass
 

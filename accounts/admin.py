@@ -1,4 +1,5 @@
 from django.contrib import admin
+from treebeard.admin import TreeAdmin
 
 from accounts import models
 
@@ -22,6 +23,7 @@ class TransactionAdmin(admin.ModelAdmin):
     readonly_fields = ('transfer', 'account', 'amount', 'date_created')
 
 
+admin.site.register(models.AccountType, TreeAdmin)
 admin.site.register(models.Account, AccountAdmin)
 admin.site.register(models.Transfer, TransferAdmin)
 admin.site.register(models.Transaction, TransactionAdmin)

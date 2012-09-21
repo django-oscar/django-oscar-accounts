@@ -3,7 +3,7 @@
 {% load i18n %}
 
 {% block title %}
-{% trans "Accounts" %} | {{ block.super }}
+{{ title }} | {{ block.super }}
 {% endblock %}
 
 {% block breadcrumbs %}
@@ -12,13 +12,13 @@
 	<a href="{% url dashboard:index %}">{% trans "Dashboard" %}</a>
         <span class="divider">/</span>
     </li>
-	<li class="active"><a href=".">{% trans "Accounts" %}</a></li>
+	<li class="active"><a href=".">{{ title }}</a></li>
 </ul>
 {% endblock %}
 
 {% block header %}
 <div class="page-header">
-	<h1>{% trans "Accounts" %}</h1>
+	<h1>{{ title }}</h1>
 </div>
 {% endblock header %}
 
@@ -44,7 +44,6 @@
 				<th>{% trans "Name" %}</th>
 				<th>{% trans "Code" %}</th>
 				<th>{% trans "Status" %}</th>
-				<th>{% trans "Category" %}</th>
 				<th>{% trans "End date" %}</th>
 				<th>{% trans "Start date" %}</th>
 				<th>{% trans "Balance" %}</th>
@@ -58,7 +57,6 @@
 				<td>{{ account.name }}</td>
 				<td>{{ account.code|default:"-" }}</td>
 				<td>{{ account.status }}</td>
-				<td>{{ account.category|default:"-" }}</td>
 				<td>{{ account.start_date|default:"-" }}</td>
 				<td>{{ account.end_date|default:"-" }}</td>
 				<td>{{ account.balance|currency }}</td>
@@ -81,8 +79,8 @@
 			{% include "catalogue/partials/pagination.html" %}
 		{% endif %}
 	{% else %}
-		<p>{% trans "No accounts found." %}</p>
+		<p>{% trans "No results found." %}</p>
 	{% endif %}
 
-	<p><a href="{% url accounts-create %}" class="btn btn-large btn-primary">{% trans "Create a new account" %}</a></p>
+	<p><a id="create_new_account" href="{% url accounts-create %}" class="btn btn-large btn-primary">{% trans "Create a new " %} {{ unit_name|lower }}</a></p>
 {% endblock dashboard_content %}

@@ -8,27 +8,6 @@ from accounts import exceptions
 logger = logging.getLogger('accounts')
 
 
-def source():
-    """
-    Return the 'source' account that is used to transfer funds to customer
-    accounts
-    """
-    return models.Account.objects.get(
-        name=settings.ACCOUNTS_SOURCE_NAME)
-
-
-def sales_account():
-    """
-    Return the 'destination' account
-    """
-    return models.Account.objects.get(
-        name=settings.ACCOUNTS_SALES_NAME)
-
-
-def expired_account():
-    return models.Account.objects.get(
-        name=settings.ACCOUNTS_EXPIRED_NAME)
-
 
 def close_expired_accounts():
     """

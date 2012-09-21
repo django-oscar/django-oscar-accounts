@@ -7,8 +7,6 @@ from django.db.models import get_model
 
 Account = get_model('accounts', 'Account')
 
-CATEGORIES = getattr(settings, 'ACCOUNTS_CATEGORIES', ())
-
 
 class SearchForm(forms.Form):
     name = forms.CharField(required=False)
@@ -24,17 +22,11 @@ class SearchForm(forms.Form):
 class EditAccountForm(forms.ModelForm):
     name = forms.CharField(label=_("Name"), required=True)
 
-    if CATEGORIES:
-        choices = [(c, _(c)) for c in CATEGORIES]
-        category = forms.ChoiceField(label=_("Category"), required=True,
-                                     choices=choices)
-
     class Meta:
         model = Account
-        exclude = ['status', 'code', 'credit_limit', 'balance', 'product_range',
-                   'primary_user', 'secondary_users']
-        if not CATEGORIES:
-            exclude.append('category')
+        exclude = ['status', 'code', 'account_type', 'credit_limit',
+                   'balance', 'product_range', 'primary_user',
+                   'secondary_users']
 
 
 class NewAccountForm(EditAccountForm):
@@ -42,6 +34,17 @@ class NewAccountForm(EditAccountForm):
         min_value=getattr(settings, 'ACCOUNTS_MIN_INITIAL_VALUE', D('0.00')),
         max_value=getattr(settings, 'ACCOUNTS_MAX_INITIAL_VALUE', None),
         decimal_places=2)
+
+    def __init__(self, account_type, *args, **kwargs):
+        self.account_type = account_type
+        super(NewAccountForm, self).__init__(*args, **kwargs)
+
+    def save(self, *args, **kwargs):
+        kwargs['commit'] = False
+        account = super(NewAccountForm, self).save(*args, **kwargs)
+        account.account_type = self.account_type
+        account.save()
+        return account
 
 
 class UpdateAccountForm(EditAccountForm):

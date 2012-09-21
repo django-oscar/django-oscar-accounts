@@ -1,35 +1,23 @@
 from django.db.models.signals import post_syncdb
-from django.conf import settings
 
-from accounts import models
+from accounts import models, names
 
 
 def ensure_core_accounts_exists(sender, **kwargs):
-    create_source_account()
-    create_sales_account()
-    create_expired_account()
-
-
-def create_sales_account():
-    name = getattr(settings, 'ACCOUNTS_SALES_NAME')
-    models.Account.objects.get_or_create(name=name)
-
-
-def create_expired_account():
-    name = getattr(settings, 'ACCOUNTS_EXPIRED_NAME')
-    models.Account.objects.get_or_create(name=name)
-
-
-def create_source_account():
-    # Create a source account if one does not exist
-    if not hasattr(settings, 'ACCOUNTS_SOURCE_NAME'):
-        return
-    # We only create the source account if there are no accounts already
-    # created.
+    # We only create core accounts the first time syncdb is run
     if models.Account.objects.all().count() > 0:
         return
-    name = getattr(settings, 'ACCOUNTS_SOURCE_NAME')
-    models.Account.objects.get_or_create(name=name, credit_limit=None)
+
+    # Create asset accounts
+    assets = models.AccountType.add_root(name='Assets')
+    assets.accounts.create(name=names.REDEMPTIONS)
+    assets.accounts.create(name=names.LAPSED)
+
+    liabilities = models.AccountType.add_root(name='Liabilities')
+    liabilities.accounts.create(name=names.MERCHANT_SOURCE,
+                                credit_limit=None)
+    liabilities.add_child(name="Giftcards")
+    liabilities.add_child(name="User accounts")
 
 
 post_syncdb.connect(ensure_core_accounts_exists, sender=models)
