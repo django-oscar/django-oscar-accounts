@@ -13,6 +13,7 @@ def ensure_core_accounts_exists(sender, **kwargs):
     assets.accounts.create(name=names.REDEMPTIONS)
     assets.accounts.create(name=names.LAPSED)
 
+    # Create liability accounts
     liabilities = models.AccountType.add_root(name='Liabilities')
     liabilities.accounts.create(name=names.MERCHANT_SOURCE,
                                 credit_limit=None)

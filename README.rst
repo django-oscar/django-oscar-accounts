@@ -44,9 +44,9 @@ settings:
 
 * ``ACCOUNTS_SOURCE_NAME`` - The name of the 'source' account which is used to
   transfer funds to other accounts (it has no credit limit).
-* ``ACCOUNTS_SALES_NAME`` - The name of the 'sales' account which is the
+* ``ACCOUNTS_REDEMPTIONS_NAME`` - The name of the 'sales' account which is the
   recipient of any funds used to pay for orders
-* ``ACCOUNTS_EXPIRED_NAME`` - The name of the 'expired' account which is the
+* ``ACCOUNTS_LAPSED_NAME`` - The name of the 'expired' account which is the
   recipient of any funds left if accounts that expire.  A cronjob is used to
   close expired accounts.
 
