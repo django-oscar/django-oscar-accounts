@@ -24,7 +24,8 @@
 
 {% block content %}
 
-<form action="." method="get">
+<form action="." method="post">
+	{% csrf_token %}
 	{% include 'partials/form_fields.html' %}
 	<button type="submit" class="btn btn-large">Fetch account details</button>
 </form>
