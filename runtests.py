@@ -84,7 +84,7 @@ def run_tests(*test_args):
 def generate_migration():
     from south.management.commands.schemamigration import Command
     com = Command()
-    com.handle(app='paypal', initial=True)
+    com.handle(app='accounts', initial=True)
 
 
 if __name__ == '__main__':
