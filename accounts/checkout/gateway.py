@@ -2,7 +2,7 @@ from django.db.models import get_model
 from django.utils.translation import ugettext_lazy as _
 from oscar.apps.payment.exceptions import UnableToTakePayment
 
-from accounts import facade, exceptions, core
+from accounts import facade, exceptions, core, codes
 
 Account = get_model('accounts', 'Account')
 Transfer = get_model('accounts', 'Transfer')
@@ -39,3 +39,13 @@ def redeem(order_number, user, allocations):
     for account, destination, amount in transfers:
         facade.transfer(account, destination, amount,
                         user, "Redeemed to pay for order %s" % order_number)
+
+
+def create_giftcard(order_number, user, amount):
+    source = core.paid_source_account()
+    code = codes.generate()
+    destination = Account.objects.create(
+        code=code
+    )
+    facade.transfer(source, destination, amount, user,
+                    "Create new code-account")
