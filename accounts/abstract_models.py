@@ -52,7 +52,8 @@ class Account(models.Model):
     name = models.CharField(max_length=128, unique=True, null=True,
                             blank=True)
     description = models.TextField(null=True, blank=True)
-    account_type = models.ForeignKey('AccountType', related_name='accounts')
+    account_type = models.ForeignKey('AccountType', related_name='accounts',
+                                     null=True)
 
     # Some account are not linked to a specific user but are activated by
     # entering a code at checkout.
