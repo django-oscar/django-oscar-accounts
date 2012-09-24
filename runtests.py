@@ -84,7 +84,7 @@ def run_tests(*test_args):
 def generate_migration():
     from south.management.commands.schemamigration import Command
     com = Command()
-    com.handle(app='accounts', initial=True)
+    com.handle(app='accounts', auto=True)
 
 
 if __name__ == '__main__':
