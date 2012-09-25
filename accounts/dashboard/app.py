@@ -6,9 +6,10 @@ from oscar.core.application import Application
 from oscar.apps.dashboard.nav import register, Node
 
 from accounts.dashboard import views
+from accounts import names
 
 node = Node(_("Accounts"))
-node.add_child(Node(_('Giftcards'), 'code-accounts-list'))
+node.add_child(Node(_(names.UNIT_NAME_PLURAL), 'code-accounts-list'))
 node.add_child(Node(_('Transfers'), 'transfers-list'))
 register(node, 100)
 

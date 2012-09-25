@@ -1,6 +1,5 @@
 from django.views import generic
 from django.core.urlresolvers import reverse
-from django.conf import settings
 from django import http
 from django.shortcuts import get_object_or_404
 from django.db.models import get_model
@@ -9,7 +8,7 @@ from django.utils.translation import ugettext_lazy as _
 from oscar.templatetags.currency_filters import currency
 
 from accounts.dashboard import forms
-from accounts import facade, codes, core
+from accounts import facade, codes, core, names
 
 AccountType = get_model('accounts', 'AccountType')
 Account = get_model('accounts', 'Account')
@@ -22,13 +21,13 @@ class CodeAccountListView(generic.ListView):
     context_object_name = 'accounts'
     template_name = 'dashboard/accounts/account_list.html'
     form_class = forms.SearchForm
-    description = _("All %ss") % settings.ACCOUNTS_UNIT_NAME
+    description = _("All %s") % names.UNIT_NAME_PLURAL.lower()
 
     def get_context_data(self, **kwargs):
         ctx = super(CodeAccountListView, self).get_context_data(**kwargs)
         ctx['form'] = self.form
-        ctx['title'] = "%ss" % settings.ACCOUNTS_UNIT_NAME
-        ctx['unit_name'] = settings.ACCOUNTS_UNIT_NAME
+        ctx['title'] = names.UNIT_NAME_PLURAL
+        ctx['unit_name'] = names.UNIT_NAME
         ctx['queryset_description'] = self.description
         return ctx
 
@@ -52,7 +51,7 @@ class CodeAccountListView(generic.ListView):
         desc_template = _(
             "%(status)s %(unit)ss %(code_filter)s %(name_filter)s")
         desc_ctx = {
-            'unit': settings.ACCOUNTS_UNIT_NAME.lower(),
+            'unit': names.UNIT_NAME.lower(),
             'status': "All",
             'code_filter': "",
             'name_filter': "",
@@ -82,7 +81,7 @@ class CodeAccountCreateView(generic.CreateView):
 
     def get_context_data(self, **kwargs):
         ctx = super(CodeAccountCreateView, self).get_context_data(**kwargs)
-        ctx['title'] = _("Create a new %s") % settings.ACCOUNTS_UNIT_NAME
+        ctx['title'] = _("Create a new %s") % names.UNIT_NAME.lower()
         return ctx
 
     def get_account_type(self):

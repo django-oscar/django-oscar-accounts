@@ -1,5 +1,10 @@
 from django.conf import settings
 
+# The basic name of the account.  Some projects will refer to them as
+# giftcards, budgets or credit allocations
+UNIT_NAME = getattr(settings, 'ACCOUNTS_UNIT_NAME', 'Giftcard')
+UNIT_NAME_PLURAL = getattr(settings, 'ACCOUNTS_UNIT_NAME_PLURAL',
+                           "%ss" % UNIT_NAME)
 
 # Account where money is transferred to when an account is used to pay for an
 # order.
