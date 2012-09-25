@@ -34,23 +34,29 @@ class ValidAccountForm(forms.Form):
 class AllocationForm(forms.Form):
     amount = forms.DecimalField(label=_("Allocation"), min_value=D('0.01'))
 
-    def __init__(self, order_total_incl_tax, account, allocations,
+    def __init__(self, account, basket, order_total, allocations,
                  *args, **kwargs):
         """
-        :order_total_incl_tax: Order total
-        :account: An account instance
+        :account: Account to allocate from
+        :basket: The basket to pay for
+        :order_total: Order total
         :allocations: Allocations instance
         """
-        self.order_total_incl_tax = order_total_incl_tax
         self.account = account
+        self.basket = basket
+        self.order_total = order_total
         self.allocations = allocations
         initial = {
             'amount': self.get_max_amount()}
         super(AllocationForm, self).__init__(initial=initial, *args, **kwargs)
+        if self.account.product_range:
+            self.fields['amount'].help_text = (
+                "Restrictions apply to which products can be paid for")
 
     def get_max_amount(self):
-        return min(self.account.balance,
-                   self.order_total_incl_tax - self.allocations.total)
+        max_allocation = self.account.permitted_allocation(
+            self.basket, self.order_total)
+        return max_allocation - self.allocations.total
 
     def clean_amount(self):
         amt = self.cleaned_data.get('amount')

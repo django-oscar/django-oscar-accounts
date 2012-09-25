@@ -28,7 +28,7 @@
 		</div>
 		<input type="hidden" name="action" value="allocate" />
 		{% include 'partials/form_fields.html' with form=allocation_form %}
-		<button type="submit" class="btn btn-primary">Allocate</button> or
+		<button type="submit" class="btn btn-primary btn-large">Allocate</button> or
 		<a href="{% url checkout:payment-details %}">cancel</a>.
 	</form>
 {% endif %}

@@ -26,7 +26,8 @@ class PaymentDetailsView(views.PaymentDetailsView):
             form = forms.ValidAccountForm(self.request.GET)
             if form.is_valid():
                 ctx['allocation_form'] = forms.AllocationForm(
-                    ctx['order_total_incl_tax'], form.account,
+                    form.account, self.request.basket,
+                    ctx['order_total_incl_tax'],
                     self.get_account_allocations())
         else:
             form = forms.ValidAccountForm()
@@ -84,7 +85,8 @@ class PaymentDetailsView(views.PaymentDetailsView):
         # Account is still valid, now check requested allocation
         ctx = self.get_context_data()
         allocation_form = forms.AllocationForm(
-            ctx['order_total_incl_tax'], account_form.account,
+            account_form.account, self.request.basket,
+            ctx['order_total_incl_tax'],
             self.get_account_allocations(),
             data=self.request.POST)
         if not allocation_form.is_valid():

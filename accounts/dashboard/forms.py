@@ -24,11 +24,15 @@ class SearchForm(forms.Form):
 class EditAccountForm(forms.ModelForm):
     name = forms.CharField(label=_("Name"), required=True)
 
+    def __init__(self, *args, **kwargs):
+        super(EditAccountForm, self).__init__(*args, **kwargs)
+        self.fields['product_range'].help_text = (
+            "You may need to create a product range first")
+
     class Meta:
         model = Account
         exclude = ['status', 'code', 'account_type', 'credit_limit',
-                   'balance', 'product_range', 'primary_user',
-                   'secondary_users']
+                   'balance', 'primary_user', 'secondary_users']
 
 
 class NewAccountForm(EditAccountForm):

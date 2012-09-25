@@ -143,6 +143,19 @@ class Account(models.Model):
         available = self.balance + self.credit_limit
         return amount <= available
 
+    def permitted_allocation(self, basket, total):
+        """
+        Return max permitted allocation from this account to pay for the passed
+        basket
+        """
+        if not self.product_range:
+            return min(total, self.balance)
+        range_total = D('0.00')
+        for line in basket.all_lines():
+            if self.product_range.contains_product(line.product):
+                range_total += line.line_price_incl_tax_and_discounts
+        return min(range_total, total, self.balance)
+
     def is_open(self):
         return self.status == self.__class__.OPEN
 
