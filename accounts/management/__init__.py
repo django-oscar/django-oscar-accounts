@@ -15,7 +15,7 @@ def ensure_core_accounts_exists(sender, **kwargs):
     liabilities = models.AccountType.add_root(name='Liabilities')
     liabilities.accounts.create(name=names.MERCHANT_SOURCE,
                                 credit_limit=None)
-    liabilities.add_child(name="Giftcards")
+    liabilities.add_child(name=names.UNIT_NAME_PLURAL)
     liabilities.add_child(name="User accounts")
 
 
