@@ -6,8 +6,10 @@ from django.utils.translation import ugettext_lazy as _
 from django.db.models import get_model
 
 from oscar.templatetags.currency_filters import currency
+from accounts import codes, names
 
 Account = get_model('accounts', 'Account')
+AccountType = get_model('accounts', 'AccountType')
 
 
 class SearchForm(forms.Form):
@@ -31,7 +33,7 @@ class EditAccountForm(forms.ModelForm):
 
     class Meta:
         model = Account
-        exclude = ['status', 'code', 'account_type', 'credit_limit',
+        exclude = ['status', 'code', 'credit_limit',
                    'balance', 'primary_user', 'secondary_users']
 
 
@@ -41,14 +43,18 @@ class NewAccountForm(EditAccountForm):
         max_value=getattr(settings, 'ACCOUNTS_MAX_ACCOUNT_VALUE', None),
         decimal_places=2)
 
-    def __init__(self, account_type, *args, **kwargs):
-        self.account_type = account_type
-        super(NewAccountForm, self).__init__(*args, **kwargs)
+    deferred_income = AccountType.objects.get(name=names.DEFERRED_INCOME)
+    account_type = forms.ModelChoiceField(
+        queryset=deferred_income.get_children())
+
+    unpaid_sources = AccountType.objects.get(name=names.UNPAID_ACCOUNT_TYPE)
+    source_account = forms.ModelChoiceField(
+        queryset=unpaid_sources.accounts.all())
 
     def save(self, *args, **kwargs):
         kwargs['commit'] = False
         account = super(NewAccountForm, self).save(*args, **kwargs)
-        account.account_type = self.account_type
+        account.code = codes.generate()
         account.save()
         return account
 

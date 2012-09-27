@@ -1,4 +1,5 @@
 from accounts import models, names
+from django.db.models import signals
 
 
 def ensure_core_accounts_exists(sender, **kwargs):
@@ -6,17 +7,45 @@ def ensure_core_accounts_exists(sender, **kwargs):
     if models.Account.objects.all().count() > 0:
         return
 
+    # Default structure is:
+    #
+    # - Assets
+    #   - Sales
+    #     * Account redemptions
+    #     * Lapsed accounts
+    #   - Cash
+    #     * Bank
+    #   - Unpaid sources
+    #     * eg "Customer services compensation"
+    #     * eg "Merchant funded"
+    #     * ...
+    # - Liabilities
+    #   - Deferred income
+    #     - Customer-service-created accounts
+    #       * Account 1234
+    #       * Account 1235
+    #     - $10 accounts
+    #       * Account 1234
+    #       * Account 1235
+    #     - $20 account
+    #       * Account 1234
+    #       * Account 1235
+
     # Create asset accounts
     assets = models.AccountType.add_root(name='Assets')
-    assets.accounts.create(name=names.REDEMPTIONS)
-    assets.accounts.create(name=names.LAPSED)
+    sales = assets.add_child(name="Sales")
+    sales.accounts.create(name=names.REDEMPTIONS)
+    sales.accounts.create(name=names.LAPSED)
+    cash = assets.add_child(name="Cash")
+    cash.accounts.create(name="Bank", credit_limit=None)
+    unpaid = assets.add_child(name=names.UNPAID_ACCOUNT_TYPE)
+    for name in names.UNPAID_ACCOUNTS:
+        unpaid.accounts.create(name=name, credit_limit=None)
 
     # Create liability accounts
     liabilities = models.AccountType.add_root(name='Liabilities')
-    liabilities.accounts.create(name=names.MERCHANT_SOURCE,
-                                credit_limit=None)
-    liabilities.add_child(name=names.UNIT_NAME_PLURAL)
-    liabilities.add_child(name="User accounts")
+    income = liabilities.add_child(name=names.DEFERRED_INCOME)
+    for name in names.DEFERRED_INCOME_ACCOUNT_TYPES:
+        income.add_child(name=name)
 
-
-#post_syncdb.connect(ensure_core_accounts_exists, sender=models)
+signals.post_syncdb.connect(ensure_core_accounts_exists, sender=models)

@@ -8,7 +8,7 @@ from django.utils.translation import ugettext_lazy as _
 from oscar.templatetags.currency_filters import currency
 
 from accounts.dashboard import forms
-from accounts import facade, codes, core, names
+from accounts import facade, names, exceptions
 
 AccountType = get_model('accounts', 'AccountType')
 Account = get_model('accounts', 'Account')
@@ -32,10 +32,7 @@ class CodeAccountListView(generic.ListView):
         return ctx
 
     def get_queryset(self):
-        account_type = AccountType.objects.get(
-            name="Giftcards")
-        queryset = self.model.objects.filter(
-            account_type=account_type)
+        queryset = self.model.objects.all()
         if 'code' not in self.request.GET:
             # Form not submitted
             self.form = self.form_class()
@@ -84,29 +81,24 @@ class CodeAccountCreateView(generic.CreateView):
         ctx['title'] = _("Create a new %s") % names.UNIT_NAME.lower()
         return ctx
 
-    def get_account_type(self):
-        return AccountType.objects.get(name="Giftcards")
-
-    def get_form_kwargs(self):
-        kwargs = super(CodeAccountCreateView, self).get_form_kwargs()
-        kwargs['account_type'] = self.get_account_type()
-        return kwargs
-
     def form_valid(self, form):
-        # Create new account and make a transfer from the global source account
-        account = form.save(commit=False)
-        code = codes.generate()
-        account.code = code
-        account.save()
+        account = form.save()
 
+        # Load transaction
+        source = form.cleaned_data['source_account']
         amount = form.cleaned_data['initial_amount']
-        facade.transfer(core.unpaid_source_account(), account, amount,
-                        user=self.request.user,
-                        description=_("Creation of account"))
-        messages.success(
-            self.request,
-            _("New account created with code '%s'") % code)
-
+        try:
+            facade.transfer(source, account, amount,
+                            user=self.request.user,
+                            description=_("Creation of account"))
+        except exceptions.AccountException, e:
+            messages.error(self.request,
+                _("Account created but unable to load funds onto new "
+                  "account: %s") % e)
+        else:
+            messages.success(
+                self.request,
+                _("New account created with code '%s'") % account.code)
         return http.HttpResponseRedirect(
             reverse('accounts-detail', kwargs={'pk': account.id}))
 
