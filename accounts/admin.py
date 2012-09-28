@@ -23,7 +23,14 @@ class TransactionAdmin(admin.ModelAdmin):
     readonly_fields = ('transfer', 'account', 'amount', 'date_created')
 
 
+class IPAddressAdmin(admin.ModelAdmin):
+    list_display = ['ip_address', 'total_failures', 'consecutive_failures',
+                    'is_temporarily_blocked', 'is_permanently_blocked', 'date_last_failure']
+    readonly_fields = ('ip_address', 'total_failures', 'date_last_failure')
+
+
 admin.site.register(models.AccountType, TreeAdmin)
 admin.site.register(models.Account, AccountAdmin)
 admin.site.register(models.Transfer, TransferAdmin)
 admin.site.register(models.Transaction, TransactionAdmin)
+admin.site.register(models.IPAddressRecord, IPAddressAdmin)

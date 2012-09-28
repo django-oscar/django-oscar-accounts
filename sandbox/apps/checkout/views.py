@@ -11,6 +11,7 @@ from django.utils.translation import ugettext_lazy as _
 from accounts.checkout import forms
 from accounts.checkout.allocation import Allocations
 from accounts.checkout import gateway
+from accounts import security
 
 
 class PaymentDetailsView(views.PaymentDetailsView):
@@ -20,17 +21,11 @@ class PaymentDetailsView(views.PaymentDetailsView):
     def get_context_data(self, **kwargs):
         ctx = super(PaymentDetailsView, self).get_context_data(**kwargs)
 
-        # If account form has been submitted, validate it and show the
-        # allocation form if the account has non-zero balance
-        if 'code' in self.request.GET:
-            form = forms.ValidAccountForm(self.request.GET)
-            if form.is_valid():
-                ctx['allocation_form'] = forms.AllocationForm(
-                    form.account, self.request.basket,
-                    ctx['order_total_incl_tax'],
-                    self.get_account_allocations())
-        else:
-            form = forms.ValidAccountForm()
+        # Add variable to indicate if the user is blocked from paying with
+        # accounts.
+        ctx['is_blocked'] = security.is_blocked(self.request)
+
+        form = forms.ValidAccountForm()
         ctx['account_form'] = form
 
         # Add existing allocations to context
@@ -44,7 +39,9 @@ class PaymentDetailsView(views.PaymentDetailsView):
         # Intercept POST requests to look for attempts to allocate to an
         # account, or remove an allocation.
         action = self.request.POST.get('action', None)
-        if action == 'allocate':
+        if action == 'select_account':
+            return self.select_account(request)
+        elif action == 'allocate':
             return self.add_allocation(request)
         elif action == 'remove_allocation':
             return self.remove_allocation(request)
@@ -71,6 +68,31 @@ class PaymentDetailsView(views.PaymentDetailsView):
         self.add_payment_event("Settle", total)
 
     # Custom form-handling methods
+
+    def select_account(self, request):
+        ctx = self.get_context_data()
+
+        # Check for blocked users
+        if security.is_blocked(request):
+            messages.error(request,
+                           "You are currently blocked from using accounts")
+            return http.HttpResponseRedirect(
+                reverse('checkout:payment-deatils'))
+
+        # If account form has been submitted, validate it and show the
+        # allocation form if the account has non-zero balance
+        form = forms.ValidAccountForm(self.request.POST)
+        if not form.is_valid():
+            security.record_failed_request(self.request)
+            ctx['account_form'] = form
+            return self.render_to_response(ctx)
+
+        security.record_successful_request(self.request)
+        ctx['allocation_form'] = forms.AllocationForm(
+            form.account, self.request.basket,
+            ctx['order_total_incl_tax'],
+            self.get_account_allocations())
+        return self.render_to_response(ctx)
 
     def add_allocation(self, request):
         # We have two forms to validate, first check the account form

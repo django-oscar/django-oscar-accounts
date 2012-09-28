@@ -7,11 +7,17 @@
 </div>
 
 {% if not allocation_form %}
-    {# 1. Initial load of page - show form to look up account #}
-	<form action="." method="get">
+    {# 1. Initial load of page - show form to look up account if they are not blocked #}
+	{% if is_blocked %}
+	<p>You are blocked.</p>
+	{% else %}
+	<form action="." method="post">
+		{% csrf_token %}
+		<input type="hidden" name="action" value="select_account" />
 		{% include 'partials/form_fields.html' with form=account_form %}
 		<button type="submit" class="btn btn-primary">Check balance</button>
 	</form>
+	{% endif %}
 {% else %}
 	{# 2. An account has been found - choose allocation #}
 	{% with account=allocation_form.account %}
@@ -21,10 +27,12 @@
 			<th>Name</th>
 			<td>{{ account.name }}</td>
 		</tr>
+		{% if account.description %}
 		<tr>
 			<th>Description</th>
 			<td>{{ account.description }}</td>
 		</tr>
+		{% endif %}
 		{% if account.end_date %}
 		<tr>
 			<th>Expiry date</th>

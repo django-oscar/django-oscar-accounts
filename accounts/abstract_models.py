@@ -315,7 +315,7 @@ class Transaction(models.Model):
 
 
 class IPAddressRecord(models.Model):
-    ip_address = models.IPAddressField(unique=True)
+    ip_address = models.IPAddressField(_("IP address"), unique=True)
     total_failures = models.PositiveIntegerField(default=0)
     consecutive_failures = models.PositiveIntegerField(default=0)
     date_created = models.DateTimeField(auto_now_add=True)
@@ -333,6 +333,8 @@ class IPAddressRecord(models.Model):
 
     class Meta:
         abstract = True
+        verbose_name = _("IP address record")
+        verbose_name_plural = _("IP address records")
 
     def increment_failures(self):
         self.total_failures += 1
@@ -349,22 +351,18 @@ class IPAddressRecord(models.Model):
         self.save()
 
     def is_blocked(self):
+        return (self.is_temporarily_blocked() or
+                self.is_permanently_blocked())
+
+    def is_temporarily_blocked(self):
         if self.consecutive_failures < self.FREEZE_THRESHOLD:
             return False
-
-        if self.total_failures > self.BLOCK_THRESHOLD:
-            return True
-
-        # You must have more than the freeze threshold number of
-        # consecutive failures before any blocking kicks in.
-        if self.consecutive_failures >= self.FREEZE_THRESHOLD:
-            return True
 
         # If you've had several consecutive failures, we impose a miniumum
         # period between each allowed request.
         now = datetime.datetime.now()
         time_since_last_failure = now - self.date_last_failure
-        if time_since_last_failure.seconds < self.COOLING_OFF_PERIOD:
-            return True
+        return time_since_last_failure.seconds < self.COOLING_OFF_PERIOD
 
-        return False
+    def is_permanently_blocked(self):
+        return self.total_failures > self.BLOCK_THRESHOLD
