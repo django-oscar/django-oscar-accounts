@@ -29,7 +29,32 @@
 {% block dashboard_content %}
 <form action="." method="post">
 	{% csrf_token %}
-	{% include 'partials/form_fields.html' %}
+	<span class="help-block">{{ form.non_field_errors }}</span>
+	{% include 'partials/form_field.html' with field=form.name %}
+	{% include 'partials/form_field.html' with field=form.description %}
+	{% include 'partials/form_field.html' with field=form.account_type %}
+
+	<legend>{% trans "Initial transaction" %}</legend>
+	{% include 'partials/form_field.html' with field=form.source_account %}
+	{% include 'partials/form_field.html' with field=form.initial_amount %}
+
+	<legend>{% trans "Restrictions" %}</legend>
+	<p><a class="form-toggle" href="#">Restrict WHEN the account can be used</a></p>
+	<div style="display:none">
+		{% include 'partials/form_field.html' with field=form.start_date %}
+		{% include 'partials/form_field.html' with field=form.end_date %}
+	</div>
+	<p><a class="form-toggle" href="#">Restrict WHO can use the account</a></p>
+	<div style="display:none">
+		{% include 'partials/form_field.html' with field=form.primary_user %}
+		{% include 'partials/form_field.html' with field=form.secondary_users %}
+	</div>
+	<p><a class="form-toggle" href="#">Restrict WHAT can be bought</a></p>
+	<div style="display:none">
+		{% include 'partials/form_field.html' with field=form.product_range %}
+		{% include 'partials/form_field.html' with field=form.can_be_used_for_non_products %}
+	</div>
+
 	<div class="form-actions">
 		<button class="btn btn-primary btn-large" type="submit">{% trans "Save" %}</button> 
 		{% trans "or" %}
@@ -38,3 +63,10 @@
 </form>
 
 {% endblock dashboard_content %}
+
+{% block onbodyload %}
+$('a.form-toggle').click(function(){
+    $($(this)[0].parentNode.nextElementSibling).toggle();
+	return false;
+});
+{% endblock %}

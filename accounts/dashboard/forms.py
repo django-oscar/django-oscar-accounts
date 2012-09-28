@@ -33,8 +33,7 @@ class EditAccountForm(forms.ModelForm):
 
     class Meta:
         model = Account
-        exclude = ['status', 'code', 'credit_limit',
-                   'balance', 'primary_user', 'secondary_users']
+        exclude = ['status', 'code', 'credit_limit', 'balance']
 
 
 class NewAccountForm(EditAccountForm):
