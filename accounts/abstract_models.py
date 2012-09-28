@@ -78,7 +78,8 @@ class Account(models.Model):
     # This is the limit to which the account can do into debt.  The default is
     # zero which means the account cannot run a negative balance.
     credit_limit = models.DecimalField(decimal_places=2, max_digits=12,
-                                       default=D('0.00'), null=True)
+                                       default=D('0.00'), null=True,
+                                       blank=True)
 
     # For performance, we keep a cached balance
     balance = models.DecimalField(decimal_places=2, max_digits=12,

@@ -2,6 +2,7 @@ from decimal import Decimal as D
 
 from django import forms
 from django.conf import settings
+from django.core import exceptions
 from django.utils.translation import ugettext_lazy as _
 from django.db.models import get_model
 
@@ -42,10 +43,6 @@ class NewAccountForm(EditAccountForm):
         max_value=getattr(settings, 'ACCOUNTS_MAX_ACCOUNT_VALUE', None),
         decimal_places=2)
 
-    unpaid_sources = AccountType.objects.get(name=names.UNPAID_ACCOUNT_TYPE)
-    source_account = forms.ModelChoiceField(
-        queryset=unpaid_sources.accounts.all())
-
     def __init__(self, *args, **kwargs):
         super(NewAccountForm, self).__init__(*args, **kwargs)
 
@@ -58,6 +55,22 @@ class NewAccountForm(EditAccountForm):
         elif types.count() == 1:
             del self.fields['account_type']
             self._account_type = types[0]
+        else:
+            raise exceptions.ImproperlyConfigured(
+                "You need to define some 'deferred income' account types")
+
+        # Add field for source account (if there is a choice)
+        unpaid_sources = AccountType.objects.get(
+            name=names.UNPAID_ACCOUNT_TYPE)
+        sources = unpaid_sources.accounts.all()
+        if sources.count() > 1:
+            self.fields['source_account'] = forms.ModelChoiceField(
+                queryset=unpaid_sources.accounts.all())
+        elif sources.count() == 1:
+            self._source_account = sources[0]
+        else:
+            raise exceptions.ImproperlyConfigured(
+                "You need to define some 'unpaid source' accounts")
 
     def save(self, *args, **kwargs):
         kwargs['commit'] = False
@@ -67,6 +80,11 @@ class NewAccountForm(EditAccountForm):
             account.account_type = self._account_type
         account.save()
         return account
+
+    def get_source_account(self):
+        if 'source_account' in self.cleaned_data:
+            return self.cleaned_data['source_account']
+        return self._source_account
 
 
 class UpdateAccountForm(EditAccountForm):

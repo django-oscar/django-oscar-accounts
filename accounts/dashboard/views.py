@@ -90,7 +90,7 @@ class CodeAccountCreateView(generic.CreateView):
         account = form.save()
 
         # Load transaction
-        source = form.cleaned_data['source_account']
+        source = form.get_source_account()
         amount = form.cleaned_data['initial_amount']
         try:
             facade.transfer(source, account, amount,
