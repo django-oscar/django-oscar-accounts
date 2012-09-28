@@ -9,27 +9,37 @@ def ensure_core_accounts_exists(sender, **kwargs):
 
     # Default structure is:
     #
+    # - Sales
+    #   - Recognised income
+    #     * Account redemptions (C)
+    #     * Lapsed accounts (D)
     # - Assets
-    #   - Sales
-    #     * Account redemptions
-    #     * Lapsed accounts
     #   - Cash
     #     * Bank
+    # - Costs
     #   - Unpaid sources
-    #     * eg "Customer services compensation"
+    #     * eg "Customer services compensation" (B)
     #     * eg "Merchant funded"
     #     * ...
     # - Liabilities
     #   - Deferred income
     #     - Customer-service-created accounts
-    #       * Account 1234
+    #       * Account 1234 (A)
     #       * Account 1235
     #     - $10 accounts
     #       * Account 1234
     #       * Account 1235
-    #     - $20 account
+    #     - $20 accounts
     #       * Account 1234
     #       * Account 1235
+
+    # Typical stories:
+    #
+    # * Admin creates a new budget: (B->A)
+    #   - create a new account with account-type "Customer-service-created accounts"
+    #   - transfer from "Customer services compensation" to this account
+    # * Customer redeems budget to pay for an order: (A->C)
+    # * Budget expires and is closed (A->D)
 
     # Create asset accounts
     assets = models.AccountType.add_root(name='Assets')
