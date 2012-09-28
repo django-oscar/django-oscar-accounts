@@ -31,7 +31,7 @@ class ExpiredAccountManager(models.Manager):
 
 
 class AccountType(MP_Node):
-    code = models.CharField(max_length=128, unique=True, null=True)
+    code = models.CharField(max_length=128, unique=True, null=True, blank=True)
     name = models.CharField(max_length=128)
 
     class Meta:

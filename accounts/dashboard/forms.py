@@ -42,18 +42,29 @@ class NewAccountForm(EditAccountForm):
         max_value=getattr(settings, 'ACCOUNTS_MAX_ACCOUNT_VALUE', None),
         decimal_places=2)
 
-    deferred_income = AccountType.objects.get(name=names.DEFERRED_INCOME)
-    account_type = forms.ModelChoiceField(
-        queryset=deferred_income.get_children())
-
     unpaid_sources = AccountType.objects.get(name=names.UNPAID_ACCOUNT_TYPE)
     source_account = forms.ModelChoiceField(
         queryset=unpaid_sources.accounts.all())
+
+    def __init__(self, *args, **kwargs):
+        super(NewAccountForm, self).__init__(*args, **kwargs)
+
+        # Add field for account type (if there is a choice)
+        deferred_income = AccountType.objects.get(name=names.DEFERRED_INCOME)
+        types = deferred_income.get_children()
+        if types.count() > 1:
+            self.fields['account_type'] = forms.ModelChoiceField(
+                queryset=types)
+        elif types.count() == 1:
+            del self.fields['account_type']
+            self._account_type = types[0]
 
     def save(self, *args, **kwargs):
         kwargs['commit'] = False
         account = super(NewAccountForm, self).save(*args, **kwargs)
         account.code = codes.generate()
+        if hasattr(self, '_account_type'):
+            account.account_type = self._account_type
         account.save()
         return account
 
