@@ -18,6 +18,10 @@ UNPAID_ACCOUNTS = getattr(settings, 'ACCOUNTS_UNPAID_SOURCES',
                           ('Unpaid source',))
 
 # Account types
+# =============
+
+# Accounts that hold money waiting to be spent
+LIABILITIES = 'Liabilities'
 
 UNPAID_ACCOUNT_TYPE = "Unpaid accounts"
 

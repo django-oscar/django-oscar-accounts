@@ -32,7 +32,12 @@ class CodeAccountListView(generic.ListView):
         return ctx
 
     def get_queryset(self):
-        queryset = self.model.objects.all()
+        # We only show accounts that have an account type that is a child of
+        # "Deferred income".
+        deferred_income = AccountType.objects.get(name=names.DEFERRED_INCOME)
+        queryset = Account.objects.filter(
+            account_type__in=deferred_income.get_children())
+
         if 'code' not in self.request.GET:
             # Form not submitted
             self.form = self.form_class()

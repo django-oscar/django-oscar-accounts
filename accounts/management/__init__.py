@@ -53,7 +53,7 @@ def ensure_core_accounts_exists(sender, **kwargs):
         unpaid.accounts.create(name=name, credit_limit=None)
 
     # Create liability accounts
-    liabilities = models.AccountType.add_root(name='Liabilities')
+    liabilities = models.AccountType.add_root(name=names.LIABILITIES)
     income = liabilities.add_child(name=names.DEFERRED_INCOME)
     for name in names.DEFERRED_INCOME_ACCOUNT_TYPES:
         income.add_child(name=name)
