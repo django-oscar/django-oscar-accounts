@@ -1,4 +1,5 @@
 from decimal import Decimal as D
+import re
 
 from django import forms
 from django.utils.translation import ugettext_lazy as _
@@ -12,7 +13,8 @@ class ValidAccountForm(forms.Form):
     code = forms.CharField(label=_("Account code"))
 
     def clean_code(self):
-        code = self.cleaned_data['code'].strip()
+        code = self.cleaned_data['code'].strip().upper()
+        code = code.replace('-', '')
         try:
             self.account = Account.objects.get(
                 code=code)
