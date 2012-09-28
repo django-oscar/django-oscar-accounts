@@ -15,10 +15,29 @@
 {% else %}
 	{# 2. An account has been found - choose allocation #}
 	{% with account=allocation_form.account %}
-	<p>The account with code {{ account.code }} has a balance of {{ account.balance|currency }}.
-		{% if account.end_date %}This account expires on {{ account.end_date }}.{% endif %}
-	</p>
+	<h3>Account</h3>
+	<table class="table">
+		<tr>
+			<th>Name</th>
+			<td>{{ account.name }}</td>
+		</tr>
+		<tr>
+			<th>Description</th>
+			<td>{{ account.description }}</td>
+		</tr>
+		{% if account.end_date %}
+		<tr>
+			<th>Expiry date</th>
+			<td>{{ account.end_date }}</td>
+		</tr>
+		{% endif %}
+		<tr>
+			<th>Balance</th>
+			<td>{{ account.balance|currency }}</td>
+		</tr>
+	</table>
 	{% endwith %}
+	<h3>Choose allocation</h3>
 	<p>The order total is {{ order_total_incl_tax|currency }}.</p>
 	<form action="." method="post">
 		{% csrf_token %}

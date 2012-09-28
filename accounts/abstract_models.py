@@ -51,7 +51,9 @@ class Account(models.Model):
     # Metadata
     name = models.CharField(max_length=128, unique=True, null=True,
                             blank=True)
-    description = models.TextField(null=True, blank=True)
+    description = models.TextField(
+        null=True, blank=True, help_text=_(
+            "This text is shown to customers during checkout"))
     account_type = models.ForeignKey('AccountType', related_name='accounts',
                                      null=True)
 
