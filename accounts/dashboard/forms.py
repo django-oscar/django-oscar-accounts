@@ -32,20 +32,6 @@ class EditAccountForm(forms.ModelForm):
         self.fields['product_range'].help_text = (
             "You may need to create a product range first")
 
-    class Meta:
-        model = Account
-        exclude = ['status', 'code', 'credit_limit', 'balance']
-
-
-class NewAccountForm(EditAccountForm):
-    initial_amount = forms.DecimalField(
-        min_value=getattr(settings, 'ACCOUNTS_MIN_LOAD_VALUE', D('0.00')),
-        max_value=getattr(settings, 'ACCOUNTS_MAX_ACCOUNT_VALUE', None),
-        decimal_places=2)
-
-    def __init__(self, *args, **kwargs):
-        super(NewAccountForm, self).__init__(*args, **kwargs)
-
         # Add field for account type (if there is a choice)
         deferred_income = AccountType.objects.get(name=names.DEFERRED_INCOME)
         types = deferred_income.get_children()
@@ -58,6 +44,44 @@ class NewAccountForm(EditAccountForm):
         else:
             raise exceptions.ImproperlyConfigured(
                 "You need to define some 'deferred income' account types")
+
+    class Meta:
+        model = Account
+        exclude = ['status', 'code', 'credit_limit', 'balance']
+
+
+class SourceAccountMixin(object):
+
+    def __init__(self, *args, **kwargs):
+        super(SourceAccountMixin, self).__init__(*args, **kwargs)
+
+        # Add field for source account (if there is a choice)
+        unpaid_sources = AccountType.objects.get(
+            name=names.UNPAID_ACCOUNT_TYPE)
+        sources = unpaid_sources.accounts.all()
+        if sources.count() > 1:
+            self.fields['source_account'] = forms.ModelChoiceField(
+                queryset=unpaid_sources.accounts.all())
+        elif sources.count() == 1:
+            self._source_account = sources[0]
+        else:
+            raise exceptions.ImproperlyConfigured(
+                "You need to define some 'unpaid source' accounts")
+
+    def get_source_account(self):
+        if 'source_account' in self.cleaned_data:
+            return self.cleaned_data['source_account']
+        return self._source_account
+
+
+class NewAccountForm(SourceAccountMixin, EditAccountForm):
+    initial_amount = forms.DecimalField(
+        min_value=getattr(settings, 'ACCOUNTS_MIN_LOAD_VALUE', D('0.00')),
+        max_value=getattr(settings, 'ACCOUNTS_MAX_ACCOUNT_VALUE', None),
+        decimal_places=2)
+
+    def __init__(self, *args, **kwargs):
+        super(NewAccountForm, self).__init__(*args, **kwargs)
 
         # Add field for source account (if there is a choice)
         unpaid_sources = AccountType.objects.get(
@@ -114,7 +138,7 @@ class ThawAccountForm(ChangeStatusForm):
     new_status = Account.OPEN
 
 
-class TopUpAccountForm(forms.Form):
+class TopUpAccountForm(SourceAccountMixin, forms.Form):
     amount = forms.DecimalField(
         min_value=getattr(settings, 'ACCOUNTS_MIN_LOAD_VALUE', D('0.00')),
         max_value=getattr(settings, 'ACCOUNTS_MAX_ACCOUNT_VALUE', None),

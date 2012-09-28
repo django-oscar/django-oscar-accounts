@@ -34,9 +34,11 @@
 	{% include 'partials/form_field.html' with field=form.description %}
 	{% include 'partials/form_field.html' with field=form.account_type %}
 
-	<legend>{% trans "Initial transaction" %}</legend>
-	{% include 'partials/form_field.html' with field=form.source_account %}
-	{% include 'partials/form_field.html' with field=form.initial_amount %}
+	{% if form.initial_amount %}
+		<legend>{% trans "Initial transaction" %}</legend>
+		{% include 'partials/form_field.html' with field=form.source_account %}
+		{% include 'partials/form_field.html' with field=form.initial_amount %}
+	{% endif %}
 
 	<legend>{% trans "Restrictions" %}</legend>
 	<p><a class="form-toggle" href="#">Restrict WHEN the account can be used</a></p>

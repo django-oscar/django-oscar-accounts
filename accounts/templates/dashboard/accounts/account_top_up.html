@@ -27,13 +27,14 @@
 {% endblock header %}
 
 {% block dashboard_content %}
-
 	{% include 'dashboard/accounts/partials/account_detail.html' %}
 
 	{% if account.is_open %}
 	<form action="." method="post">
 		{% csrf_token %}
-		{% include 'partials/form_fields.html' %}
+		<legend>Transaction</legend>
+		{% include 'partials/form_field.html' with field=form.source_account %}
+		{% include 'partials/form_field.html' with field=form.amount %}
 		<button type="submit" class="btn btn-large btn-success">{% trans "Save" %}</button>
 	</form>
 	{% else %}

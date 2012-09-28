@@ -150,7 +150,7 @@ class AccountTopUpView(generic.UpdateView):
     def form_valid(self, form):
         account = self.object
         amount = form.cleaned_data['amount']
-        facade.transfer(facade.source(), account, amount,
+        facade.transfer(form.get_source_account(), account, amount,
                         user=self.request.user,
                         description=_("Top-up account"))
         messages.success(
