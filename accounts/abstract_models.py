@@ -72,7 +72,7 @@ class Account(models.Model):
     # Track the status of a account - this is often used so that expired
     # account can have their money transferred back to some parent account and
     # then be closed.
-    OPEN, FROZEN, CLOSED = 'Open', 'Frozen',  'Closed'
+    OPEN, FROZEN, CLOSED = 'Open', 'Frozen', 'Closed'
     status = models.CharField(max_length=32, default=OPEN)
 
     # This is the limit to which the account can do into debt.  The default is
@@ -93,6 +93,10 @@ class Account(models.Model):
     # Accounts are sometimes restricted to only work on a specific range of
     # products
     product_range = models.ForeignKey('offer.Range', null=True, blank=True)
+
+    # Allow accounts to be restricted for products only (ie can't be used to
+    # pay for shipping)
+    can_be_used_for_non_products = models.BooleanField(default=True)
 
     date_created = models.DateTimeField(auto_now_add=True)
 
