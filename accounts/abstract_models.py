@@ -66,7 +66,8 @@ class Account(models.Model):
     # many cases, there will only be one user though and so we use a 'primary'
     # user for this scenario.
     primary_user = models.ForeignKey('auth.User', related_name="accounts",
-                                     null=True, blank=True)
+                                     null=True, blank=True,
+                                     on_delete=models.SET_NULL)
     secondary_users = models.ManyToManyField('auth.User', blank=True)
 
     # Track the status of a account - this is often used so that expired
@@ -172,6 +173,19 @@ class Account(models.Model):
     def is_frozen(self):
         return self.status == self.__class__.FROZEN
 
+    def can_be_authorised_by(self, user=None):
+        """
+        Test whether the passed user can authorise a transfer from this account
+        """
+        if user is None:
+            return True
+        if self.primary_user:
+            return user == self.primary_user
+        secondary_users = self.secondary_users.all()
+        if secondary_users.count() > 0:
+            return user in secondary_users
+        return True
+
     def close(self):
         # Only account with zero balance can be closed
         if self.balance > 0:
@@ -190,7 +204,7 @@ class PostingManager(models.Manager):
     def create(self, source, destination, amount, user=None, description=None):
         # Write out transfer (which involves multiple writes).  We use a
         # database transaction to ensure that all get written out correctly.
-        self.verify_transfer(source, destination, amount)
+        self.verify_transfer(source, destination, amount, user)
         with transaction.commit_on_success():
             transfer = self.get_query_set().create(
                 source=source,
@@ -213,15 +227,19 @@ class PostingManager(models.Manager):
         # transaction behaviour.
         return obj
 
-    def verify_transfer(self, source, destination, amount):
+    def verify_transfer(self, source, destination, amount, user=None):
         """
         Test whether the proposed transaction is permitted.  Raise an exception
-        if it is not.
+        if not.
         """
         if amount <= 0:
             raise exceptions.InvalidAmount("Debits must use a positive amount")
         if not source.is_open():
             raise exceptions.ClosedAccount("Source account has been closed")
+        if not source.can_be_authorised_by(user):
+            raise exceptions.AccountException(
+                "This user is not authorised to make transfers from "
+                "this account")
         if not destination.is_open():
             raise exceptions.ClosedAccount(
                 "Destination account has been closed")

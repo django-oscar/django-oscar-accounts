@@ -3,7 +3,7 @@ import datetime
 
 from django.contrib.auth.models import User
 from django.test import TestCase
-from django_dynamic_fixture import G, N
+from django_dynamic_fixture import G
 
 from accounts import exceptions
 from accounts.models import Account, Transfer, Transaction
@@ -12,7 +12,7 @@ from accounts.models import Account, Transfer, Transaction
 class TestAnAccount(TestCase):
 
     def setUp(self):
-        self.account = N(Account)
+        self.account = Account()
 
     def test_is_open_by_default(self):
         self.assertEqual(Account.OPEN, self.account.status)
@@ -25,6 +25,34 @@ class TestAnAccount(TestCase):
         self.account.code = 'abc'
         self.account.save()
         self.assertEquals('ABC', self.account.code)
+
+    def test_can_be_authorised_when_no_user_passed(self):
+        self.assertTrue(self.account.can_be_authorised_by())
+
+    def test_can_be_authorised_by_anyone_by_default(self):
+        self.account.save()
+        user = G(User)
+        self.assertTrue(self.account.can_be_authorised_by(user))
+
+    def test_can_only_be_authorised_by_primary_user_when_set(self):
+        primary = G(User)
+        other = G(User)
+        self.account.primary_user = primary
+        self.account.save()
+
+        self.assertTrue(self.account.can_be_authorised_by(primary))
+        self.assertFalse(self.account.can_be_authorised_by(other))
+
+    def test_can_only_be_authorised_by_secondary_users_when_set(self):
+        self.account.save()
+        users = [G(User), G(User)]
+        other = G(User)
+        for user in users:
+            self.account.secondary_users.add(user)
+
+        for user in users:
+            self.assertTrue(self.account.can_be_authorised_by(user))
+        self.assertFalse(self.account.can_be_authorised_by(other))
 
 
 class TestAnAccountWithFunds(TestCase):
@@ -117,7 +145,7 @@ class TestATransaction(TestCase):
 
     def test_is_not_deleted_when_the_authorisor_is_deleted(self):
         user = G(User)
-        source = G(Account, credit_limit=None)
+        source = G(Account, credit_limit=None, primary_user=user)
         destination = G(Account)
         txn = Transfer.objects.create(source, destination,
                                       D('20.00'), user)

@@ -150,12 +150,18 @@ class AccountTopUpView(generic.UpdateView):
     def form_valid(self, form):
         account = self.object
         amount = form.cleaned_data['amount']
-        facade.transfer(form.get_source_account(), account, amount,
-                        user=self.request.user,
-                        description=_("Top-up account"))
-        messages.success(
-            self.request, _("%s added to account") % currency(amount))
-        return http.HttpResponseRedirect(reverse('accounts-list'))
+        try:
+            facade.transfer(form.get_source_account(), account, amount,
+                            user=self.request.user,
+                            description=_("Top-up account"))
+        except exceptions.AccountException, e:
+            messages.error(self.request,
+                           _("Unable to top-up account: %s") % e)
+        else:
+            messages.success(
+                self.request, _("%s added to account") % currency(amount))
+        return http.HttpResponseRedirect(reverse('accounts-detail',
+                                                 kwargs={'pk': account.id}))
 
     def get_success_url(self):
         messages.success(self.request, _("Account re-opened"))

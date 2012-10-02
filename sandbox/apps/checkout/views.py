@@ -25,8 +25,12 @@ class PaymentDetailsView(views.PaymentDetailsView):
         # accounts.
         ctx['is_blocked'] = security.is_blocked(self.request)
 
-        form = forms.ValidAccountForm()
+        form = forms.ValidAccountForm(self.request.user)
         ctx['account_form'] = form
+
+        # Add accounts that are linked to this user
+        if self.request.user.is_authenticated():
+            ctx['user_accounts'] = gateway.user_accounts(self.request.user)
 
         # Add existing allocations to context
         allocations = self.get_account_allocations()
@@ -81,10 +85,11 @@ class PaymentDetailsView(views.PaymentDetailsView):
 
         # If account form has been submitted, validate it and show the
         # allocation form if the account has non-zero balance
-        form = forms.ValidAccountForm(self.request.POST)
+        form = forms.ValidAccountForm(self.request.user,
+                                      self.request.POST)
+        ctx['account_form'] = form
         if not form.is_valid():
             security.record_failed_request(self.request)
-            ctx['account_form'] = form
             return self.render_to_response(ctx)
 
         security.record_successful_request(self.request)
@@ -96,7 +101,8 @@ class PaymentDetailsView(views.PaymentDetailsView):
 
     def add_allocation(self, request):
         # We have two forms to validate, first check the account form
-        account_form = forms.ValidAccountForm(self.request.POST)
+        account_form = forms.ValidAccountForm(request.user,
+                                              self.request.POST)
         if not account_form.is_valid():
             # Only manipulation can get us here
             messages.error(request,

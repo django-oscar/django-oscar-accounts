@@ -9,14 +9,41 @@
 {% if not allocation_form %}
     {# 1. Initial load of page - show form to look up account if they are not blocked #}
 	{% if is_blocked %}
-	<p>You are blocked.</p>
+		<p>You are blocked.</p>
 	{% else %}
-	<form action="." method="post">
-		{% csrf_token %}
-		<input type="hidden" name="action" value="select_account" />
-		{% include 'partials/form_fields.html' with form=account_form %}
-		<button type="submit" class="btn btn-primary">Check balance</button>
-	</form>
+		{% if user_accounts %}
+			<h3>Choose a user account</h3>
+			<form action="." method="post">
+				{% csrf_token %}
+				<table class="table">
+					<thead>
+						<tr>
+							<th></th>
+							<th>Account</th>
+							<th>Balance</th>
+						</tr>
+					</thead>
+					<tbody>
+					{% for account in user_accounts %}
+						<tr>
+							<td><input type="radio" name="code" value="{{ account.code }}"></td>
+							<td>{{ account.name }}</td>
+							<td>{{ account.balance|currency }}</td>
+						</tr>
+					{% endfor %}
+					</tbody>
+				</table>
+				<button type="submit" class="btn btn-primary" name="action" value="select_account">Select account</button>
+			</form>
+		{% endif %}
+
+		<h3>Look up an account</h3>
+		<form action="." method="post">
+			{% csrf_token %}
+			<input type="hidden" name="action" value="select_account" />
+			{% include 'partials/form_fields.html' with form=account_form %}
+			<button type="submit" class="btn btn-primary">Check balance</button>
+		</form>
 	{% endif %}
 {% else %}
 	{# 2. An account has been found - choose allocation #}
@@ -77,7 +104,9 @@
 				{% for code, amount in account_allocations.items %}
 					<tr>
 						<td>{{ code }}</td> 
+						<td>{{ name }}</td> 
 						<td>{{ amount|currency }}</td>
+						<td>{{ balance|currency }}</td>
 						<td>
 							<button type="submit" class="btn" name="remove_{{ code }}">Remove</button>
 						</td>
@@ -90,7 +119,7 @@
 
 
 {% if to_allocate == 0 %}
-<a href="{% url checkout:preview %}" class="btn btn-primary btn-large">Continue</a>
+	<a href="{% url checkout:preview %}" class="btn btn-primary btn-large">Continue</a>
 {% else %}
 <p>Order total: {{ order_total_incl_tax|currency }}.  You need to allocate another
 	{{ to_allocate|currency }}</p>

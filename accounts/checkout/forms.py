@@ -12,6 +12,10 @@ Account = get_model('accounts', 'Account')
 class ValidAccountForm(forms.Form):
     code = forms.CharField(label=_("Account code"))
 
+    def __init__(self, user, *args, **kwargs):
+        self.user = user
+        super(ValidAccountForm, self).__init__(*args, **kwargs)
+
     def clean_code(self):
         code = self.cleaned_data['code'].strip().upper()
         code = code.replace('-', '')
@@ -30,6 +34,9 @@ class ValidAccountForm(forms.Form):
         if self.account.balance == D('0.00'):
             raise forms.ValidationError(_(
                 "This account is empty"))
+        if not self.account.can_be_authorised_by(self.user):
+            raise forms.ValidationError(_(
+                "You can not authorised to use this account"))
         return code
 
 

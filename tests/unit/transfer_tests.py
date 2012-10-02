@@ -13,7 +13,7 @@ class TestASuccessfulTransfer(TestCase):
 
     def setUp(self):
         self.user = G(User, username="barry")
-        source = G(Account, credit_limit=None)
+        source = G(Account, primary_user=None, credit_limit=None)
         destination = G(Account)
         self.transfer = Transfer.objects.create(source, destination,
                                                 D('10.00'), self.user)
@@ -46,7 +46,7 @@ class TestATransferToAnInactiveAccount(TestCase):
     def test_is_permitted(self):
         self.user = G(User)
         today = datetime.date.today()
-        source = G(Account, credit_limit=None)
+        source = G(Account, primary_user=None, credit_limit=None)
         destination = G(Account,
             end_date=today - datetime.timedelta(days=1))
         try:
@@ -61,7 +61,7 @@ class TestATransferFromAnInactiveAccount(TestCase):
     def test_is_permitted(self):
         self.user = G(User)
         today = datetime.date.today()
-        source = G(Account, credit_limit=None,
+        source = G(Account, credit_limit=None, primary_user=None,
             end_date=today - datetime.timedelta(days=1))
         destination = G(Account)
         try:
@@ -77,7 +77,7 @@ class TestAnAttemptedTransfer(TestCase):
         self.user = G(User)
 
     def test_raises_an_exception_when_trying_to_exceed_credit_limit_of_source(self):
-        source = G(Account, credit_limit=D('10.00'))
+        source = G(Account, primary_user=None, credit_limit=D('10.00'))
         destination = G(Account)
         with self.assertRaises(exceptions.InsufficientFunds):
             Transfer.objects.create(source, destination,
@@ -99,9 +99,9 @@ class TestAnAttemptedTransfer(TestCase):
                                        D('20.00'), self.user)
 
     def test_raises_an_exception_when_trying_to_use_closed_destination(self):
-        source = G(Account, credit_limit=None)
+        source = G(Account, primary_user=None, credit_limit=None)
         destination = G(Account)
         destination.close()
         with self.assertRaises(exceptions.ClosedAccount):
-            Transfer.objects.create(source, destination,
-                                    D('20.00'), self.user)
+            Transfer.objects.create(
+                source, destination, D('20.00'), self.user)

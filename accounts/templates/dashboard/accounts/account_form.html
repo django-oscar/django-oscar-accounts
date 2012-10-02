@@ -27,6 +27,10 @@
 {% endblock header %}
 
 {% block dashboard_content %}
+
+{% include 'dashboard/accounts/partials/account_detail.html' %}
+
+<h2>{% trans "Edit this account" %}</h2>
 <form action="." method="post">
 	{% csrf_token %}
 	<span class="help-block">{{ form.non_field_errors }}</span>

@@ -8,6 +8,13 @@ Account = get_model('accounts', 'Account')
 Transfer = get_model('accounts', 'Transfer')
 
 
+def user_accounts(user):
+    """
+    Return accounts available to the passed user
+    """
+    return Account.active.filter(primary_user=user)
+
+
 def redeem(order_number, user, allocations):
     """
     Settle payment for the passed set of account allocations
@@ -21,15 +28,15 @@ def redeem(order_number, user, allocations):
     destination = core.redemptions_account()
     for code, amount in allocations.items():
         try:
-            account = Account.objects.get(code=code)
+            account = Account.active.get(code=code)
         except Account.DoesNotExist:
             raise UnableToTakePayment(
-                _("No account found with code %s") % code)
+                _("No active account found with code %s") % code)
 
         # We verify each transaction
         try:
             Transfer.objects.verify_transfer(
-                account, destination, amount)
+                account, destination, amount, user)
         except exceptions.AccountException, e:
             raise UnableToTakePayment(str(e))
 

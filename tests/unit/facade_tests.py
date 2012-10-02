@@ -14,8 +14,8 @@ class TestReversingATransfer(TestCase):
 
     def setUp(self):
         self.user = G(User)
-        self.source = G(Account, credit_limit=None)
-        self.destination = G(Account)
+        self.source = G(Account, primary_user=None, credit_limit=None)
+        self.destination = G(Account, primary_user=None)
         self.transfer = facade.transfer(self.source, self.destination,
                                         D('100'), self.user, "Give money to customer")
         self.reverse = facade.reverse(self.transfer, self.user,
@@ -49,7 +49,7 @@ class TestATransfer(TestCase):
 
     def setUp(self):
         self.user = G(User)
-        self.source = G(Account, credit_limit=None)
+        self.source = G(Account, credit_limit=None, primary_user=None)
         self.destination = G(Account)
         self.transfer = facade.transfer(self.source, self.destination, D('100'),
                                         self.user, "Give money to customer")

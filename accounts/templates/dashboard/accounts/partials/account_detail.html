@@ -37,14 +37,32 @@
 				{% endif %}
 			</td>
 		</tr>
+		{% if account.start_date %}
 		<tr>
 			<th>{% trans "Start date" %}</th>
 			<td>{{ account.start_date|default:"-" }}</td>
 		</tr>
+		{% endif %}
+		{% if account.end_date %}
 		<tr>
 			<th>{% trans "End date" %}</th>
 			<td>{{ account.end_date|default:"-" }}</td>
 		</tr>
+		{% endif %}
+		{% if account.primary_user %}
+		<tr>
+			<th>{% trans "Primary user" %}</th>
+			<td>{{ account.primary_user }}</td>
+		</tr>
+		{% endif %}
+		{% with num_users=account.secondary_users.all.count %}
+		{% if num_users %}
+		<tr>
+			<th>{% trans "Num secondary users" %}</th>
+			<td>{{ num_users}}</td>
+		</tr>
+		{% endif %}
+		{% endwith %}
 	</tbody>
 </table>
 

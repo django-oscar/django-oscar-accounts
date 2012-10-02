@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import sys
+import os
 from coverage import coverage
 from optparse import OptionParser
 
@@ -50,7 +51,13 @@ if not settings.configured:
                 },
             },
             ROOT_URLCONF='tests.urls',
-            TEMPLATE_DIRS=(OSCAR_MAIN_TEMPLATE_DIR,),
+            TEMPLATE_DIRS=(
+                OSCAR_MAIN_TEMPLATE_DIR,
+                os.path.join(OSCAR_MAIN_TEMPLATE_DIR, 'templates'),
+                # Include sandbox templates as they patch from templates that
+                # are in Oscar 0.4 but not 0.3
+                'sandbox/templates'
+            ),
             SITE_ID=1,
             ACCOUNTS_UNIT_NAME='Giftcard',
             NOSE_ARGS=['-s', '--with-spec', '-x'],
