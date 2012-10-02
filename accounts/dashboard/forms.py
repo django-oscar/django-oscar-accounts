@@ -127,7 +127,8 @@ class ChangeStatusForm(forms.ModelForm):
         model = Account
         exclude = ['name', 'account_type', 'description', 'category', 'code', 'start_date',
                    'end_date', 'credit_limit', 'balance', 'product_range',
-                   'primary_user', 'secondary_users']
+                   'primary_user', 'secondary_users',
+                   'can_be_used_for_non_products']
 
 
 class FreezeAccountForm(ChangeStatusForm):
