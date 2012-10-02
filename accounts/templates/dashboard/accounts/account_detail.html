@@ -13,7 +13,7 @@
         <span class="divider">/</span>
     </li>
     <li>
-		<a href="{% url code-accounts-list %}">{% trans "Accounts" %}</a>
+		<a href="{% url accounts-list %}">{% trans "Accounts" %}</a>
         <span class="divider">/</span>
     </li>
 	<li class="active"><a href=".">{% trans "Account" %} #{{ account.id }}</a></li>
@@ -30,7 +30,7 @@
 
 {% include 'dashboard/accounts/partials/account_detail.html' %}
 <p>
-	<a class="btn" href="{% url code-accounts-update account.id %}">Edit</a>
+	<a class="btn" href="{% url accounts-update account.id %}">Edit</a>
 	<a href="{% url accounts-top-up account.id %}" class="btn">{% trans "Top-up" %}</a>
 	{% if not account.is_frozen %}
 	<a href="{% url accounts-freeze account.id %}" class="btn btn-danger">{% trans "Freeze" %}</a>

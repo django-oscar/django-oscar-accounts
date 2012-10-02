@@ -25,7 +25,8 @@ class TransactionAdmin(admin.ModelAdmin):
 
 class IPAddressAdmin(admin.ModelAdmin):
     list_display = ['ip_address', 'total_failures', 'consecutive_failures',
-                    'is_temporarily_blocked', 'is_permanently_blocked', 'date_last_failure']
+                    'is_temporarily_blocked', 'is_permanently_blocked',
+                    'date_last_failure']
     readonly_fields = ('ip_address', 'total_failures', 'date_last_failure')
 
 

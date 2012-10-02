@@ -35,7 +35,7 @@
 	<form method="get" action=".">
 		{% include 'partials/form_fields.html' %}
 		<button type="submit" class="btn btn-primary">Search</button>
-		or <a href="{% url code-accounts-list %}">reset</a>.
+		or <a href="{% url accounts-list %}">reset</a>.
 	</form>
 
 	<div class="sub-header">
@@ -67,7 +67,7 @@
 				<td>{{ account.num_transactions }}</td>
 				<td>{{ account.date_created }}</td>
 				<td>
-					<a href="{% url code-accounts-update account.id %}" class="btn">{% trans "Edit" %}</a>
+					<a href="{% url accounts-update account.id %}" class="btn">{% trans "Edit" %}</a>
 					<a href="{% url accounts-detail account.id %}" class="btn">{% trans "Transactions" %}</a>
 					<a href="{% url accounts-top-up account.id %}" class="btn">{% trans "Top-up" %}</a>
 					{% if not account.is_frozen %}
@@ -86,5 +86,5 @@
 		<p>{% trans "No results found." %}</p>
 	{% endif %}
 
-	<p><a id="create_new_account" href="{% url code-accounts-create %}" class="btn btn-large btn-primary">{% trans "Create a new " %} {{ unit_name|lower }}</a></p>
+	<p><a id="create_new_account" href="{% url accounts-create %}" class="btn btn-large btn-primary">{% trans "Create a new " %} {{ unit_name|lower }}</a></p>
 {% endblock dashboard_content %}

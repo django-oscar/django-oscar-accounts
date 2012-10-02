@@ -16,7 +16,7 @@ Transfer = get_model('accounts', 'Transfer')
 Transaction = get_model('accounts', 'Transaction')
 
 
-class CodeAccountListView(generic.ListView):
+class AccountListView(generic.ListView):
     model = Account
     context_object_name = 'accounts'
     template_name = 'dashboard/accounts/account_list.html'
@@ -24,7 +24,7 @@ class CodeAccountListView(generic.ListView):
     description = _("All %s") % names.UNIT_NAME_PLURAL.lower()
 
     def get_context_data(self, **kwargs):
-        ctx = super(CodeAccountListView, self).get_context_data(**kwargs)
+        ctx = super(AccountListView, self).get_context_data(**kwargs)
         ctx['form'] = self.form
         ctx['title'] = names.UNIT_NAME_PLURAL
         ctx['unit_name'] = names.UNIT_NAME
@@ -75,14 +75,14 @@ class CodeAccountListView(generic.ListView):
         return queryset
 
 
-class CodeAccountCreateView(generic.CreateView):
+class AccountCreateView(generic.CreateView):
     model = Account
     context_object_name = 'account'
     template_name = 'dashboard/accounts/account_form.html'
     form_class = forms.NewAccountForm
 
     def get_context_data(self, **kwargs):
-        ctx = super(CodeAccountCreateView, self).get_context_data(**kwargs)
+        ctx = super(AccountCreateView, self).get_context_data(**kwargs)
         ctx['title'] = _("Create a new %s") % names.UNIT_NAME.lower()
         return ctx
 
@@ -108,14 +108,14 @@ class CodeAccountCreateView(generic.CreateView):
             reverse('accounts-detail', kwargs={'pk': account.id}))
 
 
-class CodeAccountUpdateView(generic.UpdateView):
+class AccountUpdateView(generic.UpdateView):
     model = Account
     context_object_name = 'account'
     template_name = 'dashboard/accounts/account_form.html'
     form_class = forms.UpdateAccountForm
 
     def get_context_data(self, **kwargs):
-        ctx = super(CodeAccountUpdateView, self).get_context_data(**kwargs)
+        ctx = super(AccountUpdateView, self).get_context_data(**kwargs)
         ctx['title'] = _("Update '%s' account") % self.object.name
         return ctx
 
@@ -133,7 +133,7 @@ class AccountFreezeView(generic.UpdateView):
 
     def get_success_url(self):
         messages.success(self.request, _("Account frozen"))
-        return reverse('code-accounts-list')
+        return reverse('accounts-list')
 
 
 class AccountThawView(generic.UpdateView):
@@ -155,11 +155,11 @@ class AccountTopUpView(generic.UpdateView):
                         description=_("Top-up account"))
         messages.success(
             self.request, _("%s added to account") % currency(amount))
-        return http.HttpResponseRedirect(reverse('code-accounts-list'))
+        return http.HttpResponseRedirect(reverse('accounts-list'))
 
     def get_success_url(self):
         messages.success(self.request, _("Account re-opened"))
-        return reverse('code-accounts-list')
+        return reverse('accounts-list')
 
 
 class AccountTransactionsView(generic.ListView):

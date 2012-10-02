@@ -48,4 +48,4 @@ def create_giftcard(order_number, user, amount):
         code=code
     )
     facade.transfer(source, destination, amount, user,
-                    "Create new code-account")
+                    "Create new account")
