@@ -1,5 +1,4 @@
 from decimal import Decimal as D
-import re
 
 from django import forms
 from django.utils.translation import ugettext_lazy as _
@@ -55,8 +54,8 @@ class AllocationForm(forms.Form):
         self.basket = basket
         self.order_total = order_total
         self.allocations = allocations
-        initial = {
-            'amount': self.get_max_amount()}
+        self.max_allocation = self.get_max_amount()
+        initial = {'amount': self.max_allocation}
         super(AllocationForm, self).__init__(initial=initial, *args, **kwargs)
         if self.account.product_range:
             self.fields['amount'].help_text = (
@@ -69,7 +68,7 @@ class AllocationForm(forms.Form):
 
     def clean_amount(self):
         amt = self.cleaned_data.get('amount')
-        max_allocation = self.get_max_amount()
+        max_allocation = self.max_allocation
         if amt > max_allocation:
             raise forms.ValidationError(_(
                 "The maximum allocation is %s") % currency(

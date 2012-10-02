@@ -74,6 +74,7 @@
 	{% endwith %}
 	<h3>Choose allocation</h3>
 	<p>The order total is {{ order_total_incl_tax|currency }}.</p>
+	<p>The maximum allocation from this account is {{ allocation_form.max_allocation|currency }}.</p>
 	<form action="." method="post">
 		{% csrf_token %}
 		{# Include account form hidden #}
@@ -104,9 +105,7 @@
 				{% for code, amount in account_allocations.items %}
 					<tr>
 						<td>{{ code }}</td> 
-						<td>{{ name }}</td> 
 						<td>{{ amount|currency }}</td>
-						<td>{{ balance|currency }}</td>
 						<td>
 							<button type="submit" class="btn" name="remove_{{ code }}">Remove</button>
 						</td>
