@@ -24,6 +24,12 @@ class SearchForm(forms.Form):
     status = forms.ChoiceField(choices=STATUS_CHOICES, required=False)
 
 
+class TransferSearchForm(forms.Form):
+    reference = forms.CharField(required=False)
+    start_date = forms.DateField(required=False)
+    end_date = forms.DateField(required=False)
+
+
 class EditAccountForm(forms.ModelForm):
     name = forms.CharField(label=_("Name"), required=True)
 

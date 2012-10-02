@@ -1,3 +1,5 @@
+import datetime
+
 from django.views import generic
 from django.core.urlresolvers import reverse
 from django import http
@@ -191,6 +193,59 @@ class TransferListView(generic.ListView):
     model = Transfer
     context_object_name = 'transfers'
     template_name = 'dashboard/accounts/transfer_list.html'
+    form_class = forms.TransferSearchForm
+    description = _("All transfers")
+
+    def get_context_data(self, **kwargs):
+        ctx = super(TransferListView, self).get_context_data(**kwargs)
+        ctx['form'] = self.form
+        ctx['queryset_description'] = self.description
+        return ctx
+
+    def get_queryset(self):
+        queryset = self.model.objects.all()
+
+        if 'reference' not in self.request.GET:
+            # Form not submitted
+            self.form = self.form_class()
+            return queryset
+
+        self.form = self.form_class(self.request.GET)
+        if not self.form.is_valid():
+            # Form submitted but invalid
+            return queryset
+
+        # Form valid - build queryset and description
+        data = self.form.cleaned_data
+        desc_template = _(
+            "Transfers %(reference)s %(date)s")
+        desc_ctx = {
+            'reference': "",
+            'date': "",
+        }
+        if data['reference']:
+            queryset = queryset.filter(id=int(data['reference']))
+            desc_ctx['reference'] = _(
+                " with reference '%s'") % data['reference']
+
+        if data['start_date'] and data['end_date']:
+            # Add 24 hours to make search inclusive
+            date_from = data['start_date']
+            date_to = data['end_date'] + datetime.timedelta(days=1)
+            queryset = queryset.filter(date_created__gte=date_from).filter(date_created__lt=date_to)
+            desc_ctx['date'] = _(" created between %(start_date)s and %(end_date)s") % {
+                'start_date': data['start_date'],
+                'end_date': data['end_date']}
+        elif data['start_date']:
+            queryset = queryset.filter(date_created__gte=data['start_date'])
+            desc_ctx['date'] = _(" created since %s") % data['start_date']
+        elif data['end_date']:
+            date_to = data['end_date'] + datetime.timedelta(days=1)
+            queryset = queryset.filter(date_created__lt=date_to)
+            desc_ctx['date'] = _(" created before %s") % data['end_date']
+
+        self.description = desc_template % desc_ctx
+        return queryset
 
 
 class TransferDetailView(generic.DetailView):

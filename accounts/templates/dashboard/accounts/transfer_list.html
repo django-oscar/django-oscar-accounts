@@ -27,6 +27,20 @@
 
 {% block dashboard_content %}
 
+	<div class="sub-header">
+		<h2>{% trans "Search" %}</h2>
+	</div>
+
+	<form method="get" action=".">
+		{% include 'partials/form_fields.html' %}
+		<button type="submit" class="btn btn-primary">{% trans "Search" %}</button>
+		or <a href="{% url transfers-list %}">{% trans "reset" %}</a>.
+	</form>
+
+	<div class="sub-header">
+		<h2>{{ queryset_description }}</h2>
+	</div>
+
 	{% if transfers %}
 		<table class="table table-striped table-bordered">
 			<tr>
