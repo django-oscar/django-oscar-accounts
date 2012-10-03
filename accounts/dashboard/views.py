@@ -1,10 +1,11 @@
 import datetime
+from decimal import Decimal as D
 
 from django.views import generic
 from django.core.urlresolvers import reverse
 from django import http
 from django.shortcuts import get_object_or_404
-from django.db.models import get_model
+from django.db.models import get_model, Sum
 from django.contrib import messages
 from django.utils.translation import ugettext_lazy as _
 from oscar.templatetags.currency_filters import currency
@@ -257,3 +258,82 @@ class TransferDetailView(generic.DetailView):
         if queryset is None:
             queryset = self.get_queryset()
         return queryset.get(reference=self.kwargs['reference'])
+
+
+class DeferredIncomeReportView(generic.FormView):
+    form_class = forms.DateForm
+    template_name = 'dashboard/accounts/reports/deferred_income.html'
+
+    def get(self, request, *args, **kwargs):
+        if self.is_form_submitted():
+            return self.validate()
+        return super(DeferredIncomeReportView, self).get(request, *args,
+                                                         **kwargs)
+
+    def is_form_submitted(self):
+        return 'date' in self.request.GET
+
+    def get_context_data(self, **kwargs):
+        ctx = super(DeferredIncomeReportView, self).get_context_data(**kwargs)
+        ctx['title'] = 'Deferred income report'
+        return ctx
+
+    def get_form_kwargs(self):
+        kwargs = {'initial': self.get_initial()}
+        if self.is_form_submitted():
+            kwargs.update({
+                'data': self.request.GET,
+            })
+        return kwargs
+
+    def validate(self):
+        form_class = self.get_form_class()
+        form = self.get_form(form_class)
+        if form.is_valid():
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)
+
+    def form_valid(self, form):
+        threshold_date = form.cleaned_data['date'] + datetime.timedelta(days=1)
+        # Get data
+        rows = []
+        totals = {'total': D('0.00'),
+                  'num_accounts': 0}
+        for acc_type_name in names.DEFERRED_INCOME_ACCOUNT_TYPES:
+            acc_type = AccountType.objects.get(name=acc_type_name)
+            data = {
+                'name': acc_type_name,
+                'total': D('0.00'),
+                'num_accounts': 0,
+                'num_expiring_within_30': 0,
+                'num_expiring_within_60': 0,
+                'num_expiring_within_90': 0,
+                'num_expiring_outside_90': 0,
+            }
+            for account in acc_type.accounts.all():
+                data['num_accounts'] += 1
+                total = account.transactions.filter(
+                    date_created__lt=threshold_date).aggregate(
+                    total=Sum('amount'))['total']
+                if total is not None:
+                    data['total'] += total
+                days_remaining = account.days_remaining()
+                if days_remaining is None or days_remaining > 90:
+                    data['num_expiring_outside_90'] += 1
+                else:
+                    if days_remaining <= 90:
+                        data['num_expiring_within_90'] += 1
+                    if days_remaining <= 60:
+                        data['num_expiring_within_60'] += 1
+                    if days_remaining <= 30:
+                        data['num_expiring_within_30'] += 1
+
+            totals['total'] += data['total']
+            totals['num_accounts'] += data['num_accounts']
+            rows.append(data)
+        ctx = self.get_context_data(form=form)
+        ctx['rows'] = rows
+        ctx['totals'] = totals
+        ctx['report_date'] = form.cleaned_data['date']
+        return self.render_to_response(ctx)

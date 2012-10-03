@@ -170,3 +170,7 @@ class TopUpAccountForm(SourceAccountMixin, forms.Form):
         elif self.account.is_frozen():
             raise forms.ValidationError(_("Account is frozen"))
         return self.cleaned_data
+
+
+class DateForm(forms.Form):
+    date = forms.DateField()
