@@ -61,6 +61,7 @@ if not settings.configured:
             SITE_ID=1,
             ACCOUNTS_UNIT_NAME='Giftcard',
             NOSE_ARGS=['-s', '--with-spec', '-x'],
+            USE_TZ=True,
             **extra_settings
         )
 

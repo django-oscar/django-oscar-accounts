@@ -67,7 +67,7 @@ def transfer(source, destination, amount, user=None, order_number=None,
         return transfer
 
 
-def reverse(transfer, user=None, description=None):
+def reverse(transfer, user=None, order_number=None, description=None):
     """
     Reverse a previous transfer, returning the money to the original source.
     """
@@ -80,7 +80,9 @@ def reverse(transfer, user=None, description=None):
         transfer = Transfer.objects.create(
             source=transfer.destination,
             destination=transfer.source,
-            amount=transfer.amount, user=user, description=description)
+            amount=transfer.amount, user=user,
+            order_number=order_number,
+            description=description)
     except exceptions.AccountException, e:
         logger.warning("%s - failed: '%s'", msg, e)
         raise

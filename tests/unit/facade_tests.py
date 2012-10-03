@@ -19,7 +19,7 @@ class TestReversingATransfer(TestCase):
         self.transfer = facade.transfer(self.source, self.destination,
                                         D('100'), self.user, "Give money to customer")
         self.reverse = facade.reverse(self.transfer, self.user,
-                                      "Oops! Return money")
+                                      description="Oops! Return money")
 
     def test_creates_4_transactions(self):
         self.assertEqual(4, Transaction.objects.all().count())

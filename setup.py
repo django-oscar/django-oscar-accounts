@@ -18,4 +18,5 @@ setup(name='django-oscar-accounts',
                    'License :: OSI Approved :: BSD License',
                    'Operating System :: Unix',
                    'Programming Language :: Python'],
-      install_requires=['django-oscar>=0.2'])
+      install_requires=['django-oscar>=0.2',
+                        'python-dateutil==2.1'])

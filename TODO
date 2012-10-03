@@ -1,4 +1,13 @@
 Reports?
 Buying a product creates an account
+- including setting the recipient details
 
 STANDALONE_MODE - make lib work without oscar
+Accounts can exclude shipping costs
+
+REST API:
+- fix all the timezone related issues
+- handle creating user as part of create
+- handle invalid dates, amount in create request
+- handle invalid transfer in create request
+- include URLs of transfer and account in 201 response

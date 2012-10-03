@@ -208,6 +208,8 @@ HAYSTACK_CONNECTIONS = {
     },
 }
 
+USE_TZ = True
+
 from decimal import Decimal as D
 ACCOUNTS_UNIT_NAME = 'Giftcard'
 ACCOUNTS_MIN_LOAD_VALUE = D('30.00')

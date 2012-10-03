@@ -17,6 +17,9 @@ LAPSED = getattr(settings, 'ACCOUNTS_LAPSED_NAME', 'Lapsed accounts')
 UNPAID_ACCOUNTS = getattr(settings, 'ACCOUNTS_UNPAID_SOURCES',
                           ('Unpaid source',))
 
+# Account where money is transferred from when creating a giftcard
+BANK = "Bank"
+
 # Account types
 # =============
 

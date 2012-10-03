@@ -3,6 +3,7 @@ import datetime
 
 from django.contrib.auth.models import User
 from django.test import TestCase
+from django.utils import timezone
 from django_dynamic_fixture import G
 
 from accounts import exceptions
@@ -111,7 +112,7 @@ class TestAnUnlimitedCreditLimitAccount(TestCase):
 class TestAccountExpiredManager(TestCase):
 
     def test_includes_only_expired_accounts(self):
-        today = datetime.date.today()
+        today = timezone.now().date()
         G(Account, end_date=today - datetime.timedelta(days=1))
         G(Account, end_date=today + datetime.timedelta(days=1))
         accounts = Account.expired.all()
@@ -121,13 +122,12 @@ class TestAccountExpiredManager(TestCase):
 class TestAccountActiveManager(TestCase):
 
     def test_includes_only_active_accounts(self):
+        now = timezone.now()
+        expired = G(Account, start_date=None, end_date=now - datetime.timedelta(days=1))
+        G(Account, start_date=None, end_date=now + datetime.timedelta(days=1))
+        G(Account, start_date=now, end_date=now + datetime.timedelta(days=1))
         accounts = Account.active.all()
-        today = datetime.date.today()
-        G(Account, end_date=today - datetime.timedelta(days=1))
-        G(Account, end_date=today + datetime.timedelta(days=1))
-        G(Account, start_date=today, end_date=today + datetime.timedelta(days=1))
-        accounts = Account.active.all()
-        self.assertEqual(2, accounts.count())
+        self.assertTrue(expired not in accounts)
 
 
 class TestATransaction(TestCase):
