@@ -201,7 +201,8 @@ class PostingManager(models.Manager):
     Apparently, finance people refer to "posting a transaction"; hence why this
     """
 
-    def create(self, source, destination, amount, user=None, description=None):
+    def create(self, source, destination, amount, user=None, order_number=None,
+               description=None):
         # Write out transfer (which involves multiple writes).  We use a
         # database transaction to ensure that all get written out correctly.
         self.verify_transfer(source, destination, amount, user)
@@ -211,6 +212,7 @@ class PostingManager(models.Manager):
                 destination=destination,
                 amount=amount,
                 user=user,
+                order_number=order_number,
                 description=description)
             # Create transaction records for audit trail
             transfer.transactions.create(
@@ -264,6 +266,7 @@ class Transfer(models.Model):
     amount = models.DecimalField(decimal_places=2, max_digits=12)
 
     # Optional description of what this transfer was
+    order_number = models.CharField(max_length=128, null=True)
     description = models.CharField(max_length=256, null=True)
 
     # We record who the user was who authorised this transaction.  As

@@ -32,7 +32,8 @@ def close_expired_accounts():
             account.close()
 
 
-def transfer(source, destination, amount, user=None, description=None):
+def transfer(source, destination, amount, user=None, order_number=None,
+             description=None):
     """
     Transfer funds between source and destination accounts.
 
@@ -42,6 +43,7 @@ def transfer(source, destination, amount, user=None, description=None):
     :destination: Account to credit
     :amount: Amount to transfer
     :user: Authorising user
+    :order_number: An optional order number associated with this transfer
     :description: Description of transaction
     """
     msg = "Transfer of %.2f from account #%d to account #%d"
@@ -51,7 +53,7 @@ def transfer(source, destination, amount, user=None, description=None):
         msg += " '%s'" % description
     try:
         transfer = Transfer.objects.create(
-            source, destination, amount, user, description)
+            source, destination, amount, user, order_number, description)
     except exceptions.AccountException, e:
         logger.warning("%s - failed: '%s'", msg, e)
         raise

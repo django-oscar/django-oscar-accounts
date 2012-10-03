@@ -52,7 +52,7 @@ class TestATransfer(TestCase):
         self.source = G(Account, credit_limit=None, primary_user=None)
         self.destination = G(Account)
         self.transfer = facade.transfer(self.source, self.destination, D('100'),
-                                        self.user, "Give money to customer")
+                                        self.user, description="Give money to customer")
 
     def test_records_the_authorising_user(self):
         self.assertEqual(self.user, self.transfer.user)
