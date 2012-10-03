@@ -117,12 +117,6 @@ class TestAccountExpiredManager(TestCase):
         accounts = Account.expired.all()
         self.assertEqual(1, accounts.count())
 
-    def test_excludes_accounts_that_end_on_filter_date(self):
-        today = datetime.date.today()
-        G(Account, end_date=today)
-        accounts = Account.expired.all()
-        self.assertEqual(0, accounts.count())
-
 
 class TestAccountActiveManager(TestCase):
 

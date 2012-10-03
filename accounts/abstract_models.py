@@ -1,8 +1,8 @@
 from decimal import Decimal as D
-import datetime
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from django.utils import timezone
 from django.db import transaction
 from django.db.models import Sum
 from treebeard.mp_tree import MP_Node
@@ -13,21 +13,21 @@ from accounts import exceptions
 class ActiveAccountManager(models.Manager):
 
     def get_query_set(self):
-        today = datetime.date.today()
+        now = timezone.now()
         qs = super(ActiveAccountManager, self).get_query_set()
         return qs.filter(
-            models.Q(start_date__lte=today) |
+            models.Q(start_date__lte=now) |
             models.Q(start_date=None)).filter(
-                models.Q(end_date__gte=today) |
+                models.Q(end_date__gte=now) |
                 models.Q(end_date=None))
 
 
 class ExpiredAccountManager(models.Manager):
 
     def get_query_set(self):
-        today = datetime.date.today()
+        now = timezone.now()
         qs = super(ExpiredAccountManager, self).get_query_set()
-        return qs.filter(end_date__lt=today)
+        return qs.filter(end_date__lt=now)
 
 
 class AccountType(MP_Node):
@@ -89,8 +89,8 @@ class Account(models.Model):
     # Accounts can have an date range to indicate when they are 'active'.  Note
     # that these dates are ignored when creating a transfer.  It is up to your
     # client code to use them to enforce business logic.
-    start_date = models.DateField(null=True, blank=True)
-    end_date = models.DateField(null=True, blank=True)
+    start_date = models.DateTimeField(null=True, blank=True)
+    end_date = models.DateTimeField(null=True, blank=True)
 
     # Accounts are sometimes restricted to only work on a specific range of
     # products
@@ -119,12 +119,12 @@ class Account(models.Model):
     def is_active(self):
         if self.start_date is None and self.end_date is None:
             return True
-        today = datetime.date.today()
+        now = timezone.now()
         if self.start_date and self.end_date is None:
-            return today >= self.start_date
+            return now >= self.start_date
         if self.start_date is None and self.end_date:
-            return today < self.end_date
-        return self.start_date <= today < self.end_date
+            return now < self.end_date
+        return self.start_date <= now < self.end_date
 
     def save(self, *args, **kwargs):
         if self.code:
@@ -357,7 +357,7 @@ class IPAddressRecord(models.Model):
     def increment_failures(self):
         self.total_failures += 1
         self.consecutive_failures += 1
-        self.date_last_failure = datetime.datetime.now()
+        self.date_last_failure = timezone.now()
         self.save()
 
     def increment_blocks(self):
@@ -378,7 +378,7 @@ class IPAddressRecord(models.Model):
 
         # If you've had several consecutive failures, we impose a miniumum
         # period between each allowed request.
-        now = datetime.datetime.now()
+        now = timezone.now()
         time_since_last_failure = now - self.date_last_failure
         return time_since_last_failure.seconds < self.COOLING_OFF_PERIOD
 
