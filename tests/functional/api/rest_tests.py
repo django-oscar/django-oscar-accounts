@@ -3,6 +3,8 @@ import json
 from django import test
 from django.core.urlresolvers import reverse
 
+from accounts import models
+
 
 class TestCreatingAnAccountErrors(test.TestCase):
 
@@ -36,6 +38,8 @@ class TestSuccessfullyCreatingAnAccount(test.TestCase):
             self.detail_response = self.client.get(
                 self.create_response['Location'])
             self.payload = json.loads(self.detail_response.content)
+            self.account = models.Account.objects.get(
+                code=self.payload['code'])
 
     def test_returns_201(self):
         self.assertEqual(201, self.create_response.status_code)
@@ -43,7 +47,7 @@ class TestSuccessfullyCreatingAnAccount(test.TestCase):
     def test_returns_a_valid_location(self):
         self.assertEqual(200, self.detail_response.status_code)
 
-    def test_creates_an_account_with_correct_keys(self):
+    def test_detail_view_returns_correct_keys(self):
         keys = ['code', 'start_date', 'end_date', 'balance']
         for key in keys:
             self.assertTrue(key in self.payload)
@@ -56,6 +60,9 @@ class TestSuccessfullyCreatingAnAccount(test.TestCase):
 
     def test_loads_the_account_with_the_right_amount(self):
         self.assertEqual('400.00', self.payload['balance'])
+
+    def test_creates_a_primary_user(self):
+        self.assertIsNotNone(self.account.primary_user)
 
 
 class TestMakingARedemption(test.TestCase):

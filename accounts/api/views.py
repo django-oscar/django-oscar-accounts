@@ -2,6 +2,7 @@ import json
 from decimal import Decimal as D
 
 from django.views import generic
+from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 from django.core.urlresolvers import reverse
 from django import http
@@ -72,9 +73,18 @@ class AccountsView(JSONView):
         start_date = parser.parse(payload['start_date'])
         end_date = parser.parse(payload['end_date'])
         amount = D(payload['amount'])
+        email = payload['user_email']
+        username = payload['user_id']
+
+        # Create user
+        try:
+            user = User.objects.get(username=username)
+        except User.DoesNotExist:
+            user = User.objects.create_user(username, email, None)
 
         # Create account
         account = Account.objects.create(
+            primary_user=user,
             start_date=start_date,
             end_date=end_date,
             code=codes.generate()
