@@ -62,6 +62,7 @@ if not settings.configured:
             ACCOUNTS_UNIT_NAME='Giftcard',
             NOSE_ARGS=['-s', '--with-spec', '-x'],
             USE_TZ=True,
+            DDF_FILL_NULLABLE_FIELDS=False,
             **extra_settings
         )
 

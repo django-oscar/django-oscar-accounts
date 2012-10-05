@@ -88,7 +88,7 @@ class TestANewZeroCreditLimitAccount(TestCase):
 class TestAFixedCreditLimitAccount(TestCase):
 
     def setUp(self):
-        self.account = G(Account, credit_limit=D('500'))
+        self.account = G(Account, credit_limit=D('500'), start_date=None, end_date=None)
 
     def test_permits_smaller_and_equal_debits(self):
         for amt in (D('0.00'), D('1.00'), D('500')):
@@ -102,7 +102,7 @@ class TestAFixedCreditLimitAccount(TestCase):
 class TestAnUnlimitedCreditLimitAccount(TestCase):
 
     def setUp(self):
-        self.account = G(Account, credit_limit=None)
+        self.account = G(Account, credit_limit=None, start_date=None, end_date=None)
 
     def test_permits_any_debit(self):
         for amt in (D('0.00'), D('1.00'), D('1000000')):
@@ -112,9 +112,11 @@ class TestAnUnlimitedCreditLimitAccount(TestCase):
 class TestAccountExpiredManager(TestCase):
 
     def test_includes_only_expired_accounts(self):
-        today = timezone.now().date()
-        G(Account, end_date=today - datetime.timedelta(days=1))
-        G(Account, end_date=today + datetime.timedelta(days=1))
+        now = timezone.now()
+        G(Account, start_date=None,
+          end_date=now - datetime.timedelta(days=1))
+        G(Account, start_date=None,
+          end_date=now + datetime.timedelta(days=1))
         accounts = Account.expired.all()
         self.assertEqual(1, accounts.count())
 
@@ -139,8 +141,8 @@ class TestATransaction(TestCase):
 
     def test_is_not_deleted_when_the_authorisor_is_deleted(self):
         user = G(User)
-        source = G(Account, credit_limit=None, primary_user=user)
-        destination = G(Account)
+        source = G(Account, credit_limit=None, primary_user=user, start_date=None, end_date=None)
+        destination = G(Account, start_date=None, end_date=None)
         txn = Transfer.objects.create(source, destination,
                                       D('20.00'), user)
         self.assertEqual(2, txn.transactions.all().count())
