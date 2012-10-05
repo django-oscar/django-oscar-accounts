@@ -104,6 +104,13 @@ class TestSuccessfullyCreatingAnAccount(test.TestCase):
     def test_loads_the_account_with_the_right_amount(self):
         self.assertEqual('400.00', self.payload['balance'])
 
+    def test_detail_view_returns_redemptions_url(self):
+        self.assertTrue('redemptions_url' in self.payload)
+
+    def test_detail_view_returns_refunds_url(self):
+        self.assertTrue('refunds_url' in self.payload)
+
+
 
 class TestMakingARedemption(test.TestCase):
 
