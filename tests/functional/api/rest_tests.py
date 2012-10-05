@@ -13,8 +13,6 @@ class TestCreatingAnAccountErrors(test.TestCase):
             'start_date': '2013-01-01T09:00:00+03:00',
             'end_date': '2013-06-01T09:00:00+03:00',
             'amount': '400.00',
-            'user_id': '1223',
-            'user_email': 'david@example.com'
         }
 
     def post_json(self, payload):
@@ -65,13 +63,6 @@ class TestCreatingAnAccountErrors(test.TestCase):
         self.assertEqual(400, response.status_code)
         self.assertTrue('message' in json.loads(response.content))
 
-    def test_invalid_email_address(self):
-        payload = self.payload.copy()
-        payload['user_email'] = 'silly @ domain . com'
-        response = self.post_json(payload)
-        self.assertEqual(400, response.status_code)
-        self.assertTrue('message' in json.loads(response.content))
-
 
 class TestSuccessfullyCreatingAnAccount(test.TestCase):
 
@@ -80,8 +71,6 @@ class TestSuccessfullyCreatingAnAccount(test.TestCase):
             'start_date': '2013-01-01T09:00:00+03:00',
             'end_date': '2013-06-01T09:00:00+03:00',
             'amount': '400.00',
-            'user_id': '1223',
-            'user_email': 'david@example.com'
         }
         # Submit request to create a new account, then fetch the detail
         # page that is returned.
@@ -102,8 +91,7 @@ class TestSuccessfullyCreatingAnAccount(test.TestCase):
         self.assertEqual(200, self.detail_response.status_code)
 
     def test_detail_view_returns_correct_keys(self):
-        keys = ['code', 'start_date', 'end_date', 'balance',
-                'user_id', 'user_email']
+        keys = ['code', 'start_date', 'end_date', 'balance']
         for key in keys:
             self.assertTrue(key in self.payload)
 
@@ -116,9 +104,6 @@ class TestSuccessfullyCreatingAnAccount(test.TestCase):
     def test_loads_the_account_with_the_right_amount(self):
         self.assertEqual('400.00', self.payload['balance'])
 
-    def test_creates_a_primary_user(self):
-        self.assertIsNotNone(self.account.primary_user)
-
 
 class TestMakingARedemption(test.TestCase):
 
@@ -127,8 +112,6 @@ class TestMakingARedemption(test.TestCase):
             'start_date': '2013-01-01T09:00:00+03:00',
             'end_date': '2013-06-01T09:00:00+03:00',
             'amount': '400.00',
-            'user_id': '1223',
-            'user_email': 'david@example.com'
         }
         self.create_response = self.client.post(
             '/api/accounts/', json.dumps(self.create_payload),
@@ -183,8 +166,6 @@ class TestMakingARedemptionThenRefund(test.TestCase):
             'start_date': '2013-01-01T09:00:00+03:00',
             'end_date': '2013-06-01T09:00:00+03:00',
             'amount': '400.00',
-            'user_id': '1223',
-            'user_email': 'david@example.com'
         }
         self.create_response = self.client.post(
             reverse('accounts'),
@@ -222,8 +203,6 @@ class TestMakingARedemptionThenReverse(test.TestCase):
             'start_date': '2013-01-01T09:00:00+03:00',
             'end_date': '2013-06-01T09:00:00+03:00',
             'amount': '400.00',
-            'user_id': '1223',
-            'user_email': 'david@example.com'
         }
         self.create_response = self.client.post(
             reverse('accounts'),

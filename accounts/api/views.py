@@ -94,8 +94,7 @@ class AccountsView(JSONView):
     """
     For creating new accounts
     """
-    required_keys = ('start_date', 'end_date', 'amount', 'user_id',
-                     'user_email')
+    required_keys = ('start_date', 'end_date', 'amount')
 
     def clean_amount(self, value):
         try:
@@ -120,13 +119,6 @@ class AccountsView(JSONView):
                 'End date must include timezone information')
         return end_date
 
-    def clean_user_email(self, value):
-        try:
-            validators.validate_email(value)
-        except core_exceptions.ValidationError:
-            raise InvalidPayload("'%s' is not a valid email address" % value)
-        return value
-
     def clean(self, payload):
         if payload['start_date'] > payload['end_date']:
             raise InvalidPayload(
@@ -138,10 +130,7 @@ class AccountsView(JSONView):
         return self.created(reverse('account', kwargs={'code': account.code}))
 
     def create_account(self, payload):
-        user = self.create_user(payload['user_id'],
-                                payload['user_email'])
         return Account.objects.create(
-            primary_user=user,
             start_date=payload['start_date'],
             end_date=payload['end_date'],
             code=codes.generate()
@@ -157,13 +146,6 @@ class AccountsView(JSONView):
             # handle this and return a response
             raise
 
-    def create_user(self, username, email):
-        try:
-            user = User.objects.get(username=username)
-        except User.DoesNotExist:
-            user = User.objects.create_user(username, email, None)
-        return user
-
 
 class AccountView(JSONView):
     """
@@ -175,9 +157,7 @@ class AccountView(JSONView):
         data = {'code': account.code,
                 'start_date': account.start_date.isoformat(),
                 'end_date': account.end_date.isoformat(),
-                'balance': "%.2f" % account.balance,
-                'user_id': account.primary_user.username,
-                'user_email': account.primary_user.email}
+                'balance': "%.2f" % account.balance}
         return self.ok(data)
 
 
