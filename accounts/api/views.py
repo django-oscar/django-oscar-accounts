@@ -3,8 +3,6 @@ from decimal import Decimal as D, InvalidOperation
 
 from dateutil import parser
 from django import http
-from django.contrib.auth.models import User
-from django.core import validators, exceptions as core_exceptions
 from django.core.urlresolvers import reverse
 from django.db.models import get_model
 from django.shortcuts import get_object_or_404
@@ -166,39 +164,51 @@ class AccountView(JSONView):
 
 
 class AccountRedemptionsView(JSONView):
+    required_keys = ('amount', 'order_number')
+
+    def clean_amount(self, value):
+        try:
+            amount = D(value)
+        except InvalidOperation:
+            raise InvalidPayload("'%s' is not a valid amount" % value)
+        if amount < 0:
+            raise InvalidPayload("Amount must be positive")
+        return amount
 
     def valid_payload(self, payload):
         """
         Redeem an amount from the selected giftcard
         """
         account = get_object_or_404(Account, code=self.kwargs['code'])
-        amount = D(payload['amount'])
-        order_number = D(payload['order_number'])
-
         redemptions = Account.objects.get(name=names.REDEMPTIONS)
         try:
-            transfer = facade.transfer(account, redemptions, amount,
-                                       order_number=order_number)
+            transfer = facade.transfer(
+                account, redemptions, payload['amount'],
+                order_number=payload['order_number'])
         except exceptions.AccountException:
             raise
-
-        response = http.HttpResponse(status=201)
-        response['Location'] = reverse(
-            'transfer', kwargs={'pk': transfer.id})
-        return response
+        return self.created(reverse('transfer', kwargs={'pk': transfer.id}))
 
 
 class AccountRefundsView(JSONView):
+    required_keys = ('amount', 'order_number')
+
+    def clean_amount(self, value):
+        try:
+            amount = D(value)
+        except InvalidOperation:
+            raise InvalidPayload("'%s' is not a valid amount" % value)
+        if amount < 0:
+            raise InvalidPayload("Amount must be positive")
+        return amount
 
     def valid_payload(self, payload):
         account = get_object_or_404(Account, code=self.kwargs['code'])
-        amount = D(payload['amount'])
-        order_number = payload['order_number']
-
         redemptions = Account.objects.get(name=names.REDEMPTIONS)
         try:
-            transfer = facade.transfer(redemptions, account, amount,
-                                       order_number=order_number)
+            transfer = facade.transfer(
+                redemptions, account, payload['amount'],
+                order_number=payload['order_number'])
         except exceptions.AccountException:
             raise
         return self.created(reverse('transfer', kwargs={'pk': transfer.id}))
@@ -221,6 +231,7 @@ class TransferView(JSONView):
 
 
 class TransferReverseView(JSONView):
+    required_keys = ('order_number',)
 
     def valid_payload(self, payload):
         to_reverse = get_object_or_404(Transfer, id=self.kwargs['pk'])
