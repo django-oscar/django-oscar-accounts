@@ -1,13 +1,15 @@
 import json
-from decimal import Decimal as D
+from decimal import Decimal as D, InvalidOperation
 
-from django.views import generic
-from django.contrib.auth.models import User
-from django.shortcuts import get_object_or_404
-from django.core.urlresolvers import reverse
-from django import http
-from django.db.models import get_model
 from dateutil import parser
+from django import http
+from django.contrib.auth.models import User
+from django.core import validators, exceptions as core_exceptions
+from django.core.urlresolvers import reverse
+from django.db.models import get_model
+from django.shortcuts import get_object_or_404
+from django.utils import timezone
+from django.views import generic
 
 from accounts.api import errors
 from accounts import codes, names, facade, exceptions
@@ -16,9 +18,20 @@ Account = get_model('accounts', 'Account')
 Transfer = get_model('accounts', 'Transfer')
 
 
+class InvalidPayload(Exception):
+    pass
+
+
+class ValidationError(Exception):
+    pass
+
+
 class JSONView(generic.View):
 
+    required_keys = ()
+
     # Error handlers
+
     def forbidden(self, code=None, msg=None):
         return self.error(403, code, msg)
 
@@ -33,6 +46,7 @@ class JSONView(generic.View):
                                  content_type='application/json')
 
     # Success handlers
+
     def created(self, url):
         response = http.HttpResponse(status=201)
         response['Location'] = url
@@ -52,54 +66,103 @@ class JSONView(generic.View):
         except ValueError:
             return self.bad_request(
                 msg="JSON payload could not be decoded")
-        return self.handle_payload(payload)
+        try:
+            self.validate_payload(payload)
+        except InvalidPayload, e:
+            return self.bad_request(msg=str(e))
+        except ValidationError, e:
+            return self.forbidden(msg=str(e))
+        return self.valid_payload(payload)
+
+    def validate_payload(self, payload):
+        # We mimic Django's forms API by using dynamic dispatch to call clean_*
+        # methods, and use a single 'clean' method to validate relations
+        # between fields.
+        for key in self.required_keys:
+            if key not in payload:
+                raise InvalidPayload((
+                    "Mandatory field '%s' is missing from JSON "
+                    "payload") % key)
+            validator_method = 'clean_%s' % key
+            if hasattr(self, validator_method):
+                payload[key] = getattr(self, validator_method)(payload[key])
+        if hasattr(self, 'clean'):
+            getattr(self, 'clean')(payload)
 
 
 class AccountsView(JSONView):
     """
     For creating new accounts
     """
+    required_keys = ('start_date', 'end_date', 'amount', 'user_id',
+                     'user_email')
 
-    def handle_payload(self, payload):
-        # Validate the submission
-        required_keys = ['start_date', 'end_date', 'amount']
-        for key in required_keys:
-            if key not in payload:
-                return self.bad_request(
-                    msg=("Mandatory field '%s' is missing from JSON "
-                         "payload") % key)
+    def clean_amount(self, value):
+        try:
+            amount = D(value)
+        except InvalidOperation:
+            raise InvalidPayload("'%s' is not a valid amount" % value)
+        if amount < 0:
+            raise InvalidPayload("Amount must be positive")
+        return amount
 
-        # TODO - validate these fields better
-        start_date = parser.parse(payload['start_date'])
-        end_date = parser.parse(payload['end_date'])
-        amount = D(payload['amount'])
-        email = payload['user_email']
-        username = payload['user_id']
+    def clean_start_date(self, value):
+        start_date = parser.parse(value)
+        if timezone.is_naive(start_date):
+            raise InvalidPayload(
+                'Start date must include timezone information')
+        return start_date
 
-        # Create user
+    def clean_end_date(self, value):
+        end_date = parser.parse(value)
+        if timezone.is_naive(end_date):
+            raise InvalidPayload(
+                'End date must include timezone information')
+        return end_date
+
+    def clean_user_email(self, value):
+        try:
+            validators.validate_email(value)
+        except core_exceptions.ValidationError:
+            raise InvalidPayload("'%s' is not a valid email address" % value)
+        return value
+
+    def clean(self, payload):
+        if payload['start_date'] > payload['end_date']:
+            raise InvalidPayload(
+                'Start date must be before end date')
+
+    def valid_payload(self, payload):
+        account = self.create_account(payload)
+        self.load_account(account, payload)
+        return self.created(reverse('account', kwargs={'code': account.code}))
+
+    def create_account(self, payload):
+        user = self.create_user(payload['user_id'],
+                                payload['user_email'])
+        return Account.objects.create(
+            primary_user=user,
+            start_date=payload['start_date'],
+            end_date=payload['end_date'],
+            code=codes.generate()
+        )
+
+    def load_account(self, account, payload):
+        bank = Account.objects.get(name=names.BANK)
+        try:
+            facade.transfer(bank, account, payload['amount'],
+                            description="Load from bank")
+        except exceptions.AccountException:
+            account.delete()
+            # handle this and return a response
+            raise
+
+    def create_user(self, username, email):
         try:
             user = User.objects.get(username=username)
         except User.DoesNotExist:
             user = User.objects.create_user(username, email, None)
-
-        # Create account
-        account = Account.objects.create(
-            primary_user=user,
-            start_date=start_date,
-            end_date=end_date,
-            code=codes.generate()
-        )
-
-        # Load account
-        bank = Account.objects.get(name=names.BANK)
-        try:
-            facade.transfer(bank, account, amount,
-                            description="Load from bank")
-        except exceptions.AccountException, e:
-            account.delete()
-            # handle this and return a response
-            raise
-        return self.created(reverse('account', kwargs={'code': account.code}))
+        return user
 
 
 class AccountView(JSONView):
@@ -112,13 +175,15 @@ class AccountView(JSONView):
         data = {'code': account.code,
                 'start_date': account.start_date.isoformat(),
                 'end_date': account.end_date.isoformat(),
-                'balance': "%.2f" % account.balance}
+                'balance': "%.2f" % account.balance,
+                'user_id': account.primary_user.username,
+                'user_email': account.primary_user.email}
         return self.ok(data)
 
 
 class AccountRedemptionsView(JSONView):
 
-    def handle_payload(self, payload):
+    def valid_payload(self, payload):
         """
         Redeem an amount from the selected giftcard
         """
@@ -141,7 +206,7 @@ class AccountRedemptionsView(JSONView):
 
 class AccountRefundsView(JSONView):
 
-    def handle_payload(self, payload):
+    def valid_payload(self, payload):
         account = get_object_or_404(Account, code=self.kwargs['code'])
         amount = D(payload['amount'])
         order_number = payload['order_number']
@@ -173,7 +238,7 @@ class TransferView(JSONView):
 
 class TransferReverseView(JSONView):
 
-    def handle_payload(self, payload):
+    def valid_payload(self, payload):
         to_reverse = get_object_or_404(Transfer, id=self.kwargs['pk'])
         order_number = payload['order_number']
         try:

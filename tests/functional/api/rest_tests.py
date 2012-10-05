@@ -8,15 +8,69 @@ from accounts import models
 
 class TestCreatingAnAccountErrors(test.TestCase):
 
-    def test_missing_dates_return_400(self):
-        payload = {
+    def setUp(self):
+        self.payload = {
+            'start_date': '2013-01-01T09:00:00+03:00',
             'end_date': '2013-06-01T09:00:00+03:00',
             'amount': '400.00',
+            'user_id': '1223',
+            'user_email': 'david@example.com'
         }
-        response = self.client.post(
-            '/api/accounts/', json.dumps(payload),
+
+    def post_json(self, payload):
+        return self.client.post(
+            reverse('accounts'), json.dumps(payload),
             content_type="application/json")
+
+    def test_missing_dates(self):
+        payload = self.payload.copy()
+        del payload['start_date']
+        response = self.post_json(payload)
         self.assertEqual(400, response.status_code)
+        self.assertTrue('message' in json.loads(response.content))
+
+    def test_timezone_naive_start_date(self):
+        payload = self.payload.copy()
+        payload['start_date'] = '2013-01-01T09:00:00'
+        response = self.post_json(payload)
+        self.assertEqual(400, response.status_code)
+        self.assertTrue('message' in json.loads(response.content))
+
+    def test_timezone_naive_end_date(self):
+        payload = self.payload.copy()
+        payload['end_date'] = '2013-06-01T09:00:00'
+        response = self.post_json(payload)
+        self.assertEqual(400, response.status_code)
+        self.assertTrue('message' in json.loads(response.content))
+
+    def test_dates_in_wrong_order(self):
+        payload = self.payload.copy()
+        payload['start_date'] = '2013-06-01T09:00:00+03:00'
+        payload['end_date'] = '2013-01-01T09:00:00+03:00'
+        response = self.post_json(payload)
+        self.assertEqual(400, response.status_code)
+        self.assertTrue('message' in json.loads(response.content))
+
+    def test_invalid_amount(self):
+        payload = self.payload.copy()
+        payload['amount'] = 'silly'
+        response = self.post_json(payload)
+        self.assertEqual(400, response.status_code)
+        self.assertTrue('message' in json.loads(response.content))
+
+    def test_negative_amount(self):
+        payload = self.payload.copy()
+        payload['amount'] = '-100'
+        response = self.post_json(payload)
+        self.assertEqual(400, response.status_code)
+        self.assertTrue('message' in json.loads(response.content))
+
+    def test_invalid_email_address(self):
+        payload = self.payload.copy()
+        payload['user_email'] = 'silly @ domain . com'
+        response = self.post_json(payload)
+        self.assertEqual(400, response.status_code)
+        self.assertTrue('message' in json.loads(response.content))
 
 
 class TestSuccessfullyCreatingAnAccount(test.TestCase):
@@ -48,7 +102,8 @@ class TestSuccessfullyCreatingAnAccount(test.TestCase):
         self.assertEqual(200, self.detail_response.status_code)
 
     def test_detail_view_returns_correct_keys(self):
-        keys = ['code', 'start_date', 'end_date', 'balance']
+        keys = ['code', 'start_date', 'end_date', 'balance',
+                'user_id', 'user_email']
         for key in keys:
             self.assertTrue(key in self.payload)
 
