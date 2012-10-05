@@ -1,3 +1,4 @@
+from decimal import Decimal as D
 import json
 
 from django import test
@@ -63,6 +64,24 @@ class TestCreatingAnAccountErrors(test.TestCase):
         self.assertEqual(400, response.status_code)
         self.assertTrue('message' in json.loads(response.content))
 
+    def test_amount_too_low(self):
+        payload = self.payload.copy()
+        payload['amount'] = '1.00'
+        with self.settings(ACCOUNTS_MIN_LOAD_VALUE=D('25.00')):
+            response = self.post_json(payload)
+        self.assertEqual(403, response.status_code)
+        data = json.loads(response.content)
+        self.assertEqual('C101', data['code'])
+
+    def test_amount_too_high(self):
+        payload = self.payload.copy()
+        payload['amount'] = '5000.00'
+        with self.settings(ACCOUNTS_MAX_ACCOUNT_VALUE=D('500.00')):
+            response = self.post_json(payload)
+        self.assertEqual(403, response.status_code)
+        data = json.loads(response.content)
+        self.assertEqual('C102', data['code'])
+
 
 class TestSuccessfullyCreatingAnAccount(test.TestCase):
 
@@ -109,7 +128,6 @@ class TestSuccessfullyCreatingAnAccount(test.TestCase):
 
     def test_detail_view_returns_refunds_url(self):
         self.assertTrue('refunds_url' in self.payload)
-
 
 
 class TestMakingARedemption(test.TestCase):

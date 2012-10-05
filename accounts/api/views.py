@@ -3,6 +3,7 @@ from decimal import Decimal as D, InvalidOperation
 
 from dateutil import parser
 from django import http
+from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.db.models import get_model
 from django.shortcuts import get_object_or_404
@@ -21,7 +22,9 @@ class InvalidPayload(Exception):
 
 
 class ValidationError(Exception):
-    pass
+    def __init__(self, code, *args, **kwargs):
+        self.code = code
+        super(ValidationError, self).__init__(*args, **kwargs)
 
 
 class JSONView(generic.View):
@@ -69,7 +72,7 @@ class JSONView(generic.View):
         except InvalidPayload, e:
             return self.bad_request(msg=str(e))
         except ValidationError, e:
-            return self.forbidden(msg=str(e))
+            return self.forbidden(code=e.code, msg=errors.message(e.code))
         return self.valid_payload(payload)
 
     def validate_payload(self, payload):
@@ -101,6 +104,11 @@ class AccountsView(JSONView):
             raise InvalidPayload("'%s' is not a valid amount" % value)
         if amount < 0:
             raise InvalidPayload("Amount must be positive")
+        if amount < getattr(settings, 'ACCOUNTS_MIN_LOAD_VALUE', D('0.00')):
+            raise ValidationError(errors.AMOUNT_TOO_LOW)
+        if hasattr(settings, 'ACCOUNTS_MAX_ACCOUNT_VALUE'):
+            if amount > getattr(settings, 'ACCOUNTS_MAX_ACCOUNT_VALUE'):
+                raise ValidationError(errors.AMOUNT_TOO_HIGH)
         return amount
 
     def clean_start_date(self, value):
