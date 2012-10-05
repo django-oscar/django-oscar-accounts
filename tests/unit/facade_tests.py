@@ -112,7 +112,7 @@ class TestErrorHandling(TransactionTestCase):
 
     def test_account_exception_raised_for_invalid_transfer(self):
         user = G(User)
-        source = G(Account, credit_limit=D('0.00'))
+        source = G(Account, credit_limit=D('0.00')
         destination = G(Account)
         with self.assertRaises(exceptions.AccountException):
             facade.transfer(source, destination, D('100'), user)

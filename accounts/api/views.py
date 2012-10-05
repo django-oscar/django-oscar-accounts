@@ -15,7 +15,7 @@ Account = get_model('accounts', 'Account')
 Transfer = get_model('accounts', 'Transfer')
 
 
-class AccountsView(generic.View):
+class JSONView(generic.View):
 
     # Error handlers
     def forbidden(self, code=None, msg=None):
@@ -31,18 +31,35 @@ class AccountsView(generic.View):
                                  status=status_code,
                                  content_type='application/json')
 
+    # Success handlers
+    def created(self, url):
+        response = http.HttpResponse(status=201)
+        response['Location'] = url
+        return response
+
+    def ok(self, data):
+        return http.HttpResponse(json.dumps(data),
+                                 content_type='application/json')
+
     def post(self, request, *args, **kwargs):
         # Only accept JSON
         if request.META['CONTENT_TYPE'] != 'application/json':
-            return http.HttpBadRequest(
-                "Requests must have CONTENT_TYPE 'application/json'")
-
+            return self.bad_request(
+                msg="Requests must have CONTENT_TYPE 'application/json'")
         try:
             payload = json.loads(request.raw_post_data)
         except ValueError:
-            return http.HttpBadRequest(
-                "JSON payload could not be decoded")
+            return self.bad_request(
+                msg="JSON payload could not be decoded")
+        return self.handle_payload(payload)
 
+
+class AccountsView(JSONView):
+    """
+    For creating new accounts
+    """
+
+    def handle_payload(self, payload):
         # Validate the submission
         required_keys = ['start_date', 'end_date', 'amount']
         for key in required_keys:
@@ -72,35 +89,30 @@ class AccountsView(generic.View):
             account.delete()
             # handle this and return a response
             raise
-
-        response = http.HttpResponse(status=201)
-        response['Location'] = reverse('account',
-                                       kwargs={'code': account.code})
-        return response
+        return self.created(reverse('account', kwargs={'code': account.code}))
 
 
-class AccountView(generic.View):
+class AccountView(JSONView):
+    """
+    Fetch details of an account
+    """
 
     def get(self, request, *args, **kwargs):
-        account = Account.objects.get(code=kwargs['code'])
+        account = get_object_or_404(Account, code=kwargs['code'])
         data = {'code': account.code,
                 'start_date': account.start_date.isoformat(),
                 'end_date': account.end_date.isoformat(),
                 'balance': "%.2f" % account.balance}
-        return http.HttpResponse(json.dumps(data),
-                                 content_type='application/json')
+        return self.ok(data)
 
 
-class AccountRedemptionsView(generic.View):
+class AccountRedemptionsView(JSONView):
 
-    def post(self, request, *args, **kwargs):
+    def handle_payload(self, payload):
         """
         Redeem an amount from the selected giftcard
         """
-        account = get_object_or_404(Account, code=kwargs['code'])
-
-        # TODO Check request payload
-        payload = json.loads(request.raw_post_data)
+        account = get_object_or_404(Account, code=self.kwargs['code'])
         amount = D(payload['amount'])
         order_number = D(payload['order_number'])
 
@@ -117,13 +129,10 @@ class AccountRedemptionsView(generic.View):
         return response
 
 
-class AccountRefundsView(generic.View):
+class AccountRefundsView(JSONView):
 
-    def post(self, request, *args, **kwargs):
-        account = get_object_or_404(Account, code=kwargs['code'])
-
-        # TODO Check request payload
-        payload = json.loads(request.raw_post_data)
+    def handle_payload(self, payload):
+        account = get_object_or_404(Account, code=self.kwargs['code'])
         amount = D(payload['amount'])
         order_number = payload['order_number']
 
@@ -133,14 +142,10 @@ class AccountRefundsView(generic.View):
                                        order_number=order_number)
         except exceptions.AccountException:
             raise
-
-        response = http.HttpResponse(status=201)
-        response['Location'] = reverse(
-            'transfer', kwargs={'pk': transfer.id})
-        return response
+        return self.created(reverse('transfer', kwargs={'pk': transfer.id}))
 
 
-class TransferView(generic.View):
+class TransferView(JSONView):
 
     def get(self, request, *args, **kwargs):
         transfer = get_object_or_404(Transfer, id=kwargs['pk'])
@@ -153,22 +158,16 @@ class TransferView(generic.View):
                 'datetime': transfer.date_created.isoformat(),
                 'order_number': transfer.order_number,
                 'description': transfer.description}
-        return http.HttpResponse(json.dumps(data),
-                                 content_type='application/json')
+        return self.ok(data)
 
 
-class TransferReverseView(generic.View):
+class TransferReverseView(JSONView):
 
-    def post(self, request, *args, **kwargs):
-        to_reverse = get_object_or_404(Transfer, id=kwargs['pk'])
-        payload = json.loads(request.raw_post_data)
+    def handle_payload(self, payload):
+        to_reverse = get_object_or_404(Transfer, id=self.kwargs['pk'])
         order_number = payload['order_number']
         try:
             transfer = facade.reverse(to_reverse, order_number=order_number)
         except exceptions.AccountException:
             raise
-
-        response = http.HttpResponse(status=201)
-        response['Location'] = reverse(
-            'transfer', kwargs={'pk': transfer.id})
-        return response
+        return self.created(reverse('transfer', kwargs={'pk': transfer.id}))

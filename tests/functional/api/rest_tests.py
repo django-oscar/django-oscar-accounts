@@ -27,8 +27,10 @@ class TestSuccessfullyCreatingAnAccount(test.TestCase):
             'user_id': '1223',
             'user_email': 'david@example.com'
         }
+        # Submit request to create a new account, then fetch the detail
+        # page that is returned.
         self.create_response = self.client.post(
-            '/api/accounts/', json.dumps(self.payload),
+            reverse('accounts'), json.dumps(self.payload),
             content_type="application/json")
         if 'Location' in self.create_response:
             self.detail_response = self.client.get(
