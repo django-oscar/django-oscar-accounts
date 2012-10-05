@@ -30,7 +30,7 @@ class APIApplication(Application):
                 name='account-redemptions'),
             url(r'^accounts/(?P<code>[A-Z0-9]+)/refunds/$',
                 self.account_refunds_view.as_view(),
-                name='account-redemption'),
+                name='account-refunds'),
             url(r'^transfers/(?P<pk>\d+)/$',
                 self.transfer_view.as_view(),
                 name='transfer'),

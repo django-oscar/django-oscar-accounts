@@ -157,7 +157,11 @@ class AccountView(JSONView):
         data = {'code': account.code,
                 'start_date': account.start_date.isoformat(),
                 'end_date': account.end_date.isoformat(),
-                'balance': "%.2f" % account.balance}
+                'balance': "%.2f" % account.balance,
+                'redemptions_url': reverse('account-redemptions',
+                                           kwargs={'code': account.code}),
+                'refunds_url': reverse('account-refunds',
+                                           kwargs={'code': account.code})}
         return self.ok(data)
 
 
