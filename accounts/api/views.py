@@ -28,8 +28,8 @@ class ValidationError(Exception):
 
 
 class JSONView(generic.View):
-
     required_keys = ()
+    optional_keys = ()
 
     # Error handlers
 
@@ -84,6 +84,10 @@ class JSONView(generic.View):
                 raise InvalidPayload((
                     "Mandatory field '%s' is missing from JSON "
                     "payload") % key)
+            validator_method = 'clean_%s' % key
+            if hasattr(self, validator_method):
+                payload[key] = getattr(self, validator_method)(payload[key])
+        for key in self.optional_keys:
             validator_method = 'clean_%s' % key
             if hasattr(self, validator_method):
                 payload[key] = getattr(self, validator_method)(payload[key])
@@ -172,7 +176,8 @@ class AccountView(JSONView):
 
 
 class AccountRedemptionsView(JSONView):
-    required_keys = ('amount', 'merchant_reference')
+    required_keys = ('amount',)
+    optional_keys = ('merchant_reference',)
 
     def clean_amount(self, value):
         try:
@@ -192,15 +197,16 @@ class AccountRedemptionsView(JSONView):
         try:
             transfer = facade.transfer(
                 account, redemptions, payload['amount'],
-                merchant_reference=payload['merchant_reference'])
+                merchant_reference=payload.get('merchant_reference', None))
         except exceptions.AccountException:
             raise
-        return self.created(reverse('transfer', kwargs={'reference':
-                                                        transfer.reference}))
+        return self.created(reverse('transfer',
+                                    kwargs={'reference': transfer.reference}))
 
 
 class AccountRefundsView(JSONView):
-    required_keys = ('amount', 'merchant_reference')
+    required_keys = ('amount',)
+    optional_keys = ('merchant_reference',)
 
     def clean_amount(self, value):
         try:
@@ -217,7 +223,7 @@ class AccountRefundsView(JSONView):
         try:
             transfer = facade.transfer(
                 redemptions, account, payload['amount'],
-                merchant_reference=payload['merchant_reference'])
+                merchant_reference=payload.get('merchant_reference', None))
         except exceptions.AccountException:
             raise
         return self.created(reverse('transfer', kwargs={'reference':
@@ -244,12 +250,12 @@ class TransferView(JSONView):
 
 
 class TransferReverseView(JSONView):
-    required_keys = ('merchant_reference',)
+    optional_keys = ('merchant_reference',)
 
     def valid_payload(self, payload):
         to_reverse = get_object_or_404(Transfer,
                                        reference=self.kwargs['reference'])
-        merchant_reference = payload['merchant_reference']
+        merchant_reference = payload.get('merchant_reference', None)
         try:
             transfer = facade.reverse(to_reverse,
                                       merchant_reference=merchant_reference)

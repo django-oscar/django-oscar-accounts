@@ -196,6 +196,14 @@ class TestMakingARedemption(test.TestCase):
         self.assertEqual('50.00', data['amount'])
         self.assertIsNone(data['destination_code'])
 
+    def test_works_without_merchant_reference(self):
+        self.redeem_payload = {
+            'amount': '10.00',
+        }
+        redemption_url = json.loads(self.detail_response.content)['redemptions_url']
+        response = post(redemption_url, self.redeem_payload)
+        self.assertEqual(201, response.status_code)
+
 
 class TestTransferView(test.TestCase):
 
@@ -236,6 +244,15 @@ class TestMakingARedemptionThenRefund(test.TestCase):
     def test_returns_201_for_the_refund_request(self):
         self.assertEqual(201, self.refund_response.status_code)
 
+    def test_works_without_a_merchant_reference(self):
+        self.refund_payload = {
+            'amount': '25.00',
+        }
+        account_dict = json.loads(self.detail_response.content)
+        refund_url = account_dict['refunds_url']
+        self.refund_response = post(refund_url, self.refund_payload)
+        self.assertEqual(201, self.refund_response.status_code)
+
 
 class TestMakingARedemptionThenReverse(test.TestCase):
 
@@ -257,9 +274,7 @@ class TestMakingARedemptionThenReverse(test.TestCase):
 
         transfer_response = get(self.redeem_response['Location'])
         transfer_dict = json.loads(transfer_response.content)
-        self.reverse_payload = {
-            'merchant_reference': '1234',
-        }
+        self.reverse_payload = {}
         reverse_url = transfer_dict['reverse_url']
         self.reverse_response = post(reverse_url, self.reverse_payload)
 
