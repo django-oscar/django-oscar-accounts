@@ -351,12 +351,13 @@ class Transfer(models.Model):
 
     def as_dict(self):
         return {
-            'id': str(self.id),
+            'reference': self.reference,
             'source_code': self.source.code,
             'source_name': self.source.name,
             'destination_code': self.destination.code,
             'destination_name': self.destination.name,
             'amount': "%.2f" % self.amount,
+            'available_to_refund': "%.2f" % self.max_refund(),
             'datetime': self.date_created.isoformat(),
             'merchant_reference': self.merchant_reference,
             'description': self.description,
