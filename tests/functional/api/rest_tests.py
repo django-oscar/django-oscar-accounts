@@ -43,7 +43,7 @@ class TestCreatingAnAccountErrors(test.TestCase):
 
     def setUp(self):
         self.payload = {
-            'start_date': '2013-01-01T09:00:00+03:00',
+            'start_date': '2012-01-01T09:00:00+03:00',
             'end_date': '2013-06-01T09:00:00+03:00',
             'amount': '400.00',
         }
@@ -159,7 +159,7 @@ class TestMakingARedemption(test.TestCase):
 
     def setUp(self):
         self.create_payload = {
-            'start_date': '2013-01-01T09:00:00+03:00',
+            'start_date': '2012-01-01T09:00:00+03:00',
             'end_date': '2013-06-01T09:00:00+03:00',
             'amount': '400.00',
         }
@@ -218,7 +218,7 @@ class TestMakingARedemptionThenRefund(test.TestCase):
 
     def setUp(self):
         self.create_payload = {
-            'start_date': '2013-01-01T09:00:00+03:00',
+            'start_date': '2012-01-01T09:00:00+03:00',
             'end_date': '2013-06-01T09:00:00+03:00',
             'amount': '400.00',
         }
@@ -258,7 +258,7 @@ class TestMakingARedemptionThenReverse(test.TestCase):
 
     def setUp(self):
         self.create_payload = {
-            'start_date': '2013-01-01T09:00:00+03:00',
+            'start_date': '2012-01-01T09:00:00+03:00',
             'end_date': '2013-06-01T09:00:00+03:00',
             'amount': '400.00',
         }
@@ -286,7 +286,7 @@ class TestMakingARedemptionThenTransferRefund(test.TestCase):
 
     def setUp(self):
         self.create_payload = {
-            'start_date': '2013-01-01T09:00:00+03:00',
+            'start_date': '2012-01-01T09:00:00+03:00',
             'end_date': '2013-06-01T09:00:00+03:00',
             'amount': '1000.00',
         }

@@ -34,9 +34,11 @@ class JSONView(generic.View):
     # Error handlers
 
     def forbidden(self, code=None, msg=None):
+        # Forbidden by business logic
         return self.error(403, code, msg)
 
     def bad_request(self, code=None, msg=None):
+        # Bad syntax (eg missing keys)
         return self.error(400, code, msg)
 
     def error(self, status_code, code, msg):
@@ -75,7 +77,12 @@ class JSONView(generic.View):
             return self.bad_request(msg=str(e))
         except ValidationError, e:
             return self.forbidden(code=e.code, msg=errors.message(e.code))
-        return self.valid_payload(payload)
+        # We can still get a ValidationError even if the payload itself is
+        # valid.
+        try:
+            return self.valid_payload(payload)
+        except ValidationError, e:
+            return self.forbidden(code=e.code, msg=errors.message(e.code))
 
     def validate_payload(self, payload):
         # We mimic Django's forms API by using dynamic dispatch to call clean_*
@@ -142,7 +149,9 @@ class AccountsView(JSONView):
             self.load_account(account, payload)
         except exceptions.AccountException, e:
             account.delete()
-            raise self.forbidden(msg=e.message)
+            raise self.forbidden(
+                code=errors.CANNOT_CREATE_ACCOUNT,
+                msg=e.message)
         else:
             return self.created(
                 reverse('account', kwargs={'code': account.code}),
@@ -188,13 +197,21 @@ class AccountRedemptionsView(JSONView):
         Redeem an amount from the selected giftcard
         """
         account = get_object_or_404(Account, code=self.kwargs['code'])
+        if not account.is_active():
+            raise ValidationError(errors.ACCOUNT_INACTIVE)
+        amt = payload['amount']
+        if not account.is_debit_permitted(amt):
+            raise ValidationError(errors.INSUFFICIENT_FUNDS)
+
         redemptions = Account.objects.get(name=names.REDEMPTIONS)
         try:
             transfer = facade.transfer(
-                account, redemptions, payload['amount'],
+                account, redemptions, amt,
                 merchant_reference=payload.get('merchant_reference', None))
         except exceptions.AccountException, e:
-            return self.forbidden(msg=e.message)
+            return self.forbidden(
+                code=errors.CANNOT_CREATE_TRANSFER,
+                msg=e.message)
         return self.created(
             reverse('transfer', kwargs={'reference': transfer.reference}),
             transfer.as_dict())
@@ -215,13 +232,17 @@ class AccountRefundsView(JSONView):
 
     def valid_payload(self, payload):
         account = get_object_or_404(Account, code=self.kwargs['code'])
+        if not account.is_active():
+            raise ValidationError(errors.ACCOUNT_INACTIVE)
         redemptions = Account.objects.get(name=names.REDEMPTIONS)
         try:
             transfer = facade.transfer(
                 redemptions, account, payload['amount'],
                 merchant_reference=payload.get('merchant_reference', None))
-        except exceptions.AccountException:
-            raise
+        except exceptions.AccountException, e:
+            return self.forbidden(
+                code=errors.CANNOT_CREATE_TRANSFER,
+                msg=e.message)
         return self.created(
             reverse('transfer', kwargs={'reference': transfer.reference}),
             transfer.as_dict())
@@ -239,12 +260,16 @@ class TransferReverseView(JSONView):
     def valid_payload(self, payload):
         to_reverse = get_object_or_404(Transfer,
                                        reference=self.kwargs['reference'])
+        if not to_reverse.source.is_active():
+            raise ValidationError(errors.ACCOUNT_INACTIVE)
         merchant_reference = payload.get('merchant_reference', None)
         try:
             transfer = facade.reverse(to_reverse,
                                       merchant_reference=merchant_reference)
         except exceptions.AccountException, e:
-            return self.forbidden(msg=e.message)
+            return self.forbidden(
+                code=errors.CANNOT_CREATE_TRANSFER,
+                msg=e.message)
         return self.created(
             reverse('transfer', kwargs={'reference': transfer.reference}),
             transfer.as_dict())
@@ -272,13 +297,17 @@ class TransferRefundsView(JSONView):
             return self.forbidden(
                 ("Refund not permitted: maximum refund permitted "
                  "is %.2f") % max_refund)
+        if not to_refund.source.is_active():
+            raise ValidationError(errors.ACCOUNT_INACTIVE)
         try:
             transfer = facade.transfer(
                 to_refund.destination, to_refund.source,
                 payload['amount'], parent=to_refund,
                 merchant_reference=payload.get('merchant_reference', None))
         except exceptions.AccountException, e:
-            return self.forbidden(msg=e.message)
+            return self.forbidden(
+                code=errors.CANNOT_CREATE_TRANSFER,
+                msg=e.message)
         return self.created(
             reverse('transfer', kwargs={'reference': transfer.reference}),
             transfer.as_dict())
