@@ -48,8 +48,10 @@ class JSONView(generic.View):
 
     # Success handlers
 
-    def created(self, url):
-        response = http.HttpResponse(status=201)
+    def created(self, url, data):
+        response = http.HttpResponse(
+            json.dumps(data), content_type='application/json',
+            status=201)
         response['Location'] = url
         return response
 
@@ -137,7 +139,9 @@ class AccountsView(JSONView):
     def valid_payload(self, payload):
         account = self.create_account(payload)
         self.load_account(account, payload)
-        return self.created(reverse('account', kwargs={'code': account.code}))
+        return self.created(
+            reverse('account', kwargs={'code': account.code}),
+            account.as_dict())
 
     def create_account(self, payload):
         return Account.objects.create(
@@ -161,18 +165,9 @@ class AccountView(JSONView):
     """
     Fetch details of an account
     """
-
     def get(self, request, *args, **kwargs):
         account = get_object_or_404(Account, code=kwargs['code'])
-        data = {'code': account.code,
-                'start_date': account.start_date.isoformat(),
-                'end_date': account.end_date.isoformat(),
-                'balance': "%.2f" % account.balance,
-                'redemptions_url': reverse('account-redemptions',
-                                           kwargs={'code': account.code}),
-                'refunds_url': reverse('account-refunds',
-                                           kwargs={'code': account.code})}
-        return self.ok(data)
+        return self.ok(account.as_dict())
 
 
 class AccountRedemptionsView(JSONView):
@@ -200,8 +195,9 @@ class AccountRedemptionsView(JSONView):
                 merchant_reference=payload.get('merchant_reference', None))
         except exceptions.AccountException:
             raise
-        return self.created(reverse('transfer',
-                                    kwargs={'reference': transfer.reference}))
+        return self.created(
+            reverse('transfer', kwargs={'reference': transfer.reference}),
+            transfer.as_dict())
 
 
 class AccountRefundsView(JSONView):
@@ -226,30 +222,15 @@ class AccountRefundsView(JSONView):
                 merchant_reference=payload.get('merchant_reference', None))
         except exceptions.AccountException:
             raise
-        return self.created(reverse('transfer', kwargs={'reference':
-                                                        transfer.reference}))
+        return self.created(
+            reverse('transfer', kwargs={'reference': transfer.reference}),
+            transfer.as_dict())
 
 
 class TransferView(JSONView):
-
     def get(self, request, *args, **kwargs):
         transfer = get_object_or_404(Transfer, reference=kwargs['reference'])
-        data = {'id': str(transfer.id),
-                'source_code': transfer.source.code,
-                'source_name': transfer.source.name,
-                'destination_code': transfer.destination.code,
-                'destination_name': transfer.destination.name,
-                'amount': "%.2f" % transfer.amount,
-                'datetime': transfer.date_created.isoformat(),
-                'merchant_reference': transfer.merchant_reference,
-                'description': transfer.description,
-                'reverse_url': reverse(
-                    'transfer-reverse',
-                    kwargs={'reference': transfer.reference}),
-                'refunds_url': reverse(
-                    'transfer-refunds',
-                    kwargs={'reference': transfer.reference})}
-        return self.ok(data)
+        return self.ok(transfer.as_dict())
 
 
 class TransferReverseView(JSONView):
@@ -264,8 +245,9 @@ class TransferReverseView(JSONView):
                                       merchant_reference=merchant_reference)
         except exceptions.AccountException:
             raise
-        return self.created(reverse('transfer', kwargs={'reference':
-                                                        transfer.reference}))
+        return self.created(
+            reverse('transfer', kwargs={'reference': transfer.reference}),
+            transfer.as_dict())
 
 
 class TransferRefundsView(JSONView):
@@ -297,5 +279,6 @@ class TransferRefundsView(JSONView):
                 merchant_reference=payload.get('merchant_reference', None))
         except exceptions.AccountException:
             raise
-        return self.created(reverse('transfer',
-                                    kwargs={'reference': transfer.reference}))
+        return self.created(
+            reverse('transfer', kwargs={'reference': transfer.reference}),
+            transfer.as_dict())

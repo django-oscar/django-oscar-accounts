@@ -1,12 +1,13 @@
 from decimal import Decimal as D
 import hmac
 
-from django.db import models
-from django.utils.translation import ugettext_lazy as _
-from django.utils import timezone
-from django.db import transaction
 from django.conf import settings
+from django.core.urlresolvers import reverse
+from django.db import models
+from django.db import transaction
 from django.db.models import Sum
+from django.utils import timezone
+from django.utils.translation import ugettext_lazy as _
 from treebeard.mp_tree import MP_Node
 
 from accounts import exceptions
@@ -195,6 +196,17 @@ class Account(models.Model):
         self.status = self.__class__.CLOSED
         self.save()
 
+    def as_dict(self):
+        return {
+            'code': self.code,
+            'start_date': self.start_date.isoformat(),
+            'end_date': self.end_date.isoformat(),
+            'balance': "%.2f" % self.balance,
+            'redemptions_url': reverse('account-redemptions',
+                                       kwargs={'code': self.code}),
+            'refunds_url': reverse('account-refunds',
+                                   kwargs={'code': self.code})}
+
 
 class PostingManager(models.Manager):
     """
@@ -336,6 +348,24 @@ class Transfer(models.Model):
         if already_refunded is None:
             return self.amount
         return self.amount - already_refunded
+
+    def as_dict(self):
+        return {
+            'id': str(self.id),
+            'source_code': self.source.code,
+            'source_name': self.source.name,
+            'destination_code': self.destination.code,
+            'destination_name': self.destination.name,
+            'amount': "%.2f" % self.amount,
+            'datetime': self.date_created.isoformat(),
+            'merchant_reference': self.merchant_reference,
+            'description': self.description,
+            'reverse_url': reverse(
+                'transfer-reverse',
+                kwargs={'reference': self.reference}),
+            'refunds_url': reverse(
+                'transfer-refunds',
+                kwargs={'reference': self.reference})}
 
 
 class Transaction(models.Model):
