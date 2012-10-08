@@ -54,7 +54,7 @@
 		<tbody>
 			{% for txn in transactions %}
 			<tr>
-				<td><a href="{% url transfers-detail txn.transfer.id %}">{{ txn.transfer }}</a></td>
+				<td><a href="{% url transfers-detail txn.transfer.reference %}">{{ txn.transfer }}</a></td>
 				<td>{{ txn.amount|currency }}</td>
 				<td>{{ txn.transfer.description|default:"-" }}</td>
 				<td>{{ txn.transfer.user }}</td>

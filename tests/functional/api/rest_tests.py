@@ -200,7 +200,8 @@ class TestMakingARedemption(test.TestCase):
 class TestTransferView(test.TestCase):
 
     def test_returns_404_for_missing_transfer(self):
-        url = reverse('transfer', kwargs={'pk': 11111111})
+        url = reverse('transfer', kwargs={'reference':
+                                          '12345678123456781234567812345678'})
         response = get(url)
         self.assertEqual(404, response.status_code)
 

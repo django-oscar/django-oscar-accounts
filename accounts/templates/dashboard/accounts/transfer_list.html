@@ -55,7 +55,7 @@
 			</tr>
 			{% for transfer in transfers %}
 			<tr>
-				<td><a href="{% url transfers-detail transfer.id %}">{{ transfer.reference }}</a></td>
+				<td><a href="{% url transfers-detail transfer.reference %}">{{ transfer.reference }}</a></td>
 				<td><a href="{% url accounts-detail transfer.source.id %}">{{ transfer.source }}</a></td>
 				<td><a href="{% url accounts-detail transfer.destination.id %}">{{ transfer.destination }}</a></td>
 				<td>{{ transfer.amount|currency }}</td>

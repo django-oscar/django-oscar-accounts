@@ -252,3 +252,8 @@ class TransferDetailView(generic.DetailView):
     model = Transfer
     context_object_name = 'transfer'
     template_name = 'dashboard/accounts/transfer_detail.html'
+
+    def get_object(self, queryset=None):
+        if queryset is None:
+            queryset = self.get_queryset()
+        return queryset.get(reference=self.kwargs['reference'])

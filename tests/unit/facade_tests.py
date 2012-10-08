@@ -54,6 +54,9 @@ class TestATransfer(TestCase):
         self.transfer = facade.transfer(self.source, self.destination, D('100'),
                                         self.user, description="Give money to customer")
 
+    def test_generates_an_unguessable_reference(self):
+        self.assertTrue(len(self.transfer.reference) > 0)
+
     def test_records_the_authorising_user(self):
         self.assertEqual(self.user, self.transfer.user)
 

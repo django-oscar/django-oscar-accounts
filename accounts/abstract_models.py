@@ -1,9 +1,11 @@
 from decimal import Decimal as D
+import hmac
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
 from django.db import transaction
+from django.conf import settings
 from django.db.models import Sum
 from treebeard.mp_tree import MP_Node
 
@@ -110,11 +112,11 @@ class Account(models.Model):
         abstract = True
 
     def __unicode__(self):
+        if self.code:
+            return self.code
         if self.name:
             return self.name
-        if self.code:
-            return _("Code account - %s") % self.code
-        return _("Anonymous account")
+        return 'Anonymous'
 
     def is_active(self):
         if self.start_date is None and self.end_date is None:
@@ -259,13 +261,17 @@ class Transfer(models.Model):
     number for it and who was the authorisor.  The financial details are help
     within the transactions.  Each transfer links to TWO account transactions
     """
+    # We generate a reference for each transaction to avoid passing around
+    # primary keys
+    reference = models.CharField(max_length=64, unique=True, null=True)
+
     source = models.ForeignKey('accounts.Account',
                                related_name='source_transfers')
     destination = models.ForeignKey('accounts.Account',
                                     related_name='destination_transfers')
     amount = models.DecimalField(decimal_places=2, max_digits=12)
 
-    # Optional description of what this transfer was
+    # Optional meta-data of what this transfer was
     order_number = models.CharField(max_length=128, null=True)
     description = models.CharField(max_length=256, null=True)
 
@@ -282,10 +288,6 @@ class Transfer(models.Model):
     # account transactions.
     objects = PostingManager()
 
-    @property
-    def reference(self):
-        return "%08d" % self.id
-
     def __unicode__(self):
         return self.reference
 
@@ -300,7 +302,17 @@ class Transfer(models.Model):
         # Store audit information about authorising user (if one is set)
         if self.user:
             self.username = self.user.username
-        return super(Transfer, self).save(*args, **kwargs)
+        # We generate a transaction reference using the PK of the transfer so
+        # we save the transfer first
+        super(Transfer, self).save(*args, **kwargs)
+        if not self.reference:
+            self.reference = self._generate_reference()
+            super(Transfer, self).save()
+
+    def _generate_reference(self):
+        obj = hmac.new(key=settings.SECRET_KEY,
+                       msg=unicode(self.id))
+        return obj.hexdigest().upper()
 
     @property
     def authorisor_username(self):

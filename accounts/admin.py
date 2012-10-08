@@ -5,10 +5,10 @@ from accounts import models
 
 
 class AccountAdmin(admin.ModelAdmin):
-    list_display = ['id', 'name', 'primary_user', 'credit_limit',
-                    'start_date', 'end_date', 'is_active', 'balance',
+    list_display = ['id', 'code', 'name', 'balance', 'credit_limit', 'primary_user',
+                    'start_date', 'end_date', 'is_active',
                     'date_created']
-    readonly_fields = ('balance',)
+    readonly_fields = ('balance', 'code',)
 
 
 class TransferAdmin(admin.ModelAdmin):

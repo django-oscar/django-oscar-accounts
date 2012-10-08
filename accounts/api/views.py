@@ -195,7 +195,8 @@ class AccountRedemptionsView(JSONView):
                 order_number=payload['order_number'])
         except exceptions.AccountException:
             raise
-        return self.created(reverse('transfer', kwargs={'pk': transfer.id}))
+        return self.created(reverse('transfer', kwargs={'reference':
+                                                        transfer.reference}))
 
 
 class AccountRefundsView(JSONView):
@@ -219,13 +220,14 @@ class AccountRefundsView(JSONView):
                 order_number=payload['order_number'])
         except exceptions.AccountException:
             raise
-        return self.created(reverse('transfer', kwargs={'pk': transfer.id}))
+        return self.created(reverse('transfer', kwargs={'reference':
+                                                        transfer.reference}))
 
 
 class TransferView(JSONView):
 
     def get(self, request, *args, **kwargs):
-        transfer = get_object_or_404(Transfer, id=kwargs['pk'])
+        transfer = get_object_or_404(Transfer, reference=kwargs['reference'])
         data = {'id': str(transfer.id),
                 'source_code': transfer.source.code,
                 'source_name': transfer.source.name,
@@ -235,8 +237,9 @@ class TransferView(JSONView):
                 'datetime': transfer.date_created.isoformat(),
                 'order_number': transfer.order_number,
                 'description': transfer.description,
-                'reverse_url': reverse('transfer-reverse',
-                                       kwargs={'pk': transfer.id})}
+                'reverse_url': reverse(
+                    'transfer-reverse',
+                    kwargs={'reference': transfer.reference})}
         return self.ok(data)
 
 
@@ -244,10 +247,12 @@ class TransferReverseView(JSONView):
     required_keys = ('order_number',)
 
     def valid_payload(self, payload):
-        to_reverse = get_object_or_404(Transfer, id=self.kwargs['pk'])
+        to_reverse = get_object_or_404(Transfer,
+                                       reference=self.kwargs['reference'])
         order_number = payload['order_number']
         try:
             transfer = facade.reverse(to_reverse, order_number=order_number)
         except exceptions.AccountException:
             raise
-        return self.created(reverse('transfer', kwargs={'pk': transfer.id}))
+        return self.created(reverse('transfer', kwargs={'reference':
+                                                        transfer.reference}))

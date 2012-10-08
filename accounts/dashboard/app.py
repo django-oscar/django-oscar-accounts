@@ -47,7 +47,7 @@ class AccountsDashboardApplication(Application):
                 name='accounts-top-up'),
             url(r'^transfers/$', self.transfer_list_view.as_view(),
                 name='transfers-list'),
-            url(r'^transfers/(?P<pk>\d+)/$',
+            url(r'^transfers/(?P<reference>[A-Z0-9]{32})/$',
                 self.transfer_detail_view.as_view(),
                 name='transfers-detail'),
         )
