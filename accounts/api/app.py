@@ -3,7 +3,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from oscar.core.application import Application
 
-from accounts.api import views
+from accounts.api import views, decorators
 
 
 class APIApplication(Application):
@@ -41,7 +41,7 @@ class APIApplication(Application):
         return self.post_process_urls(urlpatterns)
 
     def get_url_decorator(self, url_name):
-        return csrf_exempt
+        return lambda x: decorators.basicauth(csrf_exempt(x))
 
 
 application = APIApplication()
