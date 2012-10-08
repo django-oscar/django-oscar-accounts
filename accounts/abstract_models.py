@@ -203,8 +203,8 @@ class PostingManager(models.Manager):
     Apparently, finance people refer to "posting a transaction"; hence why this
     """
 
-    def create(self, source, destination, amount, user=None,
-               merchant_reference=None, description=None):
+    def create(self, source, destination, amount, parent=None,
+               user=None, merchant_reference=None, description=None):
         # Write out transfer (which involves multiple writes).  We use a
         # database transaction to ensure that all get written out correctly.
         self.verify_transfer(source, destination, amount, user)
@@ -213,6 +213,7 @@ class PostingManager(models.Manager):
                 source=source,
                 destination=destination,
                 amount=amount,
+                parent=parent,
                 user=user,
                 merchant_reference=merchant_reference,
                 description=description)
@@ -271,6 +272,11 @@ class Transfer(models.Model):
                                     related_name='destination_transfers')
     amount = models.DecimalField(decimal_places=2, max_digits=12)
 
+    # We keep track of related transfers (eg multiple refunds of the same
+    # redemption) using a parent system
+    parent = models.ForeignKey('self', null=True,
+                               related_name='related_transfers')
+
     # Optional meta-data about transfer
     merchant_reference = models.CharField(max_length=128, null=True)
     description = models.CharField(max_length=256, null=True)
@@ -319,6 +325,17 @@ class Transfer(models.Model):
         if self.user:
             return self.user.username
         return self.username
+
+    def max_refund(self):
+        """
+        Return the maximum amount that can be refunded against this transfer
+        """
+        aggregates = self.related_transfers.filter(
+            source=self.destination).aggregate(sum=Sum('amount'))
+        already_refunded = aggregates['sum']
+        if already_refunded is None:
+            return self.amount
+        return self.amount - already_refunded
 
 
 class Transaction(models.Model):

@@ -280,3 +280,48 @@ class TestMakingARedemptionThenReverse(test.TestCase):
 
     def test_returns_201_for_the_reverse_request(self):
         self.assertEqual(201, self.reverse_response.status_code)
+
+
+class TestMakingARedemptionThenTransferRefund(test.TestCase):
+
+    def setUp(self):
+        self.create_payload = {
+            'start_date': '2013-01-01T09:00:00+03:00',
+            'end_date': '2013-06-01T09:00:00+03:00',
+            'amount': '1000.00',
+        }
+        self.create_response = post(
+            reverse('accounts'), self.create_payload)
+        self.detail_response = get(self.create_response['Location'])
+        account_dict = json.loads(self.detail_response.content)
+
+        self.redeem_payload = {'amount': '300.00'}
+        redemption_url = account_dict['redemptions_url']
+        self.redeem_response = post(redemption_url, self.redeem_payload)
+        self.transfer_response = get(self.redeem_response['Location'])
+        transfer_dict = json.loads(self.transfer_response.content)
+
+        self.refund_payload = {
+            'amount': '25.00',
+        }
+        refund_url = transfer_dict['refunds_url']
+        self.refund_response = post(refund_url, self.refund_payload)
+
+    def test_returns_201_for_the_refund_request(self):
+        self.assertEqual(201, self.refund_response.status_code)
+
+    def test_refunds_are_capped_at_value_of_redemption(self):
+        # Make another redemption to ensure the redemptions account has enough
+        # funds to attemp the below refund
+        self.redeem_payload = {'amount': '300.00'}
+        account_dict = json.loads(self.detail_response.content)
+        redemption_url = account_dict['redemptions_url']
+        post(redemption_url, self.redeem_payload)
+
+        self.refund_payload = {
+            'amount': '280.00',
+        }
+        transfer_dict = json.loads(self.transfer_response.content)
+        refund_url = transfer_dict['refunds_url']
+        response = post(refund_url, self.refund_payload)
+        self.assertEqual(403, response.status_code)

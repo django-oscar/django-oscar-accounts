@@ -245,6 +245,9 @@ class TransferView(JSONView):
                 'description': transfer.description,
                 'reverse_url': reverse(
                     'transfer-reverse',
+                    kwargs={'reference': transfer.reference}),
+                'refunds_url': reverse(
+                    'transfer-refunds',
                     kwargs={'reference': transfer.reference})}
         return self.ok(data)
 
@@ -263,3 +266,36 @@ class TransferReverseView(JSONView):
             raise
         return self.created(reverse('transfer', kwargs={'reference':
                                                         transfer.reference}))
+
+
+class TransferRefundsView(JSONView):
+    required_keys = ('amount',)
+    optional_keys = ('merchant_reference',)
+
+    def clean_amount(self, value):
+        try:
+            amount = D(value)
+        except InvalidOperation:
+            raise InvalidPayload("'%s' is not a valid amount" % value)
+        if amount < 0:
+            raise InvalidPayload("Amount must be positive")
+        return amount
+
+    def valid_payload(self, payload):
+        to_refund = get_object_or_404(Transfer,
+                                      reference=self.kwargs['reference'])
+        amount = payload['amount']
+        max_refund = to_refund.max_refund()
+        if amount > max_refund:
+            return self.forbidden(
+                ("Refund not permitted: maximum refund permitted "
+                 "is %.2f") % max_refund)
+        try:
+            transfer = facade.transfer(
+                to_refund.destination, to_refund.source,
+                payload['amount'], parent=to_refund,
+                merchant_reference=payload.get('merchant_reference', None))
+        except exceptions.AccountException:
+            raise
+        return self.created(reverse('transfer',
+                                    kwargs={'reference': transfer.reference}))

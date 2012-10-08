@@ -16,6 +16,7 @@ class APIApplication(Application):
 
     transfer_view = views.TransferView
     transfer_reverse_view = views.TransferReverseView
+    transfer_refunds_view = views.TransferRefundsView
 
     def get_urls(self):
         urlpatterns = patterns('',
@@ -37,6 +38,9 @@ class APIApplication(Application):
             url(r'^transfers/(?P<reference>[A-Z0-9]{32})/reverse/$',
                 self.transfer_reverse_view.as_view(),
                 name='transfer-reverse'),
+            url(r'^transfers/(?P<reference>[A-Z0-9]{32})/refunds/$',
+                self.transfer_refunds_view.as_view(),
+                name='transfer-refunds'),
         )
         return self.post_process_urls(urlpatterns)
 

@@ -144,7 +144,7 @@ class TestATransaction(TestCase):
         source = G(Account, credit_limit=None, primary_user=user, start_date=None, end_date=None)
         destination = G(Account, start_date=None, end_date=None)
         txn = Transfer.objects.create(source, destination,
-                                      D('20.00'), user)
+                                      D('20.00'), user=user)
         self.assertEqual(2, txn.transactions.all().count())
         user.delete()
         self.assertEqual(2, txn.transactions.all().count())

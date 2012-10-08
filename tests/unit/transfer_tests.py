@@ -17,7 +17,7 @@ class TestASuccessfulTransfer(TestCase):
                    credit_limit=None)
         destination = G(Account, start_date=None, end_date=None)
         self.transfer = Transfer.objects.create(source, destination,
-                                                D('10.00'), self.user)
+                                                D('10.00'), user=self.user)
 
     def test_creates_2_transactions(self):
         self.assertEqual(2, self.transfer.transactions.all().count())
@@ -52,7 +52,7 @@ class TestATransferToAnInactiveAccount(TestCase):
             end_date=now - timezone.timedelta(days=1))
         try:
             Transfer.objects.create(source, destination,
-                                    D('20.00'), self.user)
+                                    D('20.00'), user=self.user)
         except exceptions.AccountException, e:
             self.fail("Transfer failed: %s" % e)
 
@@ -67,7 +67,7 @@ class TestATransferFromAnInactiveAccount(TestCase):
         destination = G(Account, start_date=None, end_date=None)
         try:
             Transfer.objects.create(source, destination,
-                                    D('20.00'), self.user)
+                                    D('20.00'), user=self.user)
         except exceptions.AccountException, e:
             self.fail("Transfer failed: %s" % e)
 
@@ -83,14 +83,14 @@ class TestAnAttemptedTransfer(TestCase):
         destination = G(Account, start_date=None, end_date=None)
         with self.assertRaises(exceptions.InsufficientFunds):
             Transfer.objects.create(source, destination,
-                                    D('20.00'), self.user)
+                                    D('20.00'), user=self.user)
 
     def test_raises_an_exception_when_trying_to_debit_negative_value(self):
         source = G(Account, credit_limit=None, start_date=None, end_date=None)
         destination = G(Account, start_date=None, end_date=None)
         with self.assertRaises(exceptions.InvalidAmount):
             Transfer.objects.create(source, destination,
-                                    D('-20.00'), self.user)
+                                    D('-20.00'), user=self.user)
 
     def test_raises_an_exception_when_trying_to_use_closed_source(self):
         source = G(Account, credit_limit=None, start_date=None, end_date=None)
@@ -98,12 +98,13 @@ class TestAnAttemptedTransfer(TestCase):
         destination = G(Account, start_date=None, end_date=None)
         with self.assertRaises(exceptions.ClosedAccount):
             Transfer.objects.create(source, destination,
-                                       D('20.00'), self.user)
+                                    D('20.00'), user=self.user)
 
     def test_raises_an_exception_when_trying_to_use_closed_destination(self):
-        source = G(Account, primary_user=None, credit_limit=None, start_date=None, end_date=None)
+        source = G(Account, primary_user=None, credit_limit=None,
+                   start_date=None, end_date=None)
         destination = G(Account, start_date=None, end_date=None)
         destination.close()
         with self.assertRaises(exceptions.ClosedAccount):
             Transfer.objects.create(
-                source, destination, D('20.00'), self.user)
+                source, destination, D('20.00'), user=self.user)
