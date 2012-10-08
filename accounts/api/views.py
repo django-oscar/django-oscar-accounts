@@ -234,7 +234,9 @@ class TransferView(JSONView):
                 'amount': "%.2f" % transfer.amount,
                 'datetime': transfer.date_created.isoformat(),
                 'order_number': transfer.order_number,
-                'description': transfer.description}
+                'description': transfer.description,
+                'reverse_url': reverse('transfer-reverse',
+                                       kwargs={'pk': transfer.id})}
         return self.ok(data)
 
 

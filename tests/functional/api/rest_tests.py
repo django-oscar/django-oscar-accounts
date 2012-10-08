@@ -164,11 +164,13 @@ class TestMakingARedemption(test.TestCase):
             'amount': '400.00',
         }
         self.create_response = post(reverse('accounts'), self.create_payload)
+        self.detail_response = get(self.create_response['Location'])
+        redemption_url = json.loads(self.detail_response.content)['redemptions_url']
+
         self.redeem_payload = {
             'amount': '50.00',
             'order_number': '1234'
         }
-        redemption_url = self.create_response['Location'] + 'redemptions/'
         self.redeem_response = post(redemption_url, self.redeem_payload)
 
         transfer_url = self.redeem_response['Location']
@@ -213,18 +215,21 @@ class TestMakingARedemptionThenRefund(test.TestCase):
         }
         self.create_response = post(
             reverse('accounts'), self.create_payload)
+        self.detail_response = get(self.create_response['Location'])
+
         self.redeem_payload = {
             'amount': '50.00',
             'order_number': '1234'
         }
-        redemption_url = self.create_response['Location'] + 'redemptions/'
+        account_dict = json.loads(self.detail_response.content)
+        redemption_url = account_dict['redemptions_url']
         self.redeem_response = post(redemption_url, self.redeem_payload)
 
         self.refund_payload = {
             'amount': '25.00',
             'order_number': '1234',
         }
-        refund_url = self.create_response['Location'] + 'refunds/'
+        refund_url = account_dict['refunds_url']
         self.refund_response = post(refund_url, self.refund_payload)
 
     def test_returns_201_for_the_refund_request(self):
@@ -240,17 +245,21 @@ class TestMakingARedemptionThenReverse(test.TestCase):
             'amount': '400.00',
         }
         self.create_response = post(reverse('accounts'), self.create_payload)
+        self.detail_response = get(self.create_response['Location'])
+        account_dict = json.loads(self.detail_response.content)
         self.redeem_payload = {
             'amount': '50.00',
             'order_number': '1234'
         }
-        redemption_url = self.create_response['Location'] + 'redemptions/'
+        redemption_url = account_dict['redemptions_url']
         self.redeem_response = post(redemption_url, self.redeem_payload)
 
+        transfer_response = get(self.redeem_response['Location'])
+        transfer_dict = json.loads(transfer_response.content)
         self.reverse_payload = {
             'order_number': '1234',
         }
-        reverse_url = self.redeem_response['Location'] + 'reverse/'
+        reverse_url = transfer_dict['reverse_url']
         self.reverse_response = post(reverse_url, self.reverse_payload)
 
     def test_returns_201_for_the_reverse_request(self):

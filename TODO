@@ -6,7 +6,8 @@ STANDALONE_MODE - make lib work without oscar
 Accounts can exclude shipping costs
 
 REST API:
-- include URLs of transfer and account in 201 response
+- use 'merchant_reference' instead of 'order_number'
+- don't use auto-incrementing ID for transactions
 
 Error handling
 - return codes correctly
