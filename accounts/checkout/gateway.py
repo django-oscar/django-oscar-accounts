@@ -45,7 +45,7 @@ def redeem(order_number, user, allocations):
     # All transfers verified, now redeem
     for account, destination, amount in transfers:
         facade.transfer(account, destination, amount,
-                        user, order_number,
+                        user, merchant_reference=order_number,
                         description="Redeemed to pay for order %s" % order_number)
 
 

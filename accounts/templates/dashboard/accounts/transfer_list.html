@@ -59,7 +59,7 @@
 				<td><a href="{% url accounts-detail transfer.source.id %}">{{ transfer.source }}</a></td>
 				<td><a href="{% url accounts-detail transfer.destination.id %}">{{ transfer.destination }}</a></td>
 				<td>{{ transfer.amount|currency }}</td>
-				<td>{{ transfer.order_number|default:"-" }}</td>
+				<td>{{ transfer.merchant_reference|default:"-" }}</td>
 				<td>{{ transfer.description|default:"-" }}</td>
 				<td>{{ transfer.user }}</td>
 				<td>{{ transfer.date_created }}</td>

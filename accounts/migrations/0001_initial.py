@@ -49,10 +49,11 @@ class Migration(SchemaMigration):
         # Adding model 'Transfer'
         db.create_table('accounts_transfer', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('reference', self.gf('django.db.models.fields.CharField')(max_length=64, unique=True, null=True)),
             ('source', self.gf('django.db.models.fields.related.ForeignKey')(related_name='source_transfers', to=orm['accounts.Account'])),
             ('destination', self.gf('django.db.models.fields.related.ForeignKey')(related_name='destination_transfers', to=orm['accounts.Account'])),
             ('amount', self.gf('django.db.models.fields.DecimalField')(max_digits=12, decimal_places=2)),
-            ('order_number', self.gf('django.db.models.fields.CharField')(max_length=128, null=True)),
+            ('merchant_reference', self.gf('django.db.models.fields.CharField')(max_length=128, null=True)),
             ('description', self.gf('django.db.models.fields.CharField')(max_length=256, null=True)),
             ('user', self.gf('django.db.models.fields.related.ForeignKey')(related_name='transfers', null=True, to=orm['auth.User'])),
             ('username', self.gf('django.db.models.fields.CharField')(max_length=128)),
@@ -161,7 +162,8 @@ class Migration(SchemaMigration):
             'description': ('django.db.models.fields.CharField', [], {'max_length': '256', 'null': 'True'}),
             'destination': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'destination_transfers'", 'to': "orm['accounts.Account']"}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'order_number': ('django.db.models.fields.CharField', [], {'max_length': '128', 'null': 'True'}),
+            'merchant_reference': ('django.db.models.fields.CharField', [], {'max_length': '128', 'null': 'True'}),
+            'reference': ('django.db.models.fields.CharField', [], {'max_length': '64', 'unique': 'True', 'null': 'True'}),
             'source': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'source_transfers'", 'to': "orm['accounts.Account']"}),
             'user': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'transfers'", 'null': 'True', 'to': "orm['auth.User']"}),
             'username': ('django.db.models.fields.CharField', [], {'max_length': '128'})
@@ -181,7 +183,7 @@ class Migration(SchemaMigration):
         },
         'auth.user': {
             'Meta': {'object_name': 'User'},
-            'date_joined': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2012, 10, 3, 14, 42, 13, 246223)'}),
+            'date_joined': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2012, 10, 8, 13, 6, 28, 357922, tzinfo=<UTC>)'}),
             'email': ('django.db.models.fields.EmailField', [], {'max_length': '75', 'blank': 'True'}),
             'first_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
             'groups': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.Group']", 'symmetrical': 'False', 'blank': 'True'}),
@@ -189,7 +191,7 @@ class Migration(SchemaMigration):
             'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
             'is_staff': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'is_superuser': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'last_login': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2012, 10, 3, 14, 42, 13, 246133)'}),
+            'last_login': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2012, 10, 8, 13, 6, 28, 357819, tzinfo=<UTC>)'}),
             'last_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
             'password': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
             'user_permissions': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.Permission']", 'symmetrical': 'False', 'blank': 'True'}),

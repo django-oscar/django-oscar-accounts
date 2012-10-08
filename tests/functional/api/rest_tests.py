@@ -169,7 +169,7 @@ class TestMakingARedemption(test.TestCase):
 
         self.redeem_payload = {
             'amount': '50.00',
-            'order_number': '1234'
+            'merchant_reference': '1234'
         }
         self.redeem_response = post(redemption_url, self.redeem_payload)
 
@@ -188,7 +188,7 @@ class TestMakingARedemption(test.TestCase):
     def test_returns_the_correct_data_in_the_transfer_request(self):
         data = json.loads(self.transfer_response.content)
         keys = ['source_code', 'source_name', 'destination_code',
-                'destination_name', 'amount', 'datetime', 'order_number',
+                'destination_name', 'amount', 'datetime', 'merchant_reference',
                 'description']
         for key in keys:
             self.assertTrue(key in data, "Key '%s' not found in payload" % key)
@@ -220,7 +220,7 @@ class TestMakingARedemptionThenRefund(test.TestCase):
 
         self.redeem_payload = {
             'amount': '50.00',
-            'order_number': '1234'
+            'merchant_reference': '1234'
         }
         account_dict = json.loads(self.detail_response.content)
         redemption_url = account_dict['redemptions_url']
@@ -228,7 +228,7 @@ class TestMakingARedemptionThenRefund(test.TestCase):
 
         self.refund_payload = {
             'amount': '25.00',
-            'order_number': '1234',
+            'merchant_reference': '1234',
         }
         refund_url = account_dict['refunds_url']
         self.refund_response = post(refund_url, self.refund_payload)
@@ -250,7 +250,7 @@ class TestMakingARedemptionThenReverse(test.TestCase):
         account_dict = json.loads(self.detail_response.content)
         self.redeem_payload = {
             'amount': '50.00',
-            'order_number': '1234'
+            'merchant_reference': '1234'
         }
         redemption_url = account_dict['redemptions_url']
         self.redeem_response = post(redemption_url, self.redeem_payload)
@@ -258,7 +258,7 @@ class TestMakingARedemptionThenReverse(test.TestCase):
         transfer_response = get(self.redeem_response['Location'])
         transfer_dict = json.loads(transfer_response.content)
         self.reverse_payload = {
-            'order_number': '1234',
+            'merchant_reference': '1234',
         }
         reverse_url = transfer_dict['reverse_url']
         self.reverse_response = post(reverse_url, self.reverse_payload)

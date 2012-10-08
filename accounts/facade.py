@@ -32,7 +32,7 @@ def close_expired_accounts():
             account.close()
 
 
-def transfer(source, destination, amount, user=None, order_number=None,
+def transfer(source, destination, amount, user=None, merchant_reference=None,
              description=None):
     """
     Transfer funds between source and destination accounts.
@@ -43,7 +43,7 @@ def transfer(source, destination, amount, user=None, order_number=None,
     :destination: Account to credit
     :amount: Amount to transfer
     :user: Authorising user
-    :order_number: An optional order number associated with this transfer
+    :merchant_reference: An optional merchant ref associated with this transfer
     :description: Description of transaction
     """
     msg = "Transfer of %.2f from account #%d to account #%d"
@@ -53,7 +53,7 @@ def transfer(source, destination, amount, user=None, order_number=None,
         msg += " '%s'" % description
     try:
         transfer = Transfer.objects.create(
-            source, destination, amount, user, order_number, description)
+            source, destination, amount, user, merchant_reference, description)
     except exceptions.AccountException, e:
         logger.warning("%s - failed: '%s'", msg, e)
         raise
@@ -67,7 +67,7 @@ def transfer(source, destination, amount, user=None, order_number=None,
         return transfer
 
 
-def reverse(transfer, user=None, order_number=None, description=None):
+def reverse(transfer, user=None, merchant_reference=None, description=None):
     """
     Reverse a previous transfer, returning the money to the original source.
     """
@@ -81,7 +81,7 @@ def reverse(transfer, user=None, order_number=None, description=None):
             source=transfer.destination,
             destination=transfer.source,
             amount=transfer.amount, user=user,
-            order_number=order_number,
+            merchant_reference=merchant_reference,
             description=description)
     except exceptions.AccountException, e:
         logger.warning("%s - failed: '%s'", msg, e)

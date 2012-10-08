@@ -172,7 +172,7 @@ class AccountView(JSONView):
 
 
 class AccountRedemptionsView(JSONView):
-    required_keys = ('amount', 'order_number')
+    required_keys = ('amount', 'merchant_reference')
 
     def clean_amount(self, value):
         try:
@@ -192,7 +192,7 @@ class AccountRedemptionsView(JSONView):
         try:
             transfer = facade.transfer(
                 account, redemptions, payload['amount'],
-                order_number=payload['order_number'])
+                merchant_reference=payload['merchant_reference'])
         except exceptions.AccountException:
             raise
         return self.created(reverse('transfer', kwargs={'reference':
@@ -200,7 +200,7 @@ class AccountRedemptionsView(JSONView):
 
 
 class AccountRefundsView(JSONView):
-    required_keys = ('amount', 'order_number')
+    required_keys = ('amount', 'merchant_reference')
 
     def clean_amount(self, value):
         try:
@@ -217,7 +217,7 @@ class AccountRefundsView(JSONView):
         try:
             transfer = facade.transfer(
                 redemptions, account, payload['amount'],
-                order_number=payload['order_number'])
+                merchant_reference=payload['merchant_reference'])
         except exceptions.AccountException:
             raise
         return self.created(reverse('transfer', kwargs={'reference':
@@ -235,7 +235,7 @@ class TransferView(JSONView):
                 'destination_name': transfer.destination.name,
                 'amount': "%.2f" % transfer.amount,
                 'datetime': transfer.date_created.isoformat(),
-                'order_number': transfer.order_number,
+                'merchant_reference': transfer.merchant_reference,
                 'description': transfer.description,
                 'reverse_url': reverse(
                     'transfer-reverse',
@@ -244,14 +244,15 @@ class TransferView(JSONView):
 
 
 class TransferReverseView(JSONView):
-    required_keys = ('order_number',)
+    required_keys = ('merchant_reference',)
 
     def valid_payload(self, payload):
         to_reverse = get_object_or_404(Transfer,
                                        reference=self.kwargs['reference'])
-        order_number = payload['order_number']
+        merchant_reference = payload['merchant_reference']
         try:
-            transfer = facade.reverse(to_reverse, order_number=order_number)
+            transfer = facade.reverse(to_reverse,
+                                      merchant_reference=merchant_reference)
         except exceptions.AccountException:
             raise
         return self.created(reverse('transfer', kwargs={'reference':

@@ -47,8 +47,8 @@
 			<td>{{ transfer.amount|currency }}</td>
 		</tr>
 		<tr>
-			<th>{% trans "Order number" %}</th>
-			<td>{{ transfer.order_number|default:"-" }}</td>
+			<th>{% trans "Merchant reference" %}</th>
+			<td>{{ transfer.merchant_reference|default:"-" }}</td>
 		</tr>
 		<tr>
 			<th>{% trans "Description" %}</th>
