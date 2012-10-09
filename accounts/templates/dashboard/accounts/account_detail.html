@@ -57,7 +57,7 @@
 				<td><a href="{% url transfers-detail txn.transfer.reference %}">{{ txn.transfer }}</a></td>
 				<td>{{ txn.amount|currency }}</td>
 				<td>{{ txn.transfer.description|default:"-" }}</td>
-				<td>{{ txn.transfer.user }}</td>
+				<td>{{ txn.transfer.user|default:"-" }}</td>
 				<td>{{ txn.date_created }}</td>
 			</tr>
 			{% endfor %}

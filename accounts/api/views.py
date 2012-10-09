@@ -14,6 +14,7 @@ from accounts.api import errors
 from accounts import codes, names, facade, exceptions
 
 Account = get_model('accounts', 'Account')
+AccountType = get_model('accounts', 'AccountType')
 Transfer = get_model('accounts', 'Transfer')
 
 
@@ -108,7 +109,7 @@ class AccountsView(JSONView):
     """
     For creating new accounts
     """
-    required_keys = ('start_date', 'end_date', 'amount')
+    required_keys = ('start_date', 'end_date', 'amount', 'account_type')
 
     def clean_amount(self, value):
         try:
@@ -138,6 +139,16 @@ class AccountsView(JSONView):
                 'End date must include timezone information')
         return end_date
 
+    def clean_account_type(self, value):
+        # Name must be one from a predefined set of values
+        if value not in names.DEFERRED_INCOME_ACCOUNT_TYPES:
+            raise InvalidPayload('Unrecognised account type')
+        try:
+            acc_type = AccountType.objects.get(name=value)
+        except AccountType.DoesNotExist:
+            raise InvalidPayload('Unrecognised account type')
+        return acc_type
+
     def clean(self, payload):
         if payload['start_date'] > payload['end_date']:
             raise InvalidPayload(
@@ -159,6 +170,7 @@ class AccountsView(JSONView):
 
     def create_account(self, payload):
         return Account.objects.create(
+            account_type=payload['account_type'],
             start_date=payload['start_date'],
             end_date=payload['end_date'],
             code=codes.generate()

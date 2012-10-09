@@ -48,7 +48,8 @@ def transfer(source, destination, amount,
     :merchant_reference: An optional merchant ref associated with this transfer
     :description: Description of transaction
     """
-    msg = "Transfer of %.2f from account #%d to account #%d"
+    msg = "Transfer of %.2f from account #%d to account #%d" % (
+        amount, source.id, destination.id)
     if user:
         msg += " authorised by user #%d (%s)" % (user.id, user.username,)
     if description:

@@ -63,6 +63,7 @@ if not settings.configured:
             NOSE_ARGS=['-s', '--with-spec', '-x'],
             USE_TZ=True,
             DDF_FILL_NULLABLE_FIELDS=False,
+            ACCOUNTS_DEFERRED_INCOME_ACCOUNT_TYPES=('Test accounts',),
             **extra_settings
         )
 

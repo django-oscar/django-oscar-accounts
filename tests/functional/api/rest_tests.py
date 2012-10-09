@@ -117,6 +117,7 @@ class TestSuccessfullyCreatingAnAccount(test.TestCase):
             'start_date': '2013-01-01T09:00:00+03:00',
             'end_date': '2013-06-01T09:00:00+03:00',
             'amount': '400.00',
+            'account_type': 'Test accounts',
         }
         # Submit request to create a new account, then fetch the detail
         # page that is returned.
@@ -162,8 +163,10 @@ class TestMakingARedemption(test.TestCase):
             'start_date': '2012-01-01T09:00:00+03:00',
             'end_date': '2013-06-01T09:00:00+03:00',
             'amount': '400.00',
+            'account_type': 'Test accounts',
         }
         self.create_response = post(reverse('accounts'), self.create_payload)
+        self.assertEqual(201, self.create_response.status_code)
         self.detail_response = get(self.create_response['Location'])
         redemption_url = json.loads(self.detail_response.content)['redemptions_url']
 
@@ -221,6 +224,7 @@ class TestMakingARedemptionThenRefund(test.TestCase):
             'start_date': '2012-01-01T09:00:00+03:00',
             'end_date': '2013-06-01T09:00:00+03:00',
             'amount': '400.00',
+            'account_type': 'Test accounts',
         }
         self.create_response = post(
             reverse('accounts'), self.create_payload)
@@ -261,6 +265,7 @@ class TestMakingARedemptionThenReverse(test.TestCase):
             'start_date': '2012-01-01T09:00:00+03:00',
             'end_date': '2013-06-01T09:00:00+03:00',
             'amount': '400.00',
+            'account_type': 'Test accounts',
         }
         self.create_response = post(reverse('accounts'), self.create_payload)
         self.detail_response = get(self.create_response['Location'])
@@ -289,6 +294,7 @@ class TestMakingARedemptionThenTransferRefund(test.TestCase):
             'start_date': '2012-01-01T09:00:00+03:00',
             'end_date': '2013-06-01T09:00:00+03:00',
             'amount': '1000.00',
+            'account_type': 'Test accounts',
         }
         self.create_response = post(
             reverse('accounts'), self.create_payload)

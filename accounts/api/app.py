@@ -45,7 +45,7 @@ class APIApplication(Application):
         return self.post_process_urls(urlpatterns)
 
     def get_url_decorator(self, url_name):
-        return lambda x: decorators.basicauth(csrf_exempt(x))
+        return lambda x: csrf_exempt(decorators.basicauth(x))
 
 
 application = APIApplication()
