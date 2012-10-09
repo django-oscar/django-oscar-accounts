@@ -4,6 +4,7 @@ from decimal import Decimal as D
 from django.views import generic
 from django.core.urlresolvers import reverse
 from django import http
+from django.utils import timezone
 from django.shortcuts import get_object_or_404
 from django.db.models import get_model, Sum
 from django.contrib import messages
@@ -295,7 +296,12 @@ class DeferredIncomeReportView(generic.FormView):
             return self.form_invalid(form)
 
     def form_valid(self, form):
+        # Take cutoff as the first second of the following day, which we
+        # convert to a datetime instane in UTC
         threshold_date = form.cleaned_data['date'] + datetime.timedelta(days=1)
+        threshold_datetime = datetime.datetime.combine(
+            threshold_date, datetime.time(tzinfo=timezone.utc))
+
         # Get data
         rows = []
         totals = {'total': D('0.00'),
@@ -310,24 +316,28 @@ class DeferredIncomeReportView(generic.FormView):
                 'num_expiring_within_60': 0,
                 'num_expiring_within_90': 0,
                 'num_expiring_outside_90': 0,
+                'num_open_ended': 0,
             }
             for account in acc_type.accounts.all():
                 data['num_accounts'] += 1
                 total = account.transactions.filter(
-                    date_created__lt=threshold_date).aggregate(
+                    date_created__lt=threshold_datetime).aggregate(
                     total=Sum('amount'))['total']
                 if total is not None:
                     data['total'] += total
-                days_remaining = account.days_remaining()
-                if days_remaining is None or days_remaining > 90:
-                    data['num_expiring_outside_90'] += 1
+                days_remaining = account.days_remaining(threshold_datetime)
+                print account, days_remaining
+                if days_remaining is None:
+                    data['num_open_ended'] += 1
                 else:
-                    if days_remaining <= 90:
-                        data['num_expiring_within_90'] += 1
-                    if days_remaining <= 60:
-                        data['num_expiring_within_60'] += 1
                     if days_remaining <= 30:
                         data['num_expiring_within_30'] += 1
+                    elif days_remaining <= 60:
+                        data['num_expiring_within_60'] += 1
+                    elif days_remaining <= 90:
+                        data['num_expiring_within_90'] += 1
+                    else:
+                        data['num_expiring_outside_90'] += 1
 
             totals['total'] += data['total']
             totals['num_accounts'] += data['num_accounts']

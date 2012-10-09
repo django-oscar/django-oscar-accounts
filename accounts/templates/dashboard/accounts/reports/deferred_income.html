@@ -48,9 +48,10 @@
 			<th></th>
 			<th></th>
 			<th>&lt; 30 days</th>
-			<th>&lt; 60 days</th>
-			<th>&lt; 90 days</th>
+			<th>30 - 60 days</th>
+			<th>60 - 90 days</th>
 			<th>&gt; 90 days</th>
+			<th>No end date</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -63,6 +64,7 @@
 			<td>{{ row.num_expiring_within_60 }}</td>
 			<td>{{ row.num_expiring_within_90 }}</td>
 			<td>{{ row.num_expiring_outside_90 }}</td>
+			<td>{{ row.num_open_ended }}</td>
 		</tr>
 		{% endfor %}
 		<tr>

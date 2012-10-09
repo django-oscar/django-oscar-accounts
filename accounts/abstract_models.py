@@ -189,13 +189,14 @@ class Account(models.Model):
             return user in secondary_users
         return True
 
-    def days_remaining(self):
+    def days_remaining(self, from_date=None):
         if self.end_date is None:
             return None
-        now = timezone.now()
-        if now > self.end_date:
+        if from_date is None:
+            from_date = timezone.now()
+        if from_date > self.end_date:
             return 0
-        return (self.end_date - now).days
+        return (self.end_date - from_date).days
 
     def close(self):
         # Only account with zero balance can be closed
