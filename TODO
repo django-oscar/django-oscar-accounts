@@ -3,12 +3,5 @@ STANDALONE_MODE - make lib work without oscar
 Core:
 - Accounts can exclude shipping costs
 
-Error handling
-- return codes correctly
-- handle invalid transfer in create request
-
 Shop integration:
  - Buying a product creates an account
-
-Reports:
-- P&L report - for a given date range
