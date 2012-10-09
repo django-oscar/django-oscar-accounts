@@ -58,7 +58,7 @@
 			{% for account in accounts %}
 			{# When we're using bootstrap 2.1, we can use table row colors #}
 			<tr {% if account.is_frozen %}style="color: #aaa"{% endif %}>
-				<td>{{ account.name }}</td>
+				<td>{{ account.name|default:"-" }}</td>
 				<td>{{ account.code|default:"-" }}</td>
 				<td>{{ account.status }}</td>
 				<td>{{ account.start_date|default:"-" }}</td>
