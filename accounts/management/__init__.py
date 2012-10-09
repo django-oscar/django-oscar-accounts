@@ -46,7 +46,7 @@ def ensure_core_accounts_exists(sender, **kwargs):
     sales = assets.add_child(name="Sales")
     sales.accounts.create(name=names.REDEMPTIONS)
     sales.accounts.create(name=names.LAPSED)
-    cash = assets.add_child(name="Cash")
+    cash = assets.add_child(name=names.CASH)
     cash.accounts.create(name=names.BANK, credit_limit=None)
     unpaid = assets.add_child(name=names.UNPAID_ACCOUNT_TYPE)
     for name in names.UNPAID_ACCOUNTS:

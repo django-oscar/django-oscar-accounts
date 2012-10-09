@@ -174,3 +174,8 @@ class TopUpAccountForm(SourceAccountMixin, forms.Form):
 
 class DateForm(forms.Form):
     date = forms.DateField()
+
+
+class DateRangeForm(forms.Form):
+    start_date = forms.DateField(label=_("From"))
+    end_date = forms.DateField(label=_("To"))

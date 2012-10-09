@@ -12,6 +12,7 @@ node = Node(_("Accounts"))
 node.add_child(Node(_(names.UNIT_NAME_PLURAL), 'accounts-list'))
 node.add_child(Node(_('Transfers'), 'transfers-list'))
 node.add_child(Node(_('Deferred income report'), 'report-deferred-income'))
+node.add_child(Node(_('Profile/loss report'), 'report-profit-loss'))
 register(node, 100)
 
 
@@ -30,6 +31,7 @@ class AccountsDashboardApplication(Application):
     transfer_detail_view = views.TransferDetailView
 
     report_deferred_income = views.DeferredIncomeReportView
+    report_profit_loss = views.ProfitLossReportView
 
     def get_urls(self):
         urlpatterns = patterns('',
@@ -56,6 +58,9 @@ class AccountsDashboardApplication(Application):
             url(r'^reports/deferred-income/$',
                 self.report_deferred_income.as_view(),
                 name='report-deferred-income'),
+            url(r'^reports/profit-loss/$',
+                self.report_profit_loss.as_view(),
+                name='report-profit-loss'),
         )
         return self.post_process_urls(urlpatterns)
 

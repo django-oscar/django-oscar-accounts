@@ -1,0 +1,134 @@
+{% extends 'dashboard/layout.html' %}
+{% load currency_filters %}
+{% load i18n %}
+
+{% block title %}
+{{ title }} | {% trans "Accounts" %} | {{ block.super }}
+{% endblock %}
+
+{% block breadcrumbs %}
+<ul class="breadcrumb">
+    <li>
+		<a href="{% url dashboard:index %}">{% trans "Dashboard" %}</a>
+        <span class="divider">/</span>
+    </li>
+    <li>
+		<a href="{% url accounts-list %}">{% trans "Accounts" %}</a>
+        <span class="divider">/</span>
+    </li>
+	<li class="active"><a href=".">{{ title }}</a></li>
+</ul>
+{% endblock %}
+
+{% block header %}
+<div class="page-header">
+	<h1>{{ title }}</h1>
+</div>
+{% endblock header %}
+
+{% block dashboard_content %}
+
+<form action="." method="get">
+	{% include 'partials/form_fields.html' %}
+	<button type="submit" class="btn btn-primary">{% trans "Fetch report" %}</button>
+</form>
+
+{% if show_report %}
+<h2>Transactions between {{ start_date }} and {{ end_date }}</h2>
+<table class="table">
+	<tbody>
+		<tr>
+			<th colspan="2">INCREASES IN DEFERRED INCOME LIABILITY</th>
+		</tr>
+		<tr>
+			<th colspan="2">Sales</th>
+		</tr>
+		{% for row in cash_rows %}
+		<tr>
+			<td>{{ row.name }}</td>
+			<td>{{ row.total|currency }}</td>
+		</tr>
+		{% endfor %}
+		<tr>
+			<th></th>
+			<th>{{ cash_total|currency }}</th>
+		</tr>
+		<tr>
+			<th colspan="2">Unpaid sources</th>
+		</tr>
+		{% for row in unpaid_rows %}
+		<tr>
+			<td>{{ row.name }}</td>
+			<td>{{ row.total|currency }}</td>
+		</tr>
+		<tr>
+			<th></th>
+			<th>{{ unpaid_total|currency }}</th>
+		</tr>
+		{% endfor %}
+		<tr>
+			<th colspan="2">Refunds</th>
+		</tr>
+		{% for row in refund_rows %}
+		<tr>
+			<td>{{ row.name }}</td>
+			<td>{{ row.total|currency }}</td>
+		</tr>
+		{% endfor %}
+		<tr>
+			<th></th>
+			<th>{{ refund_total|currency }}</th>
+		</tr>
+		<tr>
+			<th>TOTAL</th>
+			<th>{{ increase_total|currency }}</th>
+		</tr>
+		<tr>
+			<th>&nbsp;</th>
+			<th></th>
+		</tr>
+		<tr>
+			<th colspan="2">REDUCTIONS IN DEFERRED INCOME LIABILITY</th>
+		</tr>
+		<tr>
+			<th colspan="2">Redemptions</th>
+		</tr>
+		{% for row in redeem_rows %}
+		<tr>
+			<td>{{ row.name }}</td>
+			<td>{{ row.total|currency }}</td>
+		</tr>
+		{% endfor %}
+		<tr>
+			<th></th>
+			<th>{{ redeem_total|currency }}</th>
+		</tr>
+		<tr>
+			<th colspan="2">Expired</th>
+		</tr>
+		{% for row in closure_rows %}
+		<tr>
+			<td>{{ row.name }}</td>
+			<td>{{ row.total|currency }}</td>
+		</tr>
+		{% endfor %}
+		<tr>
+			<th></th>
+			<th>{{ closure_total|currency }}</th>
+		</tr>
+		<tr>
+			<th>TOTAL</th>
+			<th>{{ reduction_total|currency }}</th>
+		</tr>
+		<tr>
+			<th>&nbsp;</th>
+			<th></th>
+		</tr>
+		<tr>
+			<th>DIFFERENCE IN POSITION</th>
+			<th>{{ position_difference|currency }}</th>
+		</tr>
+</table>
+{% endif %}
+
+{% endblock dashboard_content %}

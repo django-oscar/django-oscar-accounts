@@ -23,6 +23,8 @@ BANK = "Bank"
 # Account types
 # =============
 
+CASH = 'Cash'
+
 # Accounts that hold money waiting to be spent
 LIABILITIES = 'Liabilities'
 

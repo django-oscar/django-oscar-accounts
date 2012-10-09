@@ -10,7 +10,7 @@ from django.contrib import messages
 from django.utils.translation import ugettext_lazy as _
 from oscar.templatetags.currency_filters import currency
 
-from accounts.dashboard import forms
+from accounts.dashboard import forms, reports
 from accounts import facade, names, exceptions
 
 AccountType = get_model('accounts', 'AccountType')
@@ -337,3 +337,56 @@ class DeferredIncomeReportView(generic.FormView):
         ctx['totals'] = totals
         ctx['report_date'] = form.cleaned_data['date']
         return self.render_to_response(ctx)
+
+
+class ProfitLossReportView(generic.FormView):
+    form_class = forms.DateRangeForm
+    template_name = 'dashboard/accounts/reports/profit_loss.html'
+
+    def get(self, request, *args, **kwargs):
+        if self.is_form_submitted():
+            return self.validate()
+        return super(ProfitLossReportView, self).get(request, *args,
+                                                         **kwargs)
+
+    def is_form_submitted(self):
+        return 'start_date' in self.request.GET
+
+    def get_context_data(self, **kwargs):
+        ctx = super(ProfitLossReportView, self).get_context_data(**kwargs)
+        ctx['title'] = 'Profit and loss report'
+        return ctx
+
+    def get_form_kwargs(self):
+        kwargs = {'initial': self.get_initial()}
+        if self.is_form_submitted():
+            kwargs.update({
+                'data': self.request.GET,
+            })
+        return kwargs
+
+    def validate(self):
+        form_class = self.get_form_class()
+        form = self.get_form(form_class)
+        if form.is_valid():
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)
+
+    def form_valid(self, form):
+        start = form.cleaned_data['start_date']
+        end = form.cleaned_data['end_date'] + datetime.timedelta(days=1)
+        report = reports.ProfitLossReport(start, end)
+        data = report.run()
+
+        ctx = self.get_context_data(form=form)
+        ctx.update(data)
+        ctx['show_report'] = True
+        ctx['start_date'] = start
+        ctx['end_date'] = end
+
+        return self.render_to_response(ctx)
+
+    def total(self, qs):
+        sales_amt = qs.aggregate(sum=Sum('amount'))['sum']
+        return sales_amt if sales_amt is not None else D('0.00')
