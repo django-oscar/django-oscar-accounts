@@ -11,7 +11,7 @@ from django.utils.translation import ugettext_lazy as _
 from accounts.checkout import forms
 from accounts.checkout.allocation import Allocations
 from accounts.checkout import gateway
-from accounts import security
+from accounts import security, exceptions as act_exceptions
 
 
 class PaymentDetailsView(views.PaymentDetailsView):
@@ -58,7 +58,11 @@ class PaymentDetailsView(views.PaymentDetailsView):
             raise exceptions.UnableToTakePayment(
                 "Your account allocations do not cover the order total")
 
-        gateway.redeem(order_number, self.request.user, allocations)
+        try:
+            gateway.redeem(order_number, self.request.user, allocations)
+        except act_exceptions.AccountException:
+            raise exceptions.UnableToTakePayment(
+                "An error occurred with the account redemption")
 
         # If we get here, payment was successful.  We record the payment
         # sources and event to complete the audit trail for this order
