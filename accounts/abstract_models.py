@@ -206,15 +206,22 @@ class Account(models.Model):
         self.save()
 
     def as_dict(self):
-        return {
+        data = {
             'code': self.code,
-            'start_date': self.start_date.isoformat(),
-            'end_date': self.end_date.isoformat(),
+            'start_date': '',
+            'end_date': '',
             'balance': "%.2f" % self.balance,
             'redemptions_url': reverse('account-redemptions',
                                        kwargs={'code': self.code}),
             'refunds_url': reverse('account-refunds',
                                    kwargs={'code': self.code})}
+
+        if self.start_date:
+            data['start_date'] = self.start_date.isoformat()
+        if self.end_date:
+            data['end_date'] = self.end_date.isoformat()
+        return data
+
 
 
 class PostingManager(models.Manager):
