@@ -326,7 +326,6 @@ class DeferredIncomeReportView(generic.FormView):
                 if total is not None:
                     data['total'] += total
                 days_remaining = account.days_remaining(threshold_datetime)
-                print account, days_remaining
                 if days_remaining is None:
                     data['num_open_ended'] += 1
                 else:
