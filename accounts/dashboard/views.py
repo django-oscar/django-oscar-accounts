@@ -226,7 +226,7 @@ class TransferListView(generic.ListView):
             'date': "",
         }
         if data['reference']:
-            queryset = queryset.filter(id=int(data['reference']))
+            queryset = queryset.filter(reference=data['reference'])
             desc_ctx['reference'] = _(
                 " with reference '%s'") % data['reference']
 
