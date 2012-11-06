@@ -66,8 +66,14 @@ class Account(models.Model):
                             blank=True)
 
     # Each account can have multiple users who can use it for transactions.  In
-    # many cases, there will only be one user though and so we use a 'primary'
-    # user for this scenario.
+    # most cases, there will only be one user and so we use a 'primary'
+    # user FK for this scenario for simplicitiy.
+    #
+    # In other circumstances, there will be a group of users who can access the
+    # account - and so we use 'secondary' users for this purpose.
+    #
+    # As a rule of thumb, you don't normally need to use both primary_user and
+    # secondary_users within the same project - just one or the other.
     primary_user = models.ForeignKey('auth.User', related_name="accounts",
                                      null=True, blank=True,
                                      on_delete=models.SET_NULL)
@@ -221,7 +227,6 @@ class Account(models.Model):
         if self.end_date:
             data['end_date'] = self.end_date.isoformat()
         return data
-
 
 
 class PostingManager(models.Manager):
