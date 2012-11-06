@@ -185,7 +185,7 @@ INSTALLED_APPS = [
     'debug_toolbar',
     'haystack',
     'sorl.thumbnail',
-] + get_core_apps() + ['accounts']
+] + get_core_apps(['apps.shipping']) + ['accounts']
 
 AUTHENTICATION_BACKENDS = (
     'oscar.apps.customer.auth_backends.Emailbackend',

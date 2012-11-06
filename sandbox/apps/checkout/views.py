@@ -99,6 +99,7 @@ class PaymentDetailsView(views.PaymentDetailsView):
         security.record_successful_request(self.request)
         ctx['allocation_form'] = forms.AllocationForm(
             form.account, self.request.basket,
+            ctx['shipping_total_incl_tax'],
             ctx['order_total_incl_tax'],
             self.get_account_allocations())
         return self.render_to_response(ctx)
@@ -118,6 +119,7 @@ class PaymentDetailsView(views.PaymentDetailsView):
         ctx = self.get_context_data()
         allocation_form = forms.AllocationForm(
             account_form.account, self.request.basket,
+            ctx['shipping_total_incl_tax'],
             ctx['order_total_incl_tax'],
             self.get_account_allocations(),
             data=self.request.POST)

@@ -42,16 +42,18 @@ class ValidAccountForm(forms.Form):
 class AllocationForm(forms.Form):
     amount = forms.DecimalField(label=_("Allocation"), min_value=D('0.01'))
 
-    def __init__(self, account, basket, order_total, allocations,
-                 *args, **kwargs):
+    def __init__(self, account, basket, shipping_total, order_total,
+                 allocations, *args, **kwargs):
         """
         :account: Account to allocate from
         :basket: The basket to pay for
+        :shipping_total: The shipping total
         :order_total: Order total
         :allocations: Allocations instance
         """
         self.account = account
         self.basket = basket
+        self.shipping_total = shipping_total
         self.order_total = order_total
         self.allocations = allocations
         self.max_allocation = self.get_max_amount()
@@ -63,7 +65,7 @@ class AllocationForm(forms.Form):
 
     def get_max_amount(self):
         max_allocation = self.account.permitted_allocation(
-            self.basket, self.order_total)
+            self.basket, self.shipping_total, self.order_total)
         return max_allocation - self.allocations.total
 
     def clean_amount(self):

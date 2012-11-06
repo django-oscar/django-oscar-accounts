@@ -107,7 +107,10 @@ class Account(models.Model):
 
     # Allow accounts to be restricted for products only (ie can't be used to
     # pay for shipping)
-    can_be_used_for_non_products = models.BooleanField(default=True)
+    can_be_used_for_non_products = models.BooleanField(
+        default=True,
+        help_text=("Whether this account can be used to pay for "
+                   "shipping and other charges"))
 
     date_created = models.DateTimeField(auto_now_add=True)
 
@@ -160,18 +163,28 @@ class Account(models.Model):
         available = self.balance + self.credit_limit
         return amount <= available
 
-    def permitted_allocation(self, basket, total):
+    def permitted_allocation(self, basket, shipping_total, order_total):
         """
         Return max permitted allocation from this account to pay for the passed
         basket
+
+        :basket: The basket being paid for
+        :shipping_total: The cost of shipping
+        :order_total: The order total (which includes the shipping total)
         """
+        if not self.can_be_used_for_non_products:
+            total = order_total - shipping_total
+        else:
+            total = order_total
         if not self.product_range:
             return min(total, self.balance)
         range_total = D('0.00')
         for line in basket.all_lines():
             if self.product_range.contains_product(line.product):
                 range_total += line.line_price_incl_tax_and_discounts
-        return min(range_total, total, self.balance)
+        if self.can_be_used_for_non_products:
+            range_total += shipping_total
+        return min(range_total, self.balance)
 
     def is_open(self):
         return self.status == self.__class__.OPEN

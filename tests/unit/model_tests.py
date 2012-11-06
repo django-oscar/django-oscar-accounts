@@ -55,6 +55,11 @@ class TestAnAccount(TestCase):
             self.assertTrue(self.account.can_be_authorised_by(user))
         self.assertFalse(self.account.can_be_authorised_by(other))
 
+    def test_does_not_permit_an_allocation(self):
+        amt = self.account.permitted_allocation(
+            None, D('2.00'), D('12.00'))
+        self.assertEqual(D('0.00'), amt)
+
 
 class TestAnAccountWithFunds(TestCase):
 
@@ -65,6 +70,29 @@ class TestAnAccountWithFunds(TestCase):
     def test_cannot_be_closed(self):
         with self.assertRaises(exceptions.AccountNotEmpty):
             self.account.close()
+
+    def test_allows_allocations_less_than_balance(self):
+        amt = self.account.permitted_allocation(
+            None, D('2.00'), D('12.00'))
+        self.assertEqual(D('12.00'), amt)
+
+    def test_doesnt_allow_allocations_greater_than_balance(self):
+        amt = self.account.permitted_allocation(
+            None, D('2.00'), D('120.00'))
+        self.assertEqual(D('100.00'), amt)
+
+
+class TestAnAccountWithFundsButOnlyForProducts(TestCase):
+
+    def setUp(self):
+        self.account = Account()
+        self.account.can_be_used_for_non_products = False
+        self.account.balance = D('100.00')
+
+    def test_doesnt_allow_shipping_in_allocation(self):
+        amt = self.account.permitted_allocation(
+            None, D('20.00'), D('40.00'))
+        self.assertEqual(D('20.00'), amt)
 
 
 class TestANewZeroCreditLimitAccount(TestCase):
