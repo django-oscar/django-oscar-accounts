@@ -109,6 +109,7 @@ class NewAccountForm(SourceAccountMixin, EditAccountForm):
         if hasattr(self, '_account_type'):
             account.account_type = self._account_type
         account.save()
+        self.save_m2m()
         return account
 
     def get_source_account(self):
