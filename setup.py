@@ -8,7 +8,7 @@ setup(name='django-oscar-accounts',
       author="David Winterbottom",
       author_email="david.winterbottom@tangentlabs.co.uk",
       description="Accounts for django-oscar",
-      long_description=open('README.rst').read(),
+      long_description=open('README.md').read(),
       license=open('LICENSE').read(),
       packages=find_packages(exclude=['sandbox*', 'tests*']),
       # See http://pypi.python.org/pypi?%3Aaction=list_classifiers
