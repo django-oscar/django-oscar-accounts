@@ -53,6 +53,14 @@ settings:
 Running syncdb will create the appropriate tables and create accounts for based
 on the above 3 settings.
 
+If running with Oscar, add an additional path to your ``TEMPLATE_DIRS``::
+
+    from accounts import TEMPLATE_DIR as ACCOUNTS_TEMPLATE_DIR
+
+    TEMPLATE_DIRS = (
+        ...
+        ACCOUNTS_TEMPLATE_DIR)
+
 You should also set-up a cronjob that calls::
 
     ./manage.py close_expired_accounts
