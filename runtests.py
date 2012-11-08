@@ -17,6 +17,7 @@ if not settings.configured:
             extra_settings[key] = value
 
     from oscar import get_core_apps, OSCAR_MAIN_TEMPLATE_DIR
+    from accounts import TEMPLATE_DIR as ACCOUNTS_TEMPLATE_DIR
 
     settings.configure(
             DATABASES={
@@ -54,9 +55,10 @@ if not settings.configured:
             TEMPLATE_DIRS=(
                 OSCAR_MAIN_TEMPLATE_DIR,
                 os.path.join(OSCAR_MAIN_TEMPLATE_DIR, 'templates'),
+                ACCOUNTS_TEMPLATE_DIR,
                 # Include sandbox templates as they patch from templates that
                 # are in Oscar 0.4 but not 0.3
-                'sandbox/templates'
+                'sandbox/templates',
             ),
             SITE_ID=1,
             ACCOUNTS_UNIT_NAME='Giftcard',
