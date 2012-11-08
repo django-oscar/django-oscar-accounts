@@ -3,37 +3,47 @@ Managed accounts for Django
 ===========================
 
 This package provides managed accounts for Django.  A managed account is an
-allocation of money that can be debited and credited.  Accounts
-can be used to implement:
+allocation of money that can be debited and credited.  
+
+Accounts can be used to implement:
 
 * Giftcard schemes
 * Web accounts
 * Loyalty schemes
-* User "credits" that are allocated by sales reps to their customers (more of a
-  B2B thing)
 
 Basically anything that involves tracking the movement of funds within a closed
 system.
 
-It uses `double-entry bookkeeping`_ where every transaction is recorded
+This package uses `double-entry bookkeeping`_ where every transaction is recorded
 twice (once for the source and once for the destination).  This ensures the
 books always balance and there is full audit trail of all transactional
-activity.  Your finance people will thank you.
+activity.  
+
+If your project manages money, you should be using a library like this.  Your
+finance people will thank you.
 
 .. _`double-entry bookkeeping`: http://en.wikipedia.org/wiki/Double-entry_bookkeeping_system
 
 Features:
 
-* A account has a credit limit which defaults to zero.  Accounts can be set up
+* An account has a credit limit which defaults to zero.  Accounts can be set up
   with no credit limit so that they are a 'source' of money within the system.
-  At least one account must be set up without a credit limit.
+  At least one account must be set up without a credit limit in order for money
+  to move around the system.
+
 * Accounts can have:
   - No users assigned
   - A single "primary" user - this is the most common case
   - A set of users assigned
+
 * A user can have multiple accounts
+
 * An account can have a start and end date to allow its usage in a limited time
   window
+
+* An account can be restricted so that it can only be used to pay for a range of
+  products.
+
 * Accounts can be categorised
 
 Installation
@@ -60,6 +70,9 @@ If running with Oscar, add an additional path to your ``TEMPLATE_DIRS``::
     TEMPLATE_DIRS = (
         ...
         ACCOUNTS_TEMPLATE_DIR)
+
+This allows the templates to be customised by overriding blocks instead of
+replacing the entire template.
 
 You should also set-up a cronjob that calls::
 
