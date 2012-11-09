@@ -229,6 +229,7 @@ class Account(models.Model):
             'code': self.code,
             'start_date': '',
             'end_date': '',
+            'status': self.status,
             'balance': "%.2f" % self.balance,
             'redemptions_url': reverse('account-redemptions',
                                        kwargs={'code': self.code}),
