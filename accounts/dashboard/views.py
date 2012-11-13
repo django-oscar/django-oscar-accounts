@@ -145,6 +145,10 @@ class AccountThawView(generic.UpdateView):
     template_name = 'dashboard/accounts/account_thaw.html'
     form_class = forms.ThawAccountForm
 
+    def get_success_url(self):
+        messages.success(self.request, _("Account thawed"))
+        return reverse('accounts-list')
+
 
 class AccountTopUpView(generic.UpdateView):
     model = Account
