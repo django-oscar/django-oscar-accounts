@@ -60,11 +60,26 @@
 			<td>{{ row.name }}</td>
 			<td>{{ row.total|currency }}</td>
 			<td>{{ row.num_accounts }}</td>
-			<td>{{ row.num_expiring_within_30 }}</td>
-			<td>{{ row.num_expiring_within_60 }}</td>
-			<td>{{ row.num_expiring_within_90 }}</td>
-			<td>{{ row.num_expiring_outside_90 }}</td>
-			<td>{{ row.num_open_ended }}</td>
+			<td>
+				{{ row.total_expiring_within_30|currency }}
+				({{ row.num_expiring_within_30 }})
+			</td>
+			<td>
+				{{ row.total_expiring_within_60|currency }}
+				({{ row.num_expiring_within_60 }})
+			</td>
+			<td>
+				{{ row.total_expiring_within_90|currency }}
+				({{ row.num_expiring_within_90 }})
+			</td>
+			<td>
+				{{ row.total_expiring_outside_90|currency }}
+				({{ row.num_expiring_outside_90 }})
+			</td>
+			<td>
+				{{ row.total_open_ended|currency }}
+				({{ row.num_open_ended }})
+			</td>
 		</tr>
 		{% endfor %}
 		<tr>

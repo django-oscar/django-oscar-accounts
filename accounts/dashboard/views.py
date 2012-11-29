@@ -321,6 +321,11 @@ class DeferredIncomeReportView(generic.FormView):
                 'num_expiring_within_90': 0,
                 'num_expiring_outside_90': 0,
                 'num_open_ended': 0,
+                'total_expiring_within_30': D('0.00'),
+                'total_expiring_within_60': D('0.00'),
+                'total_expiring_within_90': D('0.00'),
+                'total_expiring_outside_90': D('0.00'),
+                'total_open_ended': D('0.00'),
             }
             for account in acc_type.accounts.all():
                 data['num_accounts'] += 1
@@ -332,15 +337,20 @@ class DeferredIncomeReportView(generic.FormView):
                 days_remaining = account.days_remaining(threshold_datetime)
                 if days_remaining is None:
                     data['num_open_ended'] += 1
+                    data['total_open_ended'] += total
                 else:
                     if days_remaining <= 30:
                         data['num_expiring_within_30'] += 1
+                        data['total_expiring_within_30'] += total
                     elif days_remaining <= 60:
                         data['num_expiring_within_60'] += 1
+                        data['total_expiring_within_60'] += total
                     elif days_remaining <= 90:
                         data['num_expiring_within_90'] += 1
+                        data['total_expiring_within_90'] += total
                     else:
                         data['num_expiring_outside_90'] += 1
+                        data['total_expiring_outside_90'] += total
 
             totals['total'] += data['total']
             totals['num_accounts'] += data['num_accounts']
