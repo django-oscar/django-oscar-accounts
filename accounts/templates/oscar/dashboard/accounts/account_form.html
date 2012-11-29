@@ -38,11 +38,15 @@
 	<span class="help-block">{{ form.non_field_errors }}</span>
 	{% include 'partials/form_field.html' with field=form.name %}
 	{% include 'partials/form_field.html' with field=form.description %}
-	{% include 'partials/form_field.html' with field=form.account_type %}
+	{% if form.account_type %}
+		{% include 'partials/form_field.html' with field=form.account_type %}
+	{% endif %}
 
 	{% if form.initial_amount %}
 		<legend>{% trans "Initial transaction" %}</legend>
-		{% include 'partials/form_field.html' with field=form.source_account %}
+		{% if form.source_account %}
+			{% include 'partials/form_field.html' with field=form.source_account %}
+		{% endif %}
 		{% include 'partials/form_field.html' with field=form.initial_amount %}
 	{% endif %}
 
