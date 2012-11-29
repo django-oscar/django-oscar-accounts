@@ -1,10 +1,12 @@
 Managed accounts for Django
 ===========================
 
-This package provides managed accounts for Django.  A managed account is an
-allocation of money that can be debited and credited.  
+A 'managed account' is an allocation of money that can be debited and credited.  This 
+package provides managed account functionality for use with the e-commerce framework 
+[Oscar](https://github.com/tangentlabs/django-oscar).  It can also be used
+standalong without the Oscar dependency.
 
-Accounts can be used to implement:
+Accounts can be used to implement as variety of interesting components, including:
 
 * Giftcard schemes
 * Web accounts
@@ -21,7 +23,8 @@ trail of all transactional activity.
 If your project manages money, you should be using a library like this.  Your
 finance people will thank you.
 
-Features:
+Features
+--------
 
 * An account has a credit limit which defaults to zero.  Accounts can be set up
   with no credit limit so that they are a 'source' of money within the system.
@@ -43,10 +46,24 @@ Features:
 
 * Accounts can be categorised
 
+Screenshots
+-----------
+
+[![Dashboard account list](https://github.com/tangentlabs/django-oscar-accounts/master/screenshots/dashboard-list.thumb)](https://github.com/tangentlabs/django-oscar-accounts/master/screenshots/dashboard-list.png)
+[![Create new account ](https://github.com/tangentlabs/django-oscar-accounts/master/screenshots/dashboard-form.thumb)](https://github.com/tangentlabs/django-oscar-accounts/master/screenshots/dashboard-form.png)
+[![Dashboard account list](https://github.com/tangentlabs/django-oscar-accounts/master/screenshots/dashboard-transfers.thumb)](https://github.com/tangentlabs/django-oscar-accounts/master/screenshots/dashboard-transfers.png)
+[![Dashboard account list](https://github.com/tangentlabs/django-oscar-accounts/master/screenshots/dashboard-report.thumb)](https://github.com/tangentlabs/django-oscar-accounts/master/screenshots/dashboard-report.png)
+
 Installation
 ------------
 
-Install using pip and add `accounts` to `INSTALLED_APPS`.  Add the following
+Install using pip:
+
+```bash
+	pip install django-oscar-accounts
+```
+
+and add `accounts` to `INSTALLED_APPS`.  Then, add the following
 settings:
 
 * `ACCOUNTS_SOURCE_NAME` - The name of the 'source' account which is used to
@@ -57,7 +74,7 @@ settings:
   recipient of any funds left if accounts that expire.  A cronjob is used to
   close expired accounts.
 
-Running syncdb will create the appropriate tables and create accounts for based
+Running `manage.py syncdb` will create the appropriate tables and initialise accounts based
 on the above 3 settings.
 
 If running with Oscar, add an additional path to your `TEMPLATE_DIRS`:
