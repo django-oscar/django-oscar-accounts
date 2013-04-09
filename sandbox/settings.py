@@ -111,7 +111,6 @@ from oscar import OSCAR_MAIN_TEMPLATE_DIR
 from accounts import TEMPLATE_DIR as ACCOUNTS_TEMPLATE_DIR
 TEMPLATE_DIRS = (
     location('templates'),
-    os.path.join(OSCAR_MAIN_TEMPLATE_DIR, 'templates'),
     OSCAR_MAIN_TEMPLATE_DIR,
     ACCOUNTS_TEMPLATE_DIR,
 )
