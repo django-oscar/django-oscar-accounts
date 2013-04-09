@@ -33,7 +33,9 @@
 	<form action="." method="post">
 		{% csrf_token %}
 		<legend>Transaction</legend>
-		{% include 'partials/form_field.html' with field=form.source_account %}
+        {% if form.source_account %}
+            {% include 'partials/form_field.html' with field=form.source_account %}
+        {% endif %}
 		{% include 'partials/form_field.html' with field=form.amount %}
 		<button type="submit" class="btn btn-large btn-success">{% trans "Save" %}</button>
 	</form>
