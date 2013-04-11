@@ -215,3 +215,8 @@ from decimal import Decimal as D
 ACCOUNTS_UNIT_NAME = 'Giftcard'
 ACCOUNTS_MIN_LOAD_VALUE = D('30.00')
 ACCOUNTS_MAX_ACCOUNT_VALUE = D('1000.00')
+
+try:
+    from settings_local import *
+except ImportError:
+    pass
