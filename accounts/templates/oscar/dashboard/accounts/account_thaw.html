@@ -16,7 +16,7 @@
 		<a href="{% url accounts-list %}">{% trans "Accounts" %}</a>
         <span class="divider">/</span>
     </li>
-	<li class="active"><a href=".">{% trans "Thaw account" %} #{{ account.id }}</a></li>
+	<li class="active">{% trans "Thaw account" %} #{{ account.id }}</li>
 </ul>
 {% endblock %}
 

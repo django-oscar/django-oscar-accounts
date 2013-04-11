@@ -16,7 +16,7 @@
 		<a href="{% url accounts-list %}">{% trans "Accounts" %}</a>
         <span class="divider">/</span>
     </li>
-	<li class="active"><a href=".">{% trans "Transfer" %} {{ transfer.reference }}</a></li>
+	<li class="active">{% trans "Transfer" %} {{ transfer.reference }}</li>
 </ul>
 {% endblock %}
 

@@ -16,7 +16,7 @@
 		<a href="{% url accounts-list %}">{% trans "Accounts" %}</a>
         <span class="divider">/</span>
     </li>
-	<li class="active"><a href=".">{% trans "Account" %} #{{ account.id }}</a></li>
+	<li class="active">{% trans "Account" %} #{{ account.id }}</li>
 </ul>
 {% endblock %}
 
@@ -64,7 +64,7 @@
 		</tbody>
 	</table>
 	{% if page_obj %}
-		{% include "catalogue/partials/pagination.html" %}
+		{% include "partials/pagination.html" %}
 	{% endif %}
 {% else %}
 	<p>{% trans "No transactions." %}</p>

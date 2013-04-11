@@ -1,19 +1,9 @@
 from django.conf.urls.defaults import patterns, url
 from django.contrib.admin.views.decorators import staff_member_required
-from django.utils.translation import ugettext_lazy as _
 
 from oscar.core.application import Application
-from oscar.apps.dashboard.nav import register, Node
 
 from accounts.dashboard import views
-from accounts import names
-
-node = Node(_("Accounts"))
-node.add_child(Node(_(names.UNIT_NAME_PLURAL), 'accounts-list'))
-node.add_child(Node(_('Transfers'), 'transfers-list'))
-node.add_child(Node(_('Deferred income report'), 'report-deferred-income'))
-node.add_child(Node(_('Profile/loss report'), 'report-profit-loss'))
-register(node, 100)
 
 
 class AccountsDashboardApplication(Application):

@@ -25,6 +25,12 @@ if not settings.configured:
                     'ENGINE': 'django.db.backends.sqlite3',
                     }
                 },
+            STATICFILES_FINDERS = (
+                'django.contrib.staticfiles.finders.FileSystemFinder',
+                'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+                'compressor.finders.CompressorFinder',
+            ),
+            STATIC_URL = '/static/',
             INSTALLED_APPS=[
                 'django.contrib.auth',
                 'django.contrib.admin',
@@ -32,8 +38,10 @@ if not settings.configured:
                 'django.contrib.sessions',
                 'django.contrib.sites',
                 'django.contrib.flatpages',
+                'django.contrib.staticfiles',
                 'accounts',
                 'south',
+                'compressor',
                 ] + get_core_apps(),
             MIDDLEWARE_CLASSES=(
                 'django.middleware.common.CommonMiddleware',

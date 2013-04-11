@@ -1,4 +1,5 @@
 import os
+from django.utils.translation import ugettext_lazy as _
 
 PROJECT_DIR = os.path.dirname(__file__)
 location = lambda x: os.path.join(os.path.dirname(os.path.realpath(__file__)), x)
@@ -65,6 +66,11 @@ MEDIA_URL = '/media/'
 STATIC_URL = '/static/'
 STATICFILES_DIRS = (location('static/'),)
 STATIC_ROOT = location('public')
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'compressor.finders.CompressorFinder',
+)
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = '$)a7n&o80u!6y5t-+jrd3)3!%vh&shg$wqpjpxc!ar&p#!)n1a'
@@ -186,6 +192,7 @@ INSTALLED_APPS = [
     'debug_toolbar',
     'haystack',
     'sorl.thumbnail',
+    'compressor',
 ] + get_core_apps(['apps.shipping']) + ['accounts']
 
 AUTHENTICATION_BACKENDS = (
@@ -213,5 +220,31 @@ USE_TZ = True
 
 from decimal import Decimal as D
 ACCOUNTS_UNIT_NAME = 'Giftcard'
+ACCOUNTS_UNIT_NAME_PLURAL = 'Giftcards'
 ACCOUNTS_MIN_LOAD_VALUE = D('30.00')
 ACCOUNTS_MAX_ACCOUNT_VALUE = D('1000.00')
+
+OSCAR_DASHBOARD_NAVIGATION.append(
+    {
+        'label': _('Accounts'),
+        'children': [
+            {
+                'label': _(ACCOUNTS_UNIT_NAME_PLURAL),
+                'url_name': 'accounts-list',
+            },
+            {
+                'label': _('Transfers'),
+                'url_name': 'transfers-list',
+            },
+            {
+                'label': _('Deferred income report'),
+                'url_name': 'report-deferred-income',
+            },
+            {
+                'label': _('Profile/loss report'),
+                'url_name': 'report-profit-loss',
+            }
+        ]
+    })
+
+from settings_local import *
