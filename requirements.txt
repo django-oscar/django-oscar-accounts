@@ -1,5 +1,3 @@
-django-oscar>=0.5
-
 # Testing
 mock
 coverage
