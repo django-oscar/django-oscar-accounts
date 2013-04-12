@@ -3,6 +3,7 @@ from setuptools import setup, find_packages
 
 from accounts import VERSION
 
+
 setup(name='django-oscar-accounts',
       version=VERSION,
       author="David Winterbottom",
@@ -18,5 +19,5 @@ setup(name='django-oscar-accounts',
                    'License :: OSI Approved :: BSD License',
                    'Operating System :: Unix',
                    'Programming Language :: Python'],
-      install_requires=['django-oscar>=0.2',
-                        'python-dateutil==2.1'])
+      install_requires=['django-oscar>=0.5',
+                        'python-dateutil>=2.1,<2.2'])

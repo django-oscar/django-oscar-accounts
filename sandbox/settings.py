@@ -190,8 +190,6 @@ INSTALLED_APPS = [
     # External apps
     'django_extensions',
     'debug_toolbar',
-    'haystack',
-    'sorl.thumbnail',
     'compressor',
 ] + get_core_apps(['apps.shipping']) + ['accounts']
 
@@ -209,6 +207,31 @@ DEBUG_TOOLBAR_CONFIG = {
 
 # Oscar settings
 from oscar.defaults import *
+
+OSCAR_DASHBOARD_NAVIGATION.append(
+    {
+        'label': 'Accounts',
+        'icon': 'icon-globe',
+        'children': [
+            {
+                'label': 'Accounts',
+                'url_name': 'accounts-list',
+            },
+            {
+                'label': 'Transfers',
+                'url_name': 'transfers-list',
+            },
+            {
+                'label': 'Deferred income report',
+                'url_name': 'report-deferred-income',
+            },
+            {
+                'label': 'Profit/loss report',
+                'url_name': 'report-profit-loss',
+            },
+        ]
+    })
+
 
 HAYSTACK_CONNECTIONS = {
     'default': {

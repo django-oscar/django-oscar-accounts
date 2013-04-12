@@ -35,6 +35,7 @@ if not settings.configured:
                 'django.contrib.auth',
                 'django.contrib.admin',
                 'django.contrib.contenttypes',
+                'django.contrib.staticfiles',
                 'django.contrib.sessions',
                 'django.contrib.sites',
                 'django.contrib.flatpages',
@@ -68,6 +69,8 @@ if not settings.configured:
                 # are in Oscar 0.4 but not 0.3
                 'sandbox/templates',
             ),
+            STATIC_URL='/static/',
+            COMPRESS_ENABLED=False,
             SITE_ID=1,
             ACCOUNTS_UNIT_NAME='Giftcard',
             NOSE_ARGS=['-s', '--with-spec', '-x'],
