@@ -191,6 +191,7 @@ INSTALLED_APPS = [
     'django_extensions',
     'debug_toolbar',
     'compressor',
+    'south',
 ] + get_core_apps(['apps.shipping']) + ['accounts']
 
 AUTHENTICATION_BACKENDS = (
