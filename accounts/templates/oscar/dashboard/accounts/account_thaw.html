@@ -20,20 +20,13 @@
 </ul>
 {% endblock %}
 
-{% block header %}
-<div class="page-header">
-	<h1>{% trans "Thaw account?" %}</h1>
-</div>
-{% endblock header %}
+{% block headertext %}{% trans "Thaw account?" %}{% endblock %}
 
 {% block dashboard_content %}
-
-{% include 'dashboard/accounts/partials/account_detail.html' %}
-
-<form action="." method="post">
-	{% csrf_token %}
-	{{ form.as_p }}
-	<button type="submit" class="btn btn-large btn-success">{% trans "Thaw" %}</button>
-</form>
-
+    {% include 'dashboard/accounts/partials/account_detail.html' %}
+    <form action="." method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-large btn-success">{% trans "Thaw" %}</button>
+    </form>
 {% endblock dashboard_content %}

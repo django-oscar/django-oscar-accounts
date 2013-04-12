@@ -16,15 +16,15 @@
 		<a href="{% url accounts-list %}">{% trans "Accounts" %}</a>
         <span class="divider">/</span>
     </li>
-	<li class="active">{% trans "Transfer" %} {{ transfer.reference }}</li>
+    <li>
+		<a href="{% url transfers-list %}">{% trans "Transfers" %}</a>
+        <span class="divider">/</span>
+    </li>
+	<li class="active">{{ transfer.reference }}</li>
 </ul>
 {% endblock %}
 
-{% block header %}
-<div class="page-header">
-	<h1>Transfer {{ transfer.reference }}</h1>
-</div>
-{% endblock header %}
+{% block headertext %}Transfer {{ transfer.reference }}{% endblock %}
 
 {% block dashboard_content %}
 

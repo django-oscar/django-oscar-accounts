@@ -19,23 +19,21 @@
 </ul>
 {% endblock %}
 
-{% block header %}
-<div class="page-header">
-	<h1>{% trans "Transfers" %}</h1>
-</div>
-{% endblock header %}
+{% block headertext %}{% trans "Transfers" %}{% endblock %}
 
 {% block dashboard_content %}
 
-	<div class="sub-header">
-		<h2>{% trans "Search" %}</h2>
-	</div>
+    <div class="well">
+        <div class="sub-header">
+            <h2>{% trans "Search" %}</h2>
+        </div>
 
-	<form method="get" action=".">
-		{% include 'partials/form_fields.html' %}
-		<button type="submit" class="btn btn-primary">{% trans "Search" %}</button>
-		or <a href="{% url transfers-list %}">{% trans "reset" %}</a>.
-	</form>
+        <form class="form-horizontal" method="get" action=".">
+            {% include 'partials/form_fields.html' %}
+            <button type="submit" class="btn btn-primary">{% trans "Search" %}</button>
+            or <a href="{% url transfers-list %}">{% trans "reset" %}</a>.
+        </form>
+    </div>
 
 	<div class="sub-header">
 		<h2>{{ queryset_description }}</h2>
@@ -66,9 +64,7 @@
 			</tr>
 			{% endfor %}
 		</table>
-		{% if page_obj %}
-			{% include "partials/pagination.html" %}
-		{% endif %}
+        {% include "partials/pagination.html" %}
 	{% else %}
 		<p>{% trans "No transfers found." %}</p>
 	{% endif %}

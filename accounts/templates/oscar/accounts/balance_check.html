@@ -12,22 +12,18 @@
         <a href="{% url promotions:home %}">{% trans 'Home' %}</a>
         <span class="divider">/</span>
     </li>
-    <li class="active"><a href=".">{% trans 'Accounts' %}</a></li>
+    <li class="active">{% trans 'Accounts' %}</li>
 </ul>
 {% endblock %}
 
-{% block header %}
-<div class="page-header">
-    <h1>{% trans 'Check balance of giftcard' %}</h1>
-</div>
-{% endblock header %}
+{% block headertext %}{% trans 'Check balance of giftcard' %}{% endblock %}
 
 {% block content %}
 
 {% if is_blocked %}
 	<p>{% trans "Your IP address is currently blocked.  Please try again later." %}</p>
 {% else %}
-	<form action="." method="post">
+	<form action="." method="post" class="form-horizontal">
 		{% csrf_token %}
 		{% include 'partials/form_fields.html' %}
 		<button type="submit" class="btn btn-large">Fetch account details</button>

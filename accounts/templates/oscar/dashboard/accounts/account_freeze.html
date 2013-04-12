@@ -16,26 +16,23 @@
 		<a href="{% url accounts-list %}">{% trans "Accounts" %}</a>
         <span class="divider">/</span>
     </li>
-	<li class="active">{% trans "Freeze account" %} #{{ account.id }}</li>
+    <li>
+        <a href="{% url accounts-detail account.id %}">{{ account }}</a>
+        <span class="divider">/</span>
+    </li>
+	<li class="active">{% trans "Freeze" %}</li>
 </ul>
 {% endblock %}
 
-{% block header %}
-<div class="page-header">
-	<h1>{% trans "Freeze account?" %}</h1>
-</div>
-{% endblock header %}
+{% block headertext %}{% trans "Freeze account?" %}{% endblock %}
 
 {% block dashboard_content %}
+    {% include 'dashboard/accounts/partials/account_detail.html' %}
 
-{% include 'dashboard/accounts/partials/account_detail.html' %}
-
-<form action="." method="post">
-	{% csrf_token %}
-	{{ form.as_p }}
-	<button type="submit" class="btn btn-large btn-danger">{% trans "Freeze" %}</button>
-	or <a href="{% url accounts-list %}">cancel</a>.
-</form>
-
-
+    <form action="." method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-large btn-danger">{% trans "Freeze" %}</button>
+        {% trans "or" %} <a href="{% url accounts-list %}">{% trans "cancel" %}</a>.
+    </form>
 {% endblock dashboard_content %}
