@@ -13,10 +13,10 @@
         <span class="divider">/</span>
     </li>
     <li>
-		<a href=".">Accounts</a>
+		<a href=".">{% trans "Accounts" %}</a>
         <span class="divider">/</span>
     </li>
-	<li class="active"><a href=".">{{ title }}</a></li>
+	<li class="active">{{ title }}</li>
 </ul>
 {% endblock %}
 
@@ -80,7 +80,7 @@
 			{% endfor %}
 		</table>
 		{% if page_obj %}
-			{% include "catalogue/partials/pagination.html" %}
+			{% include "partials/pagination.html" %}
 		{% endif %}
 	{% else %}
 		<p>{% trans "No results found." %}</p>
