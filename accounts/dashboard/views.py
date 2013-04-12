@@ -23,7 +23,7 @@ Transaction = get_model('accounts', 'Transaction')
 class AccountListView(generic.ListView):
     model = Account
     context_object_name = 'accounts'
-    template_name = 'dashboard/accounts/account_list.html'
+    template_name = 'accounts/dashboard/account_list.html'
     form_class = forms.SearchForm
     description = _("All %s") % names.UNIT_NAME_PLURAL.lower()
 
@@ -82,7 +82,7 @@ class AccountListView(generic.ListView):
 class AccountCreateView(generic.CreateView):
     model = Account
     context_object_name = 'account'
-    template_name = 'dashboard/accounts/account_form.html'
+    template_name = 'accounts/dashboard/account_form.html'
     form_class = forms.NewAccountForm
 
     def get_context_data(self, **kwargs):
@@ -115,7 +115,7 @@ class AccountCreateView(generic.CreateView):
 class AccountUpdateView(generic.UpdateView):
     model = Account
     context_object_name = 'account'
-    template_name = 'dashboard/accounts/account_form.html'
+    template_name = 'accounts/dashboard/account_form.html'
     form_class = forms.UpdateAccountForm
 
     def get_context_data(self, **kwargs):
@@ -132,7 +132,7 @@ class AccountUpdateView(generic.UpdateView):
 
 class AccountFreezeView(generic.UpdateView):
     model = Account
-    template_name = 'dashboard/accounts/account_freeze.html'
+    template_name = 'accounts/dashboard/account_freeze.html'
     form_class = forms.FreezeAccountForm
 
     def get_success_url(self):
@@ -142,7 +142,7 @@ class AccountFreezeView(generic.UpdateView):
 
 class AccountThawView(generic.UpdateView):
     model = Account
-    template_name = 'dashboard/accounts/account_thaw.html'
+    template_name = 'accounts/dashboard/account_thaw.html'
     form_class = forms.ThawAccountForm
 
     def get_success_url(self):
@@ -152,7 +152,7 @@ class AccountThawView(generic.UpdateView):
 
 class AccountTopUpView(generic.UpdateView):
     model = Account
-    template_name = 'dashboard/accounts/account_top_up.html'
+    template_name = 'accounts/dashboard/account_top_up.html'
     form_class = forms.TopUpAccountForm
 
     def form_valid(self, form):
@@ -179,7 +179,7 @@ class AccountTopUpView(generic.UpdateView):
 class AccountTransactionsView(generic.ListView):
     model = Transaction
     context_object_name = 'transactions'
-    template_name = 'dashboard/accounts/account_detail.html'
+    template_name = 'accounts/dashboard/account_detail.html'
 
     def get(self, request, *args, **kwargs):
         self.account = get_object_or_404(Account, id=kwargs['pk'])
@@ -198,7 +198,7 @@ class AccountTransactionsView(generic.ListView):
 class TransferListView(generic.ListView):
     model = Transfer
     context_object_name = 'transfers'
-    template_name = 'dashboard/accounts/transfer_list.html'
+    template_name = 'accounts/dashboard/transfer_list.html'
     form_class = forms.TransferSearchForm
     description = _("All transfers")
 
@@ -257,7 +257,7 @@ class TransferListView(generic.ListView):
 class TransferDetailView(generic.DetailView):
     model = Transfer
     context_object_name = 'transfer'
-    template_name = 'dashboard/accounts/transfer_detail.html'
+    template_name = 'accounts/dashboard/transfer_detail.html'
 
     def get_object(self, queryset=None):
         if queryset is None:
@@ -267,7 +267,7 @@ class TransferDetailView(generic.DetailView):
 
 class DeferredIncomeReportView(generic.FormView):
     form_class = forms.DateForm
-    template_name = 'dashboard/accounts/reports/deferred_income.html'
+    template_name = 'accounts/dashboard/reports/deferred_income.html'
 
     def get(self, request, *args, **kwargs):
         if self.is_form_submitted():
@@ -364,13 +364,13 @@ class DeferredIncomeReportView(generic.FormView):
 
 class ProfitLossReportView(generic.FormView):
     form_class = forms.DateRangeForm
-    template_name = 'dashboard/accounts/reports/profit_loss.html'
+    template_name = 'accounts/dashboard/reports/profit_loss.html'
 
     def get(self, request, *args, **kwargs):
         if self.is_form_submitted():
             return self.validate()
         return super(ProfitLossReportView, self).get(request, *args,
-                                                         **kwargs)
+                                                     **kwargs)
 
     def is_form_submitted(self):
         return 'start_date' in self.request.GET
