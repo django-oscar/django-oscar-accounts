@@ -30,7 +30,6 @@ if not settings.configured:
                 'django.contrib.staticfiles.finders.AppDirectoriesFinder',
                 'compressor.finders.CompressorFinder',
             ),
-            STATIC_URL = '/static/',
             INSTALLED_APPS=[
                 'django.contrib.auth',
                 'django.contrib.admin',
