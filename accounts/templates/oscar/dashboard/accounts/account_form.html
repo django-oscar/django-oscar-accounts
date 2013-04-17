@@ -51,17 +51,17 @@
 	{% endif %}
 
 	<legend>{% trans "Restrictions" %}</legend>
-	<p><a class="form-toggle" href="#">Restrict WHEN the account can be used</a></p>
+	<p><a class="form-toggle" href="#">{% trans "Restrict WHEN the account can be used" %}</a></p>
 	<div style="display:none">
 		{% include 'partials/form_field.html' with field=form.start_date %}
 		{% include 'partials/form_field.html' with field=form.end_date %}
 	</div>
-	<p><a class="form-toggle" href="#">Restrict WHO can use the account</a></p>
+	<p><a class="form-toggle" href="#">{% trans "Restrict WHO can use the account" %}</a></p>
 	<div style="display:none">
 		{% include 'partials/form_field.html' with field=form.primary_user %}
 		{% include 'partials/form_field.html' with field=form.secondary_users %}
 	</div>
-	<p><a class="form-toggle" href="#">Restrict WHAT can be bought</a></p>
+	<p><a class="form-toggle" href="#">{% trans "Restrict WHAT can be bought" %}</a></p>
 	<div style="display:none">
 		{% include 'partials/form_field.html' with field=form.product_range %}
 		{% include 'partials/form_field.html' with field=form.can_be_used_for_non_products %}

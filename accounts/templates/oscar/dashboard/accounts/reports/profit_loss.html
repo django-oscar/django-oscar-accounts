@@ -34,14 +34,14 @@
 </form>
 
 {% if show_report %}
-<h2>Transactions between {{ start_date }} and {{ end_date }}</h2>
+<h2>{% trans "Transactions between" %} {{ start_date }} {% trans "and" %} {{ end_date }}</h2>
 <table class="table">
 	<tbody>
 		<tr>
-			<th colspan="2">INCREASES IN DEFERRED INCOME LIABILITY</th>
+			<th colspan="2">{% trans "INCREASES IN DEFERRED INCOME LIABILITY" %}</th>
 		</tr>
 		<tr>
-			<th colspan="2">Sales</th>
+			<th colspan="2">{% trans "Sales" %}</th>
 		</tr>
 		{% for row in cash_rows %}
 		<tr>
@@ -54,7 +54,7 @@
 			<th>{{ cash_total|currency }}</th>
 		</tr>
 		<tr>
-			<th colspan="2">Unpaid sources</th>
+			<th colspan="2">{% trans "Unpaid sources" %}</th>
 		</tr>
 		{% for row in unpaid_rows %}
 		<tr>
@@ -67,7 +67,7 @@
 		</tr>
 		{% endfor %}
 		<tr>
-			<th colspan="2">Refunds</th>
+			<th colspan="2">{% trans "Refunds" %}</th>
 		</tr>
 		{% for row in refund_rows %}
 		<tr>
@@ -80,7 +80,7 @@
 			<th>{{ refund_total|currency }}</th>
 		</tr>
 		<tr>
-			<th>TOTAL</th>
+			<th>{% trans "TOTAL" %}</th>
 			<th>{{ increase_total|currency }}</th>
 		</tr>
 		<tr>
@@ -88,10 +88,10 @@
 			<th></th>
 		</tr>
 		<tr>
-			<th colspan="2">REDUCTIONS IN DEFERRED INCOME LIABILITY</th>
+			<th colspan="2">{% trans "REDUCTIONS IN DEFERRED INCOME LIABILITY" %}</th>
 		</tr>
 		<tr>
-			<th colspan="2">Redemptions</th>
+			<th colspan="2">{% trans "Redemptions" %}</th>
 		</tr>
 		{% for row in redeem_rows %}
 		<tr>
@@ -104,7 +104,7 @@
 			<th>{{ redeem_total|currency }}</th>
 		</tr>
 		<tr>
-			<th colspan="2">Expired</th>
+			<th colspan="2">{% trans "Expired" %}</th>
 		</tr>
 		{% for row in closure_rows %}
 		<tr>
@@ -117,7 +117,7 @@
 			<th>{{ closure_total|currency }}</th>
 		</tr>
 		<tr>
-			<th>TOTAL</th>
+			<th>{% trans "TOTAL" %}</th>
 			<th>{{ reduction_total|currency }}</th>
 		</tr>
 		<tr>
@@ -125,7 +125,7 @@
 			<th></th>
 		</tr>
 		<tr>
-			<th>DIFFERENCE IN POSITION</th>
+			<th>{% trans "DIFFERENCE IN POSITION" %}</th>
 			<th>{{ position_difference|currency }}</th>
 		</tr>
 </table>

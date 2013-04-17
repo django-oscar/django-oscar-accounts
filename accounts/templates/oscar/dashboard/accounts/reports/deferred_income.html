@@ -34,24 +34,24 @@
 </form>
 
 {% if rows %}
-<h2>Position at {{ report_date }}</h2>
+<h2>{% trans "Position at" %} {{ report_date }}</h2>
 <table class="table">
 	<thead>
 		<tr>
-			<th>Account type</th>
-			<th>Total balance</th>
-			<th>Num accounts</th>
-			<th colspan="4">Expiring</th>
+			<th>{% trans "Account type" %}</th>
+			<th>{% trans "Total balance" %}</th>
+			<th>{% trans "Num accounts" %}</th>
+			<th colspan="4">{% trans "Expiring" %}</th>
 		</tr>
 		<tr>
 			<th></th>
 			<th></th>
 			<th></th>
-			<th>&lt; 30 days</th>
-			<th>30 - 60 days</th>
-			<th>60 - 90 days</th>
-			<th>&gt; 90 days</th>
-			<th>No end date</th>
+			<th>&lt; {% blocktrans count days=30 %}{{ days }} days{% endblocktrans %}</th>
+			<th>30 - {% blocktrans count days=30 %}{{ days }} days{% endblocktrans %}</th>
+			<th>60 - {% blocktrans count days=90 %}{{ days }} days{% endblocktrans %}</th>
+			<th>&gt; {% blocktrans count days=90 %}{{ days }} days{% endblocktrans %}</th>
+			<th>{% trans "No end date" %}</th>
 		</tr>
 	</thead>
 	<tbody>

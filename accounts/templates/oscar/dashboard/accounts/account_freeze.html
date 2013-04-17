@@ -34,7 +34,7 @@
 	{% csrf_token %}
 	{{ form.as_p }}
 	<button type="submit" class="btn btn-large btn-danger">{% trans "Freeze" %}</button>
-	or <a href="{% url accounts-list %}">cancel</a>.
+	 {% trans "or" %}<a href="{% url accounts-list %}"></{% trans "cancel" %}a>.
 </form>
 
 

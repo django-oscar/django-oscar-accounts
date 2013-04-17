@@ -5,10 +5,10 @@
 {% block payment_info %}
 <div class="well well-success">
 	<h3>{% trans "Payment" %}</h3>
-	<p>Account allocations</p>
+	<p>{% trans "Account allocations" %}</p>
 	<ul>
 	{% for source in order.sources.all %}
-	<li>{{ source.amount_debited|currency }} from account with code {{ source.reference }}</li>
+	<li>{% blocktrans with amount=source.amount_debited|currency ref=source.reference %}{{ amount }} from account with code {{ ref }}{% endblocktrans %}</li>
 	{% endfor %}
 	</ul>
 </div>
