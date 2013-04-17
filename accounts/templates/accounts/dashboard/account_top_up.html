@@ -32,7 +32,7 @@
 	{% if account.is_open %}
 	<form action="." method="post">
 		{% csrf_token %}
-		<legend>Transaction</legend>
+		<legend>{% trans "Transaction" %}</legend>
         {% if form.source_account %}
             {% include 'partials/form_field.html' with field=form.source_account %}
         {% endif %}
