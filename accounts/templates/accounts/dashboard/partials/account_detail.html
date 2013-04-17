@@ -64,8 +64,8 @@
 		{% endif %}
 		{% endwith %}
 		{% if account.product_range %}
-		<td>
-            <th>{% trans "Can be spent on products from range" %}</th>
+		<tr>
+      <th>{% trans "Can be spent on products from range" %}</th>
 			<td><a href="{% url dashboard:range-update account.product_range.id %}">{{ account.product_range }}</a></td>
 		</tr>
 		{% endif %}

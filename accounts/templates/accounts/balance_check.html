@@ -26,7 +26,7 @@
 	<form action="." method="post" class="form-horizontal">
 		{% csrf_token %}
 		{% include 'partials/form_fields.html' %}
-		<button type="submit" class="btn btn-large">Fetch account details</button>
+		<button type="submit" class="btn btn-large">{% trans "Fetch account details" %}</button>
 	</form>
 {% endif %}
 
@@ -34,26 +34,26 @@
 	<table id="" class="table">
 		<tbody>
 			<tr>
-				<th>Code</th>
+				<th>{% trans "Code" %}</th>
 				<td>{{ account.code }}</td>
 			</tr>
 			<tr>
-				<th>Balance</th>
+				<th>{% trans "Balance" %}</th>
 				<td>{{ account.balance|currency }}</td>
 			</tr>
 			<tr>
-				<th>Status</th>
+				<th>{% trans "Status" %}</th>
 				<td>{{ account.status }}</td>
 			</tr>
 			{% if account.start_date %}
 			<tr>
-				<th>Start date</th>
+				<th>{% trans "Start date" %}</th>
 				<td>{{ account.start_date }}</td>
 			</tr>
 			{% endif %}
 			{% if account.end_date %}
 			<tr>
-				<th>End date</th>
+				<th>{% trans "End date" %}</th>
 				<td>{{ account.end_date }}</td>
 			</tr>
 			{% endif %}

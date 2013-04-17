@@ -37,7 +37,7 @@
         <form method="get" action="." class="form-horizontal">
             {% include 'partials/form_fields.html' %}
             <button type="submit" class="btn btn-primary">{% trans "Search" %}</button>
-            or <a href="{% url accounts-list %}">{% trans "reset" %}</a>.
+            {% trans "or" %} <a href="{% url accounts-list %}">{% trans "reset" %}</a>.
         </form>
     </div>
 
