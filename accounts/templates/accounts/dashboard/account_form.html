@@ -16,15 +16,19 @@
 		<a href="{% url accounts-list %}">{% trans "Accounts" %}</a>
         <span class="divider">/</span>
     </li>
-	<li class="active"><a href=".">{{ title }}</a></li>
+    {% if account %}
+    <li>
+        <a href="{% url accounts-detail account.id %}">{{ account }}</a>
+        <span class="divider">/</span>
+    </li>
+    <li class="active">{% trans "Update" %}</li>
+    {% else %}
+    <li class="active">{% trans "Create" %}</li>
+    {% endif %}
 </ul>
 {% endblock %}
 
-{% block header %}
-<div class="page-header">
-	<h1>{{ title }}</h1>
-</div>
-{% endblock header %}
+{% block headertext %}{{ title }}{% endblock %}
 
 {% block dashboard_content %}
 
@@ -68,7 +72,7 @@
 	</div>
 
 	<div class="form-actions">
-		<button class="btn btn-primary btn-large" type="submit">{% trans "Save" %}</button> 
+		<button class="btn btn-primary btn-large" type="submit">{% trans "Save" %}</button>
 		{% trans "or" %}
 		<a href="{% url accounts-list %}">{% trans "cancel" %}</a>
 	</div>

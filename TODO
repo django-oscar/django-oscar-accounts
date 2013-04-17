@@ -1,7 +1,0 @@
-STANDALONE_MODE - make lib work without oscar
-
-Core:
-- Accounts can exclude shipping costs
-
-Shop integration:
- - Buying a product creates an account

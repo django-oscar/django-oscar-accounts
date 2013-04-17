@@ -1,1 +1,5 @@
 dist/*
+*.pyc
+sandbox/db.sqlite
+*.egg-info
+settings_local.py

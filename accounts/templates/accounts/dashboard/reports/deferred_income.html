@@ -16,19 +16,15 @@
 		<a href="{% url accounts-list %}">{% trans "Accounts" %}</a>
         <span class="divider">/</span>
     </li>
-	<li class="active"><a href=".">{{ title }}</a></li>
+	<li class="active">{{ title }}</li>
 </ul>
 {% endblock %}
 
-{% block header %}
-<div class="page-header">
-	<h1>{{ title }}</h1>
-</div>
-{% endblock header %}
+{% block headertext %}{{ title }}{% endblock %}
 
 {% block dashboard_content %}
 
-<form action="." method="get">
+<form class="form-horizontal well" action="." method="get">
 	{% include 'partials/form_fields.html' %}
 	<button type="submit" class="btn btn-primary">{% trans "Fetch report" %}</button>
 </form>

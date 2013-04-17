@@ -16,15 +16,15 @@
 		<a href="{% url accounts-list %}">{% trans "Accounts" %}</a>
         <span class="divider">/</span>
     </li>
-	<li class="active"><a href=".">{% trans "Top up account" %} #{{ account.id }}</a></li>
+    <li>
+        <a href="{% url accounts-detail account.id %}">{{ account }}</a>
+        <span class="divider">/</span>
+    </li>
+    <li class="active">{% trans "Top up" %}</li>
 </ul>
 {% endblock %}
 
-{% block header %}
-<div class="page-header">
-	<h1>{% trans "Top up account?" %}</h1>
-</div>
-{% endblock header %}
+{% block headertext %}{% trans "Top up account?" %}{% endblock %}
 
 {% block dashboard_content %}
 	{% include 'dashboard/accounts/partials/account_detail.html' %}

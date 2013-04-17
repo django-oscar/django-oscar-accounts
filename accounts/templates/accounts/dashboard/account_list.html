@@ -16,27 +16,30 @@
 		<a href=".">{% trans "Accounts" %}</a>
         <span class="divider">/</span>
     </li>
-	<li class="active"><a href=".">{{ title }}</a></li>
+	<li class="active">{{ title }}</li>
 </ul>
 {% endblock %}
 
 {% block header %}
 <div class="page-header">
-	<h1>{{ title }}</h1>
+	<a id="create_new_account" href="{% url accounts-create %}" class="btn btn-large btn-primary pull-right">{% trans "Create a new " %} {{ unit_name|lower }}</a></p>
+    <h1>{{ title }}</h1>
 </div>
 {% endblock header %}
 
 {% block dashboard_content %}
 
-	<div class="sub-header">
-		<h2>{% trans "Search" %}</h2>
-	</div>
+    <div class="well">
+        <div class="sub-header">
+            <h2>{% trans "Search" %}</h2>
+        </div>
 
-	<form method="get" action=".">
-		{% include 'partials/form_fields.html' %}
-		<button type="submit" class="btn btn-primary">{% trans "Search" %}</button>
-		 {% trans "or" %}<a href="{% url accounts-list %}">{% trans "reset" %}</a>.
-	</form>
+        <form method="get" action="." class="form-horizontal">
+            {% include 'partials/form_fields.html' %}
+            <button type="submit" class="btn btn-primary">{% trans "Search" %}</button>
+            {% trans "or" %} <a href="{% url accounts-list %}">{% trans "reset" %}</a>.
+        </form>
+    </div>
 
 	<div class="sub-header">
 		<h2>{{ queryset_description }}</h2>
@@ -58,7 +61,7 @@
 			{% for account in accounts %}
 			{# When we're using bootstrap 2.1, we can use table row colors #}
 			<tr {% if account.is_frozen %}style="color: #aaa"{% endif %}>
-				<td>{{ account.name|default:"-" }}</td>
+                <td><a href="{% url accounts-detail account.id %}">{{ account.name|default:"-" }}</a></td>
 				<td>{{ account.code|default:"-" }}</td>
 				<td>{{ account.status }}</td>
 				<td>{{ account.start_date|default:"-" }}</td>
@@ -79,12 +82,8 @@
 			</tr>
 			{% endfor %}
 		</table>
-		{% if page_obj %}
-			{% include "catalogue/partials/pagination.html" %}
-		{% endif %}
+        {% include "partials/pagination.html" %}
 	{% else %}
 		<p>{% trans "No results found." %}</p>
 	{% endif %}
-
-	<p><a id="create_new_account" href="{% url accounts-create %}" class="btn btn-large btn-primary">{% trans "Create a new " %} {{ unit_name|lower }}</a></p>
 {% endblock dashboard_content %}

@@ -25,15 +25,23 @@ if not settings.configured:
                     'ENGINE': 'django.db.backends.sqlite3',
                     }
                 },
+            STATICFILES_FINDERS = (
+                'django.contrib.staticfiles.finders.FileSystemFinder',
+                'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+                'compressor.finders.CompressorFinder',
+            ),
             INSTALLED_APPS=[
                 'django.contrib.auth',
                 'django.contrib.admin',
                 'django.contrib.contenttypes',
+                'django.contrib.staticfiles',
                 'django.contrib.sessions',
                 'django.contrib.sites',
                 'django.contrib.flatpages',
+                'django.contrib.staticfiles',
                 'accounts',
                 'south',
+                'compressor',
                 ] + get_core_apps(),
             MIDDLEWARE_CLASSES=(
                 'django.middleware.common.CommonMiddleware',
@@ -60,6 +68,8 @@ if not settings.configured:
                 # are in Oscar 0.4 but not 0.3
                 'sandbox/templates',
             ),
+            STATIC_URL='/static/',
+            COMPRESS_ENABLED=False,
             SITE_ID=1,
             ACCOUNTS_UNIT_NAME='Giftcard',
             NOSE_ARGS=['-s', '--with-spec', '-x'],
