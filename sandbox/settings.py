@@ -248,29 +248,6 @@ ACCOUNTS_UNIT_NAME_PLURAL = 'Giftcards'
 ACCOUNTS_MIN_LOAD_VALUE = D('30.00')
 ACCOUNTS_MAX_ACCOUNT_VALUE = D('1000.00')
 
-OSCAR_DASHBOARD_NAVIGATION.append(
-    {
-        'label': _('Accounts'),
-        'children': [
-            {
-                'label': _(ACCOUNTS_UNIT_NAME_PLURAL),
-                'url_name': 'accounts-list',
-            },
-            {
-                'label': _('Transfers'),
-                'url_name': 'transfers-list',
-            },
-            {
-                'label': _('Deferred income report'),
-                'url_name': 'report-deferred-income',
-            },
-            {
-                'label': _('Profile/loss report'),
-                'url_name': 'report-profit-loss',
-            }
-        ]
-    })
-
 try:
     from settings_local import *
 except ImportError:
