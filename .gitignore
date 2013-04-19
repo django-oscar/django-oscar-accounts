@@ -1,5 +1,13 @@
-dist/*
 *.pyc
-sandbox/db.sqlite
+
+# Packagin
+dist/*
 *.egg-info
+
+# Sandbox
+sandbox/db.sqlite
 settings_local.py
+
+# Testing
+.coverage
+.coveralls.yml

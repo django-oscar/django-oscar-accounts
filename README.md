@@ -23,6 +23,9 @@ trail of all transactional activity.
 If your project manages money, you should be using a library like this.  Your
 finance people will thank you.
 
+[![Build Status](https://travis-ci.org/tangentlabs/django-oscar-accounts.png)](https://travis-ci.org/tangentlabs/django-oscar-accounts)
+[![Coverage](https://coveralls.io/repo/tangentlabs/django-oscar-stores/badge.png?branch=master)](https://coveralls.io/r/tangentlabs/django-oscar-stores)
+
 Features
 --------
 

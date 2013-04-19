@@ -1,0 +1,3 @@
+[run]
+source = accounts
+omit = *migrations*

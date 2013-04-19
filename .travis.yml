@@ -5,4 +5,6 @@ python:
 install:
   - make install
 script:
-  - make test
+  - coverage run ./runtests.py
+after_success:
+  - coveralls
