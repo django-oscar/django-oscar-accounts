@@ -33,7 +33,7 @@
 {% block dashboard_content %}
 
 {% if account %}
-	{% include 'dashboard/accounts/partials/account_detail.html' %}
+	{% include 'accounts/dashboard/partials/account_detail.html' %}
 	<h2>{% trans "Edit this account" %}</h2>
 {% endif %}
 
@@ -83,6 +83,8 @@
 {% block onbodyload %}
 $('a.form-toggle').click(function(){
     $($(this)[0].parentNode.nextElementSibling).toggle();
+    // Bind datepicker
+    oscar.dashboard.init();
 	return false;
 });
 {% endblock %}

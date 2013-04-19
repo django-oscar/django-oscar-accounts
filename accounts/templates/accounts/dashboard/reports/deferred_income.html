@@ -43,10 +43,10 @@
 			<th></th>
 			<th></th>
 			<th></th>
-			<th>&lt; {% blocktrans count days=30 %}{{ days }} days{% endblocktrans %}</th>
-			<th>30 - {% blocktrans count days=30 %}{{ days }} days{% endblocktrans %}</th>
-			<th>60 - {% blocktrans count days=90 %}{{ days }} days{% endblocktrans %}</th>
-			<th>&gt; {% blocktrans count days=90 %}{{ days }} days{% endblocktrans %}</th>
+            <th>{% trans "&lt; 30 days" %}</th>
+            <th>{% trans "30 - 60 days" %}</th>
+            <th>{% trans "60 - 90 days" %}</th>
+            <th>{% trans "&gt; 90 days" %}</th>
 			<th>{% trans "No end date" %}</th>
 		</tr>
 	</thead>

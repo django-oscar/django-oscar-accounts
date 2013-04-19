@@ -331,9 +331,10 @@ class DeferredIncomeReportView(generic.FormView):
                 data['num_accounts'] += 1
                 total = account.transactions.filter(
                     date_created__lt=threshold_datetime).aggregate(
-                    total=Sum('amount'))['total']
-                if total is not None:
-                    data['total'] += total
+                        total=Sum('amount'))['total']
+                if total is None:
+                    total = D('0.00')
+                data['total'] += total
                 days_remaining = account.days_remaining(threshold_datetime)
                 if days_remaining is None:
                     data['num_open_ended'] += 1

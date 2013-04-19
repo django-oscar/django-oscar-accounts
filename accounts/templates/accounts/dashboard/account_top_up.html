@@ -27,7 +27,7 @@
 {% block headertext %}{% trans "Top up account?" %}{% endblock %}
 
 {% block dashboard_content %}
-	{% include 'dashboard/accounts/partials/account_detail.html' %}
+    {% include 'accounts/dashboard/partials/account_detail.html' %}
 
 	{% if account.is_open %}
 	<form action="." method="post">
@@ -37,7 +37,7 @@
             {% include 'partials/form_field.html' with field=form.source_account %}
         {% endif %}
 		{% include 'partials/form_field.html' with field=form.amount %}
-		<button type="submit" class="btn btn-large btn-success">{% trans "Save" %}</button>
+		<button type="submit" class="btn btn-large btn-success">{% trans "Transfer" %}</button>
 	</form>
 	{% else %}
 	<p>{% trans "This account cannot be topped-up." %}</p>

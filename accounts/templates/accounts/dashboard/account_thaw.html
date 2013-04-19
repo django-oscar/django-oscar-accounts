@@ -23,7 +23,7 @@
 {% block headertext %}{% trans "Thaw account?" %}{% endblock %}
 
 {% block dashboard_content %}
-    {% include 'dashboard/accounts/partials/account_detail.html' %}
+    {% include 'accounts/dashboard/partials/account_detail.html' %}
     <form action="." method="post">
         {% csrf_token %}
         {{ form.as_p }}
