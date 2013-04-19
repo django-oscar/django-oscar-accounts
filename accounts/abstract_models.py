@@ -52,18 +52,18 @@ class AccountType(MP_Node):
 
 class Account(models.Model):
     # Metadata
-    name = models.CharField(max_length=128, unique=True, null=True,
-                            blank=True)
+    name = models.CharField(
+        max_length=128, unique=True, null=True, blank=True)
     description = models.TextField(
         null=True, blank=True, help_text=_(
             "This text is shown to customers during checkout"))
-    account_type = models.ForeignKey('AccountType', related_name='accounts',
-                                     null=True)
+    account_type = models.ForeignKey(
+        'AccountType', related_name='accounts', null=True)
 
-    # Some account are not linked to a specific user but are activated by
+    # Some accounts are not linked to a specific user but are activated by
     # entering a code at checkout.
-    code = models.CharField(max_length=128, unique=True, null=True,
-                            blank=True)
+    code = models.CharField(
+        max_length=128, unique=True, null=True, blank=True)
 
     # Each account can have multiple users who can use it for transactions.  In
     # most cases, there will only be one user and so we use a 'primary'
@@ -85,13 +85,16 @@ class Account(models.Model):
     OPEN, FROZEN, CLOSED = 'Open', 'Frozen', 'Closed'
     status = models.CharField(max_length=32, default=OPEN)
 
-    # This is the limit to which the account can do into debt.  The default is
-    # zero which means the account cannot run a negative balance.
+    # This is the limit to which the account can go into debt.  The default is
+    # zero which means the account cannot run a negative balance.  A 'source'
+    # account will have no credit limit meaning it can transfer funds to other
+    # accounts without limit.
     credit_limit = models.DecimalField(decimal_places=2, max_digits=12,
                                        default=D('0.00'), null=True,
                                        blank=True)
 
-    # For performance, we keep a cached balance
+    # For performance, we keep a cached balance.  This can always be
+    # recalculated from the account transactions.
     balance = models.DecimalField(decimal_places=2, max_digits=12,
                                   default=D('0.00'), null=True)
 
@@ -102,7 +105,7 @@ class Account(models.Model):
     end_date = models.DateTimeField(null=True, blank=True)
 
     # Accounts are sometimes restricted to only work on a specific range of
-    # products
+    # products.  This is the only link with Oscar.
     product_range = models.ForeignKey('offer.Range', null=True, blank=True)
 
     # Allow accounts to be restricted for products only (ie can't be used to
@@ -158,6 +161,9 @@ class Account(models.Model):
         return self.credit_limit is not None
 
     def is_debit_permitted(self, amount):
+        """
+        Test if the a debit for the passed amount is permitted
+        """
         if self.credit_limit is None:
             return True
         available = self.balance + self.credit_limit
