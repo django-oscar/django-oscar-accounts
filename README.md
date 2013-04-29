@@ -25,7 +25,8 @@ finance people will thank you.
 
 [![Build Status](https://travis-ci.org/tangentlabs/django-oscar-accounts.png)](https://travis-ci.org/tangentlabs/django-oscar-accounts)
 [![Coverage Status](https://coveralls.io/repos/tangentlabs/django-oscar-accounts/badge.png?branch=master)](https://coveralls.io/r/tangentlabs/django-oscar-accounts)
-
+[![Latest Version](https://pypip.in/v/django-oscar-accounts/badge.png)](https://crate.io/packages/django-oscar-accounts/)
+[![Number of Downloads](https://pypip.in/d/django-oscar-accounts/badge.png)](https://crate.io/packages/django-oscar-accounts/)
 
 Features
 --------
