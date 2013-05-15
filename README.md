@@ -206,24 +206,19 @@ from accounts import models, exceptions, facade
 
 
 def redeem(order_number, user, amount):
-    # Ensure there is a account for expenditure on orders
-    destination = sales_account()
-    
     # Get user's non-empty accounts ordered with the first to expire first
     accounts = models.Account.active.filter(
         user=user, balance__gt=0).order_by('end_date')
 
-    # Build up a list of potential transfers
+    # Build up a list of potential transfers that cover the requested amount
     transfers = []
-    amount_to_allocate = D('0.00')
+    amount_to_allocate = amount
     for account in accounts:
         to_transfer = min(account.balance, amount_to_allocate)
         transfers.append((account, to_transfer))
         amount_to_allocate -= to_transfer
         if amount_to_allocate == D('0.00'):
             break
-
-    # Check we have sufficient transfers to cover the requested amount
     if amount_to_allocate > D('0.00'):
         raise exceptions.InsufficientFunds()
 
@@ -243,8 +238,8 @@ def redeem(order_number, user, amount):
             for transfer in completed_transfers:
                 facade.reverse(transfer)
         except Exception, reverse_exc:
-            # No man's land.  We're left with a partial redemption. This will
-            # require an admin to intervene.
+            # Uh oh: No man's land.  We could be left with a partial redemption. This will
+            # require an admin to intervene.  Make sure your logger mails admins on error.
             logger.error("Order %s, transfers failed (%s) and reverse failed (%s)",
                          order_number, transfer_exc, reverse_exc)
             logger.exception(reverse_exc)
@@ -254,6 +249,7 @@ def redeem(order_number, user, amount):
     else:
         # All transfers completed ok
         return completed_transfers
+```
 
 As you can see, there is some careful handling of the scenario where not all transfers can be 
 executed.
@@ -276,6 +272,7 @@ aggregating them all into one).  This will provide better audit information.  He
                 amount_debited=transfer.amount,
                 reference=transfer.reference)
             self.add_payment_source(source)
+```
 
 Settings
 --------
