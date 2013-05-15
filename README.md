@@ -175,8 +175,8 @@ from accounts import facade
 def submit(self, order_total):
 	# Take payment first
 	transfer = facade.transfer(self.get_user_account(),
-								self.get_merchant_account(),
-								order_total)
+							   self.get_merchant_account(),
+							   order_total)
 	# Create order models
 	try:
 		self.place_order()
@@ -189,6 +189,93 @@ def submit(self, order_total):
 In this situation, you'll end up with two transfers being created but no order.
 While this isn't ideal, it's the best way of handling exceptions that occur
 during order placement.
+
+Multi-transfer payments
+-----------------------
+
+Projects will often allow users to have multiple accounts and pay for an order
+using more than one.  This will involve several transfers and needs some careful handling
+in your application code.
+
+It normally makes sense to write your own wrapper around the accounts API to encapsulate
+your business logic and error handling.  Here's an example:
+
+``` python
+from decimal import Decimal as D
+from accounts import models, exceptions, facade
+
+
+def redeem(order_number, user, amount):
+    # Ensure there is a account for expenditure on orders
+    destination = sales_account()
+    
+    # Get user's non-empty accounts ordered with the first to expire first
+    accounts = models.Account.active.filter(
+        user=user, balance__gt=0).order_by('end_date')
+
+    # Build up a list of potential transfers
+    transfers = []
+    amount_to_allocate = D('0.00')
+    for account in accounts:
+        to_transfer = min(account.balance, amount_to_allocate)
+        transfers.append((account, to_transfer))
+        amount_to_allocate -= to_transfer
+        if amount_to_allocate == D('0.00'):
+            break
+
+    # Check we have sufficient transfers to cover the requested amount
+    if amount_to_allocate > D('0.00'):
+        raise exceptions.InsufficientFunds()
+
+    # Execute transfers to some 'Sales' account
+    destination = models.Account.objects.get(name="Sales")
+    completed_transfers = []
+    try:
+        for account, amount in transfers:
+            transfer = facade.transfer(
+                account, destination, amount, user=user,
+                description="Order %s" % order_number)
+            completed_transfers.append(transfer)
+    except exceptions.AccountException, transfer_exc:
+        # Something went wrong with one of the transfers (possibly a race condition).
+        # We try and roll back all completed ones to get us back to a clean state.
+        try:
+            for transfer in completed_transfers:
+                facade.reverse(transfer)
+        except Exception, reverse_exc:
+            # No man's land.  We're left with a partial redemption. This will
+            # require an admin to intervene.
+            logger.error("Order %s, transfers failed (%s) and reverse failed (%s)",
+                         order_number, transfer_exc, reverse_exc)
+            logger.exception(reverse_exc)
+
+        # Raise an exception so that your client code can inform the user appropriately.
+        raise RedemptionFailed()
+    else:
+        # All transfers completed ok
+        return completed_transfers
+
+As you can see, there is some careful handling of the scenario where not all transfers can be 
+executed.
+
+If you using Oscar then ensure that you create an `OrderSource` instance for every transfer (rather than
+aggregating them all into one).  This will provide better audit information.  Here's some example code:
+
+``` python
+
+    try:
+        transfers = api.redeem(order_number, user, total_incl_tax)
+    except Exception:
+        # Inform user of failed payment
+    else:
+        for transfer in transfers:
+            source_type = SourceType.objects.get_or_create(name="Accounts")
+            source = Source(
+                source_type=source_type,
+                amount_allocated=tranfer.amount,
+                amount_debited=transfer.amount,
+                reference=transfer.reference)
+            self.add_payment_source(source)
 
 Settings
 --------
