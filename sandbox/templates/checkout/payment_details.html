@@ -1,5 +1,6 @@
-{% extends 'checkout/payment_details.html' %}
+{% extends 'oscar/checkout/payment_details.html' %}
 {% load currency_filters %}
+{% load i18n %}
 
 {% block payment_details %}
 <div class="sub-header">
@@ -33,7 +34,7 @@
 					{% endfor %}
 					</tbody>
 				</table>
-				<button type="submit" class="btn btn-primary" name="action" value="select_account">Select account</button>
+				<button type="submit" class="btn btn-primary" name="action" value="select_account">{% trans 'Select account' %}</button>
 			</form>
 		{% endif %}
 
@@ -104,7 +105,7 @@
 			<tbody>
 				{% for code, amount in account_allocations.items %}
 					<tr>
-						<td>{{ code }}</td> 
+						<td>{{ code }}</td>
 						<td>{{ amount|currency }}</td>
 						<td>
 							<button type="submit" class="btn" name="remove_{{ code }}">{% trans "Remove" %}</button>
