@@ -1,4 +1,5 @@
 {% extends 'oscar/checkout/payment_details.html' %}
+{% load url from future %}
 {% load currency_filters %}
 {% load i18n %}
 
@@ -85,7 +86,7 @@
 		<input type="hidden" name="action" value="allocate" />
 		{% include 'partials/form_fields.html' with form=allocation_form %}
 		<button type="submit" class="btn btn-primary btn-large">{% trans "Allocate" %}</button>{% trans "or" %}
-		<a href="{% url checkout:payment-details %}">{% trans "cancel" %}</a>.
+		<a href="{% url 'checkout:payment-details' %}">{% trans "cancel" %}</a>.
 	</form>
 {% endif %}
 
@@ -119,7 +120,7 @@
 
 
 {% if to_allocate == 0 %}
-	<a href="{% url checkout:preview %}" class="btn btn-primary btn-large">{% trans "Continue" %}</a>
+	<a href="{% url 'checkout:preview' %}" class="btn btn-primary btn-large">{% trans "Continue" %}</a>
 {% else %}
 <p>{% trans "Order total" %}: {{ order_total_incl_tax|currency }}. {% trans "You need to allocate another" %}
 	{{ to_allocate|currency }}</p>

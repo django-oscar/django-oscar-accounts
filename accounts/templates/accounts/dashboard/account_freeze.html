@@ -1,4 +1,5 @@
 {% extends 'dashboard/layout.html' %}
+{% load url from future %}
 {% load currency_filters %}
 {% load i18n %}
 
@@ -9,15 +10,15 @@
 {% block breadcrumbs %}
 <ul class="breadcrumb">
     <li>
-		<a href="{% url dashboard:index %}">{% trans "Dashboard" %}</a>
+		<a href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a>
         <span class="divider">/</span>
     </li>
     <li>
-		<a href="{% url accounts-list %}">{% trans "Accounts" %}</a>
+		<a href="{% url 'accounts-list' %}">{% trans "Accounts" %}</a>
         <span class="divider">/</span>
     </li>
     <li>
-        <a href="{% url accounts-detail account.id %}">{{ account }}</a>
+        <a href="{% url 'accounts-detail' account.id %}">{{ account }}</a>
         <span class="divider">/</span>
     </li>
 	<li class="active">{% trans "Freeze" %}</li>
@@ -33,6 +34,6 @@
         {% csrf_token %}
         {{ form.as_p }}
         <button type="submit" class="btn btn-large btn-danger">{% trans "Freeze" %}</button>
-        {% trans "or" %} <a href="{% url accounts-list %}">{% trans "cancel" %}</a>.
+        {% trans "or" %} <a href="{% url 'accounts-list' %}">{% trans "cancel" %}</a>.
     </form>
 {% endblock dashboard_content %}

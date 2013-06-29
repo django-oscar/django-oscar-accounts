@@ -1,4 +1,5 @@
 {% extends "layout.html" %}
+{% load url from future %}
 {% load currency_filters %}
 {% load i18n %}
 
@@ -9,7 +10,7 @@
 {% block breadcrumbs %}
     <ul class="breadcrumb">
         <li>
-            <a href="{% url promotions:home %}">{% trans 'Home' %}</a>
+            <a href="{% url 'promotions:home' %}">{% trans 'Home' %}</a>
             <span class="divider">/</span>
         </li>
         <li class="active">{% trans 'Accounts' %}</li>
