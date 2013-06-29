@@ -1,4 +1,5 @@
 {% extends 'dashboard/layout.html' %}
+{% load url from future %}
 {% load currency_filters %}
 {% load i18n %}
 
@@ -9,16 +10,16 @@
 {% block breadcrumbs %}
 <ul class="breadcrumb">
     <li>
-		<a href="{% url dashboard:index %}">{% trans "Dashboard" %}</a>
+		<a href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a>
         <span class="divider">/</span>
     </li>
     <li>
-		<a href="{% url accounts-list %}">{% trans "Accounts" %}</a>
+		<a href="{% url 'accounts-list' %}">{% trans "Accounts" %}</a>
         <span class="divider">/</span>
     </li>
     {% if account %}
     <li>
-        <a href="{% url accounts-detail account.id %}">{{ account }}</a>
+        <a href="{% url 'accounts-detail' account.id %}">{{ account }}</a>
         <span class="divider">/</span>
     </li>
     <li class="active">{% trans "Update" %}</li>
@@ -74,7 +75,7 @@
 	<div class="form-actions">
 		<button class="btn btn-primary btn-large" type="submit">{% trans "Save" %}</button>
 		{% trans "or" %}
-		<a href="{% url accounts-list %}">{% trans "cancel" %}</a>
+		<a href="{% url 'accounts-list' %}">{% trans "cancel" %}</a>
 	</div>
 </form>
 

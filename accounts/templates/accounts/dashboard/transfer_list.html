@@ -1,4 +1,5 @@
 {% extends 'dashboard/layout.html' %}
+{% load url from future %}
 {% load currency_filters %}
 {% load i18n %}
 
@@ -9,10 +10,10 @@
 {% block breadcrumbs %}
 <ul class="breadcrumb">
     <li>
-	<a href="{% url dashboard:index %}">{% trans "Dashboard" %}</a>
+	<a href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a>
         <span class="divider">/</span>
     </li>
-	<a href="{% url accounts-list %}">{% trans "Accounts" %}</a>
+	<a href="{% url 'accounts-list' %}">{% trans "Accounts" %}</a>
         <span class="divider">/</span>
     </li>
 	<li class="active">{% trans "Transfers" %}</li>
@@ -31,7 +32,7 @@
         <form class="form-horizontal" method="get" action=".">
             {% include 'partials/form_fields.html' %}
             <button type="submit" class="btn btn-primary">{% trans "Search" %}</button>
-            or <a href="{% url transfers-list %}">{% trans "reset" %}</a>.
+            or <a href="{% url 'transfers-list' %}">{% trans "reset" %}</a>.
         </form>
     </div>
 
@@ -53,9 +54,9 @@
 			</tr>
 			{% for transfer in transfers %}
 			<tr>
-				<td><a href="{% url transfers-detail transfer.reference %}">{{ transfer.reference }}</a></td>
-				<td><a href="{% url accounts-detail transfer.source.id %}">{{ transfer.source }}</a></td>
-				<td><a href="{% url accounts-detail transfer.destination.id %}">{{ transfer.destination }}</a></td>
+				<td><a href="{% url 'transfers-detail' transfer.reference %}">{{ transfer.reference }}</a></td>
+				<td><a href="{% url 'accounts-detail' transfer.source.id %}">{{ transfer.source }}</a></td>
+				<td><a href="{% url 'accounts-detail' transfer.destination.id %}">{{ transfer.destination }}</a></td>
 				<td>{{ transfer.amount|currency }}</td>
 				<td>{{ transfer.merchant_reference|default:"-" }}</td>
 				<td>{{ transfer.description|default:"-" }}</td>
