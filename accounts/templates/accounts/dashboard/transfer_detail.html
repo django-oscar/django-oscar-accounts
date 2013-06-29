@@ -1,4 +1,5 @@
 {% extends 'dashboard/layout.html' %}
+{% load url from future %}
 {% load currency_filters %}
 {% load i18n %}
 
@@ -9,15 +10,15 @@
 {% block breadcrumbs %}
 <ul class="breadcrumb">
     <li>
-		<a href="{% url dashboard:index %}">{% trans "Dashboard" %}</a>
+		<a href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a>
         <span class="divider">/</span>
     </li>
     <li>
-		<a href="{% url accounts-list %}">{% trans "Accounts" %}</a>
+		<a href="{% url 'accounts-list' %}">{% trans "Accounts" %}</a>
         <span class="divider">/</span>
     </li>
     <li>
-		<a href="{% url transfers-list %}">{% trans "Transfers" %}</a>
+		<a href="{% url 'transfers-list' %}">{% trans "Transfers" %}</a>
         <span class="divider">/</span>
     </li>
 	<li class="active">{{ transfer.reference }}</li>
@@ -36,11 +37,11 @@
 		</tr>
 		<tr>
 			<th>{% trans "Source" %}</th>
-			<td><a href="{% url accounts-detail transfer.source.id %}">{{ transfer.source }}</a></td>
+			<td><a href="{% url 'accounts-detail' transfer.source.id %}">{{ transfer.source }}</a></td>
 		</tr>
 		<tr>
 			<th>{% trans "Destination" %}</th>
-			<td><a href="{% url accounts-detail transfer.destination.id %}">{{ transfer.destination }}</a></td>
+			<td><a href="{% url 'accounts-detail' transfer.destination.id %}">{{ transfer.destination }}</a></td>
 		</tr>
 		<tr>
 			<th>{% trans "Amount" %}</th>

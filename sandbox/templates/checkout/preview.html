@@ -1,4 +1,5 @@
 {% extends 'oscar/checkout/preview.html' %}
+{% load url from future %}
 {% load currency_filters %}
 {% load i18n %}
 
@@ -15,7 +16,7 @@
 		{% endfor %}
 		</ul>
 		<div class="alert-actions">
-			<a href="{% url checkout:payment-details %}" class="btn">{% trans "Change payment details" %}</a>
+			<a href="{% url 'checkout:payment-details' %}" class="btn">{% trans "Change payment details" %}</a>
 		</div>
 	</div>    
 </div>

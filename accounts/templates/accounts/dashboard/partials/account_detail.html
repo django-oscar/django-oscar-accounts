@@ -1,4 +1,5 @@
 {% load i18n %}
+{% load url from future %}
 {% load currency_filters %}
 
 <table id="" class="table">
@@ -66,7 +67,7 @@
         {% if account.product_range %}
             <tr>
                 <th>{% trans "Can be spent on products from range" %}</th>
-                <td><a href="{% url dashboard:range-update account.product_range.id %}">{{ account.product_range }}</a></td>
+                <td><a href="{% url 'dashboard:range-update' account.product_range.id %}">{{ account.product_range }}</a></td>
             </tr>
         {% endif %}
     </tbody>

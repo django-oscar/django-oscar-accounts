@@ -1,4 +1,5 @@
 {% extends 'dashboard/layout.html' %}
+{% load url from future %}
 {% load currency_filters %}
 {% load i18n %}
 
@@ -9,7 +10,7 @@
 {% block breadcrumbs %}
 <ul class="breadcrumb">
     <li>
-	<a href="{% url dashboard:index %}">{% trans "Dashboard" %}</a>
+	<a href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a>
         <span class="divider">/</span>
     </li>
     <li>
@@ -22,7 +23,7 @@
 
 {% block header %}
 <div class="page-header">
-	<a id="create_new_account" href="{% url accounts-create %}" class="btn btn-large btn-primary pull-right">{% trans "Create a new " %} {{ unit_name|lower }}</a></p>
+	<a id="create_new_account" href="{% url 'accounts-create' %}" class="btn btn-large btn-primary pull-right">{% trans "Create a new " %} {{ unit_name|lower }}</a></p>
     <h1>{{ title }}</h1>
 </div>
 {% endblock header %}
@@ -37,7 +38,7 @@
 	<form method="get" action="." class="form-horizontal">
 		{% include 'partials/form_fields.html' %}
 		<button type="submit" class="btn btn-primary">{% trans "Search" %}</button>
-		 {% trans "or" %}<a href="{% url accounts-list %}">{% trans "reset" %}</a>.
+		 {% trans "or" %}<a href="{% url 'accounts-list' %}">{% trans "reset" %}</a>.
 	</form>
 
 	<div class="sub-header">
@@ -60,7 +61,7 @@
 			{% for account in accounts %}
 			{# When we're using bootstrap 2.1, we can use table row colors #}
 			<tr {% if account.is_frozen %}style="color: #aaa"{% endif %}>
-                <td><a href="{% url accounts-detail account.id %}">{{ account.name|default:"-" }}</a></td>
+                <td><a href="{% url 'accounts-detail' account.id %}">{{ account.name|default:"-" }}</a></td>
 				<td>{{ account.code|default:"-" }}</td>
 				<td>{{ account.status }}</td>
 				<td>{{ account.start_date|default:"-" }}</td>
@@ -69,13 +70,13 @@
 				<td>{{ account.num_transactions }}</td>
 				<td>{{ account.date_created }}</td>
 				<td>
-					<a href="{% url accounts-update account.id %}" class="btn">{% trans "Edit" %}</a>
-					<a href="{% url accounts-detail account.id %}" class="btn">{% trans "Transactions" %}</a>
-					<a href="{% url accounts-top-up account.id %}" class="btn">{% trans "Top-up" %}</a>
+					<a href="{% url 'accounts-update' account.id %}" class="btn">{% trans "Edit" %}</a>
+					<a href="{% url 'accounts-detail' account.id %}" class="btn">{% trans "Transactions" %}</a>
+					<a href="{% url 'accounts-top-up' account.id %}" class="btn">{% trans "Top-up" %}</a>
 					{% if not account.is_frozen %}
-					<a href="{% url accounts-freeze account.id %}" class="btn btn-danger">{% trans "Freeze" %}</a>
+					<a href="{% url 'accounts-freeze' account.id %}" class="btn btn-danger">{% trans "Freeze" %}</a>
 					{% else %}
-					<a href="{% url accounts-thaw account.id %}" class="btn btn-success">{% trans "Thaw" %}</a>
+					<a href="{% url 'accounts-thaw' account.id %}" class="btn btn-success">{% trans "Thaw" %}</a>
 					{% endif %}
 				</td>
 			</tr>
