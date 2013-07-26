@@ -68,19 +68,9 @@ Install using pip:
 	pip install django-oscar-accounts
 ```
 
-and add `accounts` to `INSTALLED_APPS`.  Then, add the following
-settings:
-
-* `ACCOUNTS_SOURCE_NAME` - The name of the 'source' account which is used to
-  transfer funds to other accounts (it has no credit limit).
-* `ACCOUNTS_REDEMPTIONS_NAME` - The name of the 'sales' account which is the
-  recipient of any funds used to pay for orders
-* `ACCOUNTS_LAPSED_NAME` - The name of the 'expired' account which is the
-  recipient of any funds left if accounts that expire.  A cronjob is used to
-  close expired accounts.
-
-Running `manage.py syncdb` will create the appropriate tables and initialise accounts based
-on the above 3 settings.
+and add `accounts` to `INSTALLED_APPS`.  Runnning ``manage.py syncdb`` will create the appropriate database
+tables and also initial some core accounts and account-types.  The names of these accounts can be controlled using
+settings (see below).
 
 If running with Oscar, add an additional path to your `TEMPLATE_DIRS`:
 ``` python
@@ -274,14 +264,83 @@ aggregating them all into one).  This will provide better audit information.  He
             self.add_payment_source(source)
 ```
 
+Core accounts and account types
+-------------------------------
+
+A post-syncdb signal will create the common structure for account types and
+accounts.  Some names can be controlled with settings, as indicated in parentheses. 
+
+- **Assets**
+
+    - **Sales**
+        - Redemptions (`ACCOUNTS_REDEMPTIONS_NAME`) - where money is
+          transferred to when an account is used to pay for something.  
+        - Lapsed (`ACCOUNTS_LAPSED_NAME`) - where money is transferred to
+          when an account expires.  This is done by the
+          'close_expired_accounts' management command.  The name of this
+          account can be set using the `ACCOUNTS_LAPSED_NAME`.
+
+    - **Cash**
+        - "Bank" (`ACCOUNTS_BANK_NAME`) - the source account for creating new
+          accounts that are paid for by the customer (eg a giftcard).  This
+          account will not have a credit limit and will normally have a
+          negative balance as money is only transferred out.
+
+    - **Unpaid** - This contains accounts that are used as sources for other
+      accounts but aren't paid for by the customer.  For instance, you might
+      allow admins to create new accounts in the dashboard.  An account of this
+      type will be the source account for the initial transfer.
+
+- **Liabilities**
+
+    - **Deferred income** - This contains customer accounts/giftcards.  You may want to create
+    additional account types within this type to categorise accounts.
+
+Example transactions
+--------------------
+
+Consider the following accounts and account types:
+
+- **Assets**
+    - **Sales** 
+        - Redemptions 
+        - Lapsed
+    - **Cash**
+        - Bank 
+    - **Unpaid**
+        - Merchant funded 
+- **Liabilities**
+    - **Deferred income**
+
+Note that all accounts start with a balance of 0 and the sum of all balances will always be zero.
+
+*A customer purchases a £50 giftcard*
+
+- A new account is created of type 'Deferred income' with an end date
+- £50 is transferred from the Bank to this new account
+
+*A customer pays for a £30 order using their £50 giftcard*
+
+- £30 is transferred from the giftcard account to the redemptions account
+
+*The customer's giftcard expires with £20 still on it*
+
+- £20 is transferred from the giftcard account to the lapsed account
+
+*The customer phones up to complain and a staff member creates a new giftcard for £20*
+
+- A new account is created of type 'Deferred income' 
+- £20 is transferred from the "Merchant funded" account to this new account
+
 Settings
 --------
 
-* `ACCOUNTS_SOURCE_NAME` The name of the 'source' account
-* `ACCOUNTS_SALES_NAME` The name of the 'sales' account
-* `ACCOUNTS_EXPIRED_NAME` The name of the 'expired' account
+There are settings to control the naming and initial unpaid and deferred income account
+types:
+
 * `ACCOUNTS_MIN_INITIAL_VALUE` The minimum value that can be used to create an
   account (or for a top-up)
+
 * `ACCOUNTS_MAX_INITIAL_VALUE` The maximum value that can be transferred to an
   account.
 

@@ -18,11 +18,13 @@ UNPAID_ACCOUNTS = getattr(settings, 'ACCOUNTS_UNPAID_SOURCES',
                           ('Unpaid source',))
 
 # Account where money is transferred from when creating a giftcard
-BANK = "Bank"
+BANK = getattr(settings, 'ACCOUNTS_BANK_NAME', "Bank")
 
 # Account types
 # =============
 
+ASSETS = 'Assets'
+SALES = 'Sales'
 CASH = 'Cash'
 
 # Accounts that hold money waiting to be spent
