@@ -12,6 +12,7 @@ setup(name='django-oscar-accounts',
       long_description=open('README.md').read(),
       license=open('LICENSE').read(),
       packages=find_packages(exclude=['sandbox*', 'tests*']),
+      include_package_data=True,
       # See http://pypi.python.org/pypi?%3Aaction=list_classifiers
       classifiers=[
           'Development Status :: 4 - Beta',
