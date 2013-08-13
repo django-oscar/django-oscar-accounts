@@ -54,10 +54,10 @@ Features
 Screenshots
 -----------
 
-[![Dashboard account list](https://github.com/tangentlabs/django-oscar-accounts/raw/master/screenshots/dashboard-list.thumb.png)](https://github.com/tangentlabs/django-oscar-accounts/raw/master/screenshots/dashboard-list.png)
+[![Dashboard account list](https://github.com/tangentlabs/django-oscar-accounts/raw/master/screenshots/dashboard-accounts.thumb.png)](https://github.com/tangentlabs/django-oscar-accounts/raw/master/screenshots/dashboard-accounts.png)
 [![Create new account ](https://github.com/tangentlabs/django-oscar-accounts/raw/master/screenshots/dashboard-form.thumb.png)](https://github.com/tangentlabs/django-oscar-accounts/raw/master/screenshots/dashboard-form.png)
-[![Dashboard account list](https://github.com/tangentlabs/django-oscar-accounts/raw/master/screenshots/dashboard-transfers.thumb.png)](https://github.com/tangentlabs/django-oscar-accounts/raw/master/screenshots/dashboard-transfers.png)
-[![Dashboard account list](https://github.com/tangentlabs/django-oscar-accounts/raw/master/screenshots/dashboard-report.thumb.png)](https://github.com/tangentlabs/django-oscar-accounts/raw/master/screenshots/dashboard-report.png)
+[![Dashboard transfer list](https://github.com/tangentlabs/django-oscar-accounts/raw/master/screenshots/dashboard-transfers.thumb.png)](https://github.com/tangentlabs/django-oscar-accounts/raw/master/screenshots/dashboard-transfers.png)
+[![Dashboard account detail](https://github.com/tangentlabs/django-oscar-accounts/raw/master/screenshots/dashboard-detail.thumb.png)](https://github.com/tangentlabs/django-oscar-accounts/raw/master/screenshots/dashboard-detail.png)
 
 Installation
 ------------
