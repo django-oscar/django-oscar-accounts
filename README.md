@@ -258,7 +258,7 @@ aggregating them all into one).  This will provide better audit information.  He
             source_type = SourceType.objects.get_or_create(name="Accounts")
             source = Source(
                 source_type=source_type,
-                amount_allocated=tranfer.amount,
+                amount_allocated=transfer.amount,
                 amount_debited=transfer.amount,
                 reference=transfer.reference)
             self.add_payment_source(source)
