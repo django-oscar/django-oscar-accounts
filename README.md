@@ -255,7 +255,7 @@ aggregating them all into one).  This will provide better audit information.  He
         # Inform user of failed payment
     else:
         for transfer in transfers:
-            source_type = SourceType.objects.get_or_create(name="Accounts")
+            source_type, __ = SourceType.objects.get_or_create(name="Accounts")
             source = Source(
                 source_type=source_type,
                 amount_allocated=transfer.amount,
