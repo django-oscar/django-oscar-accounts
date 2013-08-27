@@ -173,6 +173,11 @@ LOGGING = {
             'propagate': False,
             'level': 'DEBUG',
         },
+        'accounts': {
+            'handlers': ['console'],
+            'propagate': False,
+            'level': 'DEBUG',
+        },
     }
 }
 
@@ -209,6 +214,19 @@ DEBUG_TOOLBAR_CONFIG = {
 # Oscar settings
 from oscar.defaults import *
 
+OSCAR_SHOP_TAGLINE = "Accounts"
+
+HAYSTACK_CONNECTIONS = {
+    'default': {
+        'ENGINE': 'haystack.backends.simple_backend.SimpleEngine',
+    },
+}
+
+USE_TZ = True
+
+# Accounts settings
+# =================
+
 OSCAR_DASHBOARD_NAVIGATION.append(
     {
         'label': 'Accounts',
@@ -232,15 +250,6 @@ OSCAR_DASHBOARD_NAVIGATION.append(
             },
         ]
     })
-
-
-HAYSTACK_CONNECTIONS = {
-    'default': {
-        'ENGINE': 'haystack.backends.simple_backend.SimpleEngine',
-    },
-}
-
-USE_TZ = True
 
 from decimal import Decimal as D
 ACCOUNTS_UNIT_NAME = 'Giftcard'
