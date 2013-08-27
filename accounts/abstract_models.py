@@ -201,6 +201,13 @@ class Account(models.Model):
     def is_frozen(self):
         return self.status == self.__class__.FROZEN
 
+    @property
+    def is_editable(self):
+        """
+        Test whether this account can be edite within the dashboard
+        """
+        return self.code is not None
+
     def can_be_authorised_by(self, user=None):
         """
         Test whether the passed user can authorise a transfer from this account
