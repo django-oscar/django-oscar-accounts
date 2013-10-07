@@ -7,4 +7,4 @@ VERSION = '0.3'
 # extended by a template with the same identifier.
 TEMPLATE_DIR = os.path.join(
     os.path.dirname(os.path.abspath(__file__)),
-    'templates/oscar')
+    'templates/accounts')

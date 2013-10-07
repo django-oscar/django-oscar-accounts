@@ -1,4 +1,5 @@
 *.pyc
+*.sw[po]
 
 # Packagin
 dist/*
