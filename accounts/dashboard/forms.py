@@ -6,7 +6,7 @@ from django.core import exceptions
 from django.utils.translation import ugettext_lazy as _
 from django.db.models import get_model
 
-from oscar.templatetags.currency_filters import currency
+from oscar.templatetags.currency_filters import render_currency as currency
 from accounts import codes, names
 
 Account = get_model('accounts', 'Account')
