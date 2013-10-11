@@ -3,7 +3,7 @@ from decimal import Decimal as D
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 from django.db.models import get_model
-from oscar.templatetags.currency_filters import currency
+from oscar.templatetags.currency_filters import render_currency as currency
 
 Account = get_model('accounts', 'Account')
 
