@@ -17,6 +17,11 @@ except ImportError:
 
 class Migration(SchemaMigration):
 
+    depends_on = (
+        ('offer', '0001_initial'),
+        ('catalogue', '0001_initial'),
+    )
+
     def forwards(self, orm):
 
         # Adding model 'AccountType'
