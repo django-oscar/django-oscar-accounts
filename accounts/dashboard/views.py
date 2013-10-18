@@ -9,8 +9,8 @@ from django.shortcuts import get_object_or_404
 from django.db.models import get_model, Sum
 from django.contrib import messages
 from django.utils.translation import ugettext_lazy as _
-from oscar.templatetags.currency_filters import currency
 
+from ..compat import currency
 from accounts.dashboard import forms, reports
 from accounts import facade, names, exceptions
 
