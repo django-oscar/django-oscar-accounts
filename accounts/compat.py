@@ -1,4 +1,4 @@
 try:
     from oscar.templatetags.currency_filters import render_currency as currency
-except importError:
+except ImportError:
     from oscar.templatetags.currency_filters import currency
