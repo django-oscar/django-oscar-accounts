@@ -114,7 +114,10 @@ OSCAR_DASHBOARD_NAVIGATION.append(
 ```
 Furthermore you need to add the url-pattern to your `urls.py`
 ``` python
-(r'^dashboard/accounts/', include(accounts_app.urls)),
+urlpatterns = patterns('',
+    ...
+    (r'^dashboard/accounts/', include(accounts_app.urls)),
+)
 ```
 
 You should also set-up a cronjob that calls:
