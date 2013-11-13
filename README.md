@@ -68,7 +68,7 @@ Install using pip:
 	pip install django-oscar-accounts
 ```
 
-and add `accounts` to `INSTALLED_APPS`.  Runnning ``manage.py syncdb`` will create the appropriate database
+and add `accounts` to `INSTALLED_APPS`.  Runnning ``manage.py migrate accounts`` will create the appropriate database
 tables and also initial some core accounts and account-types.  The names of these accounts can be controlled using
 settings (see below).
 
@@ -83,6 +83,42 @@ TEMPLATE_DIRS = (
 
 This allows the templates to be customised by overriding blocks instead of
 replacing the entire template.
+
+In order to make the accounts accessible via the Oscar dashboard you need to append it to your `OSCAR_DASHBOARD_NAVIGATION`
+``` python
+from oscar.defaults import *
+
+OSCAR_DASHBOARD_NAVIGATION.append(
+    {
+        'label': 'Accounts',
+        'icon': 'icon-globe',
+        'children': [
+            {
+                'label': 'Accounts',
+                'url_name': 'accounts-list',
+            },
+            {
+                'label': 'Transfers',
+                'url_name': 'transfers-list',
+            },
+            {
+                'label': 'Deferred income report',
+                'url_name': 'report-deferred-income',
+            },
+            {
+                'label': 'Profit/loss report',
+                'url_name': 'report-profit-loss',
+            },
+        ]
+    })
+```
+Furthermore you need to add the url-pattern to your `urls.py`
+``` python
+urlpatterns = patterns('',
+    ...
+    (r'^dashboard/accounts/', include(accounts_app.urls)),
+)
+```
 
 You should also set-up a cronjob that calls:
 
