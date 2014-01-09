@@ -68,7 +68,7 @@ class JSONView(generic.View):
             return self.bad_request(
                 msg="Requests must have CONTENT_TYPE 'application/json'")
         try:
-            payload = json.loads(request.raw_post_data)
+            payload = json.loads(request.body)
         except ValueError:
             return self.bad_request(
                 msg="JSON payload could not be decoded")

@@ -25,6 +25,7 @@ DATABASES = {
         'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
     }
 }
+ATOMIC_REQUESTS = True
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -64,8 +65,7 @@ MEDIA_URL = '/media/'
 #ADMIN_MEDIA_PREFIX = '/media/admin/'
 
 STATIC_URL = '/static/'
-STATICFILES_DIRS = (location('static/'),)
-STATIC_ROOT = location('public')
+STATICFILES_DIRS = ()
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
@@ -103,7 +103,6 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.transaction.TransactionMiddleware',
     'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
     'oscar.apps.basket.middleware.BasketMiddleware',
