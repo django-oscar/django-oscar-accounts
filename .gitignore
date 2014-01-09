@@ -1,7 +1,7 @@
 *.pyc
 *.sw[po]
 
-# Packagin
+# Packaging
 dist/*
 *.egg-info
 
@@ -12,3 +12,4 @@ settings_local.py
 # Testing
 .coverage
 .coveralls.yml
+.tox
