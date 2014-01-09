@@ -6,10 +6,7 @@ django-dynamic-fixture>=1.6.5,<1.7
 pinocchio>=0.3.1,<0.4
 WebTest>=2.0.4,<2.1
 django-webtest>=1.6.1,<1.7
+tox==1.6.1
 
 # Development
 flake8
-django-extensions
-Werkzeug
-django-debug-toolbar
-ipdb
