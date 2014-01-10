@@ -6,7 +6,7 @@ from optparse import OptionParser
 import logging
 logging.disable(logging.CRITICAL)
 
-from django.conf import settings
+from django.conf import settings, global_settings
 
 if not settings.configured:
     from oscar.defaults import *
@@ -42,14 +42,15 @@ if not settings.configured:
             'south',
             'compressor',
         ] + get_core_apps(),
-        MIDDLEWARE_CLASSES=(
-            'django.middleware.common.CommonMiddleware',
-            'django.contrib.sessions.middleware.SessionMiddleware',
-            'django.middleware.csrf.CsrfViewMiddleware',
-            'django.contrib.auth.middleware.AuthenticationMiddleware',
-            'django.contrib.messages.middleware.MessageMiddleware',
-            'django.middleware.transaction.TransactionMiddleware',
+        MIDDLEWARE_CLASSES=global_settings.MIDDLEWARE_CLASSES + (
             'oscar.apps.basket.middleware.BasketMiddleware',
+        ),
+        TEMPLATE_CONTEXT_PROCESSORS=global_settings.TEMPLATE_CONTEXT_PROCESSORS + (
+            'django.core.context_processors.request',
+            'oscar.apps.search.context_processors.search_form',
+            'oscar.apps.promotions.context_processors.promotions',
+            'oscar.apps.checkout.context_processors.checkout',
+            'oscar.core.context_processors.metadata',
         ),
         DEBUG=False,
         SOUTH_TESTS_MIGRATE=False,
