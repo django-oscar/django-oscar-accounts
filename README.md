@@ -114,6 +114,10 @@ OSCAR_DASHBOARD_NAVIGATION.append(
 ```
 Furthermore you need to add the url-pattern to your `urls.py`
 ``` python
+from accounts.dashboard.app import application as accounts_app
+
+# ...
+
 urlpatterns = patterns('',
     ...
     (r'^dashboard/accounts/', include(accounts_app.urls)),
