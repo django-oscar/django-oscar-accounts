@@ -164,10 +164,15 @@ class Account(models.Model):
         """
         Test if the a debit for the passed amount is permitted
         """
-        if self.credit_limit is None:
+        if self.amount_available is None:
             return True
-        available = self.balance + self.credit_limit
-        return amount <= available
+        return amount <= self.amount_available
+
+    @property
+    def amount_available(self):
+        if self.credit_limit is None:
+            return None
+        return self.balance + self.credit_limit
 
     def permitted_allocation(self, basket, shipping_total, order_total):
         """
