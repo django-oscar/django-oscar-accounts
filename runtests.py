@@ -9,7 +9,7 @@ logging.disable(logging.CRITICAL)
 from django.conf import settings, global_settings
 
 if not settings.configured:
-    from oscar.defaults import *
+    from oscar.defaults import *  # noqa
     extra_settings = {}
     for key, value in locals().items():
         if key.startswith('OSCAR'):
@@ -69,6 +69,7 @@ if not settings.configured:
             'sandbox/templates',
         ),
         STATIC_URL='/static/',
+        COMPRESS_ROOT='',
         COMPRESS_ENABLED=False,
         SITE_ID=1,
         ACCOUNTS_UNIT_NAME='Giftcard',
@@ -106,5 +107,5 @@ def generate_migration():
 
 if __name__ == '__main__':
     parser = OptionParser()
-    (options, args) = parser.parse_args()
+    (options, args) = parser.parse_args()  # noqa
     run_tests(*args)
