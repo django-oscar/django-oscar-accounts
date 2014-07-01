@@ -13,6 +13,7 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
     (r'^admin/', include(admin.site.urls)),
+    url(r'^i18n/', include('django.conf.urls.i18n')),
     url(r'^giftcard-balance/', AccountBalanceView.as_view(),
         name="account-balance"),
     (r'^dashboard/accounts/', include(accounts_app.urls)),
