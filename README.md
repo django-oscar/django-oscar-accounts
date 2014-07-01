@@ -68,7 +68,7 @@ Install using pip:
 	pip install django-oscar-accounts
 ```
 
-and add `accounts` to `INSTALLED_APPS`.  Runnning ``manage.py migrate accounts`` will create the appropriate database
+and add `accounts` to `INSTALLED_APPS`.  Runnning `manage.py migrate accounts` will create the appropriate database
 tables and also initial some core accounts and account-types.  The names of these accounts can be controlled using
 settings (see below).
 
@@ -83,6 +83,9 @@ TEMPLATE_DIRS = (
 
 This allows the templates to be customised by overriding blocks instead of
 replacing the entire template.
+
+If not using Oscar, then add `accounts.offer` to `INSTALLED_APPS`. This is required as the `Account` model has a foreign key to Oscar's product range 
+model. When Oscar isn't installed, this needs to be stubbed.
 
 In order to make the accounts accessible via the Oscar dashboard you need to append it to your `OSCAR_DASHBOARD_NAVIGATION`
 ``` python

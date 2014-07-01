@@ -105,7 +105,9 @@ class Account(models.Model):
     end_date = models.DateTimeField(null=True, blank=True)
 
     # Accounts are sometimes restricted to only work on a specific range of
-    # products.  This is the only link with Oscar.
+    # products.  This is the only link with Oscar. If you're not using Oscar,
+    # then you'll need to create a stub 'offer' app with a 'Range' model so
+    # this FK can resolve correctly - apologies for the inconvenience.
     product_range = models.ForeignKey('offer.Range', null=True, blank=True)
 
     # Allow accounts to be restricted for products only (ie can't be used to
@@ -129,7 +131,7 @@ class Account(models.Model):
             return self.code
         if self.name:
             return self.name
-        return 'Anonymous'
+        return u'Anonymous'
 
     def is_active(self):
         if self.start_date is None and self.end_date is None:
