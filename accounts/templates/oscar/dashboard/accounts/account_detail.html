@@ -32,6 +32,7 @@
 <p>
 	<a class="btn" href="{% url accounts-update account.id %}">Edit</a>
 	<a href="{% url accounts-top-up account.id %}" class="btn">{% trans "Top-up" %}</a>
+	<a href="{% url accounts-withdraw account.id %}" class="btn">{% trans "Withdraw" %}</a>
 	{% if not account.is_frozen %}
 	<a href="{% url accounts-freeze account.id %}" class="btn btn-danger">{% trans "Freeze" %}</a>
 	{% else %}

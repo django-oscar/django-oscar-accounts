@@ -26,6 +26,7 @@ class AccountsDashboardApplication(Application):
     account_freeze_view = views.AccountFreezeView
     account_thaw_view = views.AccountThawView
     account_top_up_view = views.AccountTopUpView
+    account_withdraw_view = views.AccountWithdrawView
 
     transfer_list_view = views.TransferListView
     transfer_detail_view = views.TransferDetailView
@@ -50,6 +51,8 @@ class AccountsDashboardApplication(Application):
                 name='accounts-thaw'),
             url(r'^(?P<pk>\d+)/top-up/$', self.account_top_up_view.as_view(),
                 name='accounts-top-up'),
+            url(r'^(?P<pk>\d+)/withdraw/$', self.account_withdraw_view.as_view(),
+                name='accounts-withdraw'),
             url(r'^transfers/$', self.transfer_list_view.as_view(),
                 name='transfers-list'),
             url(r'^transfers/(?P<reference>[A-Z0-9]{32})/$',
