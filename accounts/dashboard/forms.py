@@ -173,6 +173,33 @@ class TopUpAccountForm(SourceAccountMixin, forms.Form):
         return self.cleaned_data
 
 
+class WithdrawFromAccountForm(SourceAccountMixin, forms.Form):
+    amount = forms.DecimalField(
+        min_value=D('0.00'),
+        max_value=None,
+        decimal_places=2)
+
+    def __init__(self, *args, **kwargs):
+        self.account = kwargs.pop('instance')
+        super(WithdrawFromAccountForm, self).__init__(*args, **kwargs)
+
+    def clean_amount(self):
+        amt = self.cleaned_data['amount']
+        max_amount = self.account.balance
+        if amt > max_amount:
+            raise forms.ValidationError(_(
+                "The account has only %s") % (
+                    currency(max_amount)))
+        return amt
+
+    def clean(self):
+        if self.account.is_closed():
+            raise forms.ValidationError(_("Account is closed"))
+        elif self.account.is_frozen():
+            raise forms.ValidationError(_("Account is frozen"))
+        return self.cleaned_data
+
+
 class DateForm(forms.Form):
     date = forms.DateField()
 

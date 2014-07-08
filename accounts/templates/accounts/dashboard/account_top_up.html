@@ -38,7 +38,8 @@
             {% include 'partials/form_field.html' with field=form.source_account %}
         {% endif %}
 		{% include 'partials/form_field.html' with field=form.amount %}
-		<button type="submit" class="btn btn-large btn-success">{% trans "Transfer" %}</button>
+		<button type="submit" class="btn btn-large btn-success">{% trans "Top-up" %}</button>
+            or <a href="{% url 'accounts-detail' account.id %}">{% trans "cancel" %}</a>.
 	</form>
 	{% else %}
 	<p>{% trans "This account cannot be topped-up." %}</p>

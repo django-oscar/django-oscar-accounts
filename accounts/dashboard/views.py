@@ -97,7 +97,8 @@ class AccountCreateView(generic.CreateView):
                             user=self.request.user,
                             description=_("Creation of account"))
         except exceptions.AccountException, e:
-            messages.error(self.request,
+            messages.error(
+                self.request,
                 _("Account created but unable to load funds onto new "
                   "account: %s") % e)
         else:
@@ -167,9 +168,28 @@ class AccountTopUpView(generic.UpdateView):
         return http.HttpResponseRedirect(reverse('accounts-detail',
                                                  kwargs={'pk': account.id}))
 
-    def get_success_url(self):
-        messages.success(self.request, _("Account re-opened"))
-        return reverse('accounts-list')
+
+class AccountWithdrawView(generic.UpdateView):
+    model = Account
+    template_name = 'accounts/dashboard/account_withdraw.html'
+    form_class = forms.WithdrawFromAccountForm
+
+    def form_valid(self, form):
+        account = self.object
+        amount = form.cleaned_data['amount']
+        try:
+            facade.transfer(account, form.get_source_account(), amount,
+                            user=self.request.user,
+                            description=_("Return funds to source account"))
+        except exceptions.AccountException, e:
+            messages.error(self.request,
+                           _("Unable to withdraw funds from account: %s") % e)
+        else:
+            messages.success(
+                self.request,
+                _("%s withdrawn from account") % currency(amount))
+        return http.HttpResponseRedirect(reverse('accounts-detail',
+                                                 kwargs={'pk': account.id}))
 
 
 class AccountTransactionsView(generic.ListView):
