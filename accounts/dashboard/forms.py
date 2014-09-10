@@ -4,8 +4,8 @@ from django import forms
 from django.conf import settings
 from django.core import exceptions
 from django.utils.translation import ugettext_lazy as _
-from django.db.models import get_model
 
+from oscar.core.loading import get_model
 from oscar.templatetags.currency_filters import currency
 from accounts import codes, names
 

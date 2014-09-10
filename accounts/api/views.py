@@ -5,10 +5,11 @@ from dateutil import parser
 from django import http
 from django.conf import settings
 from django.core.urlresolvers import reverse
-from django.db.models import get_model
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.views import generic
+
+from oscar.core.loading import get_model
 
 from accounts.api import errors
 from accounts import codes, names, facade, exceptions

@@ -6,9 +6,11 @@ from django.core.urlresolvers import reverse
 from django import http
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
-from django.db.models import get_model, Sum
+from django.db.models import Sum
 from django.contrib import messages
 from django.utils.translation import ugettext_lazy as _
+
+from oscar.core.loading import get_model
 from oscar.templatetags.currency_filters import currency
 
 from accounts.dashboard import forms, reports

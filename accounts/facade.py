@@ -1,6 +1,6 @@
 import logging
 
-from django.db.models import get_model
+from oscar.core.loading import get_model
 
 from accounts import exceptions, core
 
