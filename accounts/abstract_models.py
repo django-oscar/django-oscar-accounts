@@ -20,9 +20,9 @@ except ImportError:
 
 class ActiveAccountManager(models.Manager):
 
-    def get_query_set(self):
+    def get_queryset(self):
         now = timezone.now()
-        qs = super(ActiveAccountManager, self).get_query_set()
+        qs = super(ActiveAccountManager, self).get_queryset()
         return qs.filter(
             models.Q(start_date__lte=now) |
             models.Q(start_date=None)).filter(
@@ -32,9 +32,9 @@ class ActiveAccountManager(models.Manager):
 
 class ExpiredAccountManager(models.Manager):
 
-    def get_query_set(self):
+    def get_queryset(self):
         now = timezone.now()
-        qs = super(ExpiredAccountManager, self).get_query_set()
+        qs = super(ExpiredAccountManager, self).get_queryset()
         return qs.filter(end_date__lt=now)
 
 
@@ -279,7 +279,7 @@ class PostingManager(models.Manager):
         # database transaction to ensure that all get written out correctly.
         self.verify_transfer(source, destination, amount, user)
         with transaction.atomic():
-            transfer = self.get_query_set().create(
+            transfer = self.get_queryset().create(
                 source=source,
                 destination=destination,
                 amount=amount,
