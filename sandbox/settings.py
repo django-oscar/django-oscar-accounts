@@ -105,7 +105,6 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'oscar.apps.basket.middleware.BasketMiddleware',
 )
 
@@ -194,7 +193,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # External apps
     'django_extensions',
-    'debug_toolbar',
     'compressor',
     'south',
 ] + get_core_apps(['apps.shipping']) + ['accounts']
@@ -206,10 +204,6 @@ AUTHENTICATION_BACKENDS = (
 
 LOGIN_REDIRECT_URL = '/accounts/'
 APPEND_SLASH = True
-
-DEBUG_TOOLBAR_CONFIG = {
-    'INTERCEPT_REDIRECTS': False
-}
 
 # Oscar settings
 from oscar.defaults import *
