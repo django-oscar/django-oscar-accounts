@@ -35,10 +35,12 @@ if not settings.configured:
             'django.contrib.sites',
             'django.contrib.flatpages',
             'accounts',
-            'south',
             'compressor',
         ] + get_core_apps(),
         MIDDLEWARE_CLASSES=global_settings.MIDDLEWARE_CLASSES + (
+            'django.contrib.sessions.middleware.SessionMiddleware',
+            'django.contrib.auth.middleware.AuthenticationMiddleware',
+            'django.contrib.messages.middleware.MessageMiddleware',
             'oscar.apps.basket.middleware.BasketMiddleware',
         ),
         TEMPLATE_CONTEXT_PROCESSORS=global_settings.TEMPLATE_CONTEXT_PROCESSORS + (
@@ -49,7 +51,6 @@ if not settings.configured:
             'oscar.core.context_processors.metadata',
         ),
         DEBUG=False,
-        SOUTH_TESTS_MIGRATE=False,
         HAYSTACK_CONNECTIONS={
             'default': {
                 'ENGINE': 'haystack.backends.simple_backend.SimpleEngine',
@@ -80,10 +81,6 @@ from django_nose import NoseTestSuiteRunner
 
 
 def run_tests(*test_args):
-    if 'south' in settings.INSTALLED_APPS:
-        from south.management.commands import patch_for_test_db_setup
-        patch_for_test_db_setup()
-
     if not test_args:
         test_args = ['tests']
 
@@ -93,12 +90,6 @@ def run_tests(*test_args):
 
     if num_failures > 0:
         sys.exit(num_failures)
-
-
-def generate_migration():
-    from south.management.commands.schemamigration import Command
-    com = Command()
-    com.handle(app='accounts', auto=True)
 
 
 if __name__ == '__main__':

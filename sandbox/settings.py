@@ -194,7 +194,6 @@ INSTALLED_APPS = [
     # External apps
     'django_extensions',
     'compressor',
-    'south',
 ] + get_core_apps(['apps.shipping']) + ['accounts']
 
 AUTHENTICATION_BACKENDS = (
