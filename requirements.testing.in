@@ -1,0 +1,13 @@
+# Testing
+mock
+coverage
+django-nose
+django-dynamic-fixture
+pinocchio
+WebTest
+django-webtest
+tox
+spec
+
+# Development
+flake8
