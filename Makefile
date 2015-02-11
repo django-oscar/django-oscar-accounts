@@ -1,6 +1,6 @@
 install:
 	pip install -r requirements.testing.txt
-	./setup.py develop 
+	./setup.py develop
 
 test:
 	./runtests.py
@@ -14,7 +14,7 @@ sandbox: install
 
 clean:
 	find . -type f -name "*.pyc" -delete
-	rm -rf htmlcov *.egg-info *.pdf dist 
+	rm -rf htmlcov *.egg-info *.pdf dist
 
 update-requirements:
 	pip-compile requirements.sandbox.in || echo "\n\nPlease install pip-compile: pip install git+https://github.com/nvie/pip-tools.git@future\n\n"
