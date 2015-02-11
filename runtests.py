@@ -38,6 +38,9 @@ if not settings.configured:
             'compressor',
         ] + get_core_apps(),
         MIDDLEWARE_CLASSES=global_settings.MIDDLEWARE_CLASSES + (
+            'django.contrib.sessions.middleware.SessionMiddleware',
+            'django.contrib.auth.middleware.AuthenticationMiddleware',
+            'django.contrib.messages.middleware.MessageMiddleware',
             'oscar.apps.basket.middleware.BasketMiddleware',
         ),
         TEMPLATE_CONTEXT_PROCESSORS=global_settings.TEMPLATE_CONTEXT_PROCESSORS + (
