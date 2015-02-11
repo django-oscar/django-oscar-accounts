@@ -4,6 +4,13 @@ sudo: false
 
 python:
     - 2.7
+    - 3.3
+    - 3.4
+
+matrix:
+    allow_failures:
+        - python: 3.3
+        - python: 3.4
 
 install:
     - make install
