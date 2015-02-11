@@ -34,7 +34,6 @@ if not settings.configured:
             'django.contrib.sessions',
             'django.contrib.sites',
             'django.contrib.flatpages',
-            'django.contrib.staticfiles',
             'accounts',
             'south',
             'compressor',
