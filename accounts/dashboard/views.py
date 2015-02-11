@@ -98,7 +98,7 @@ class AccountCreateView(generic.CreateView):
             facade.transfer(source, account, amount,
                             user=self.request.user,
                             description=_("Creation of account"))
-        except exceptions.AccountException, e:
+        except exceptions.AccountException as e:
             messages.error(
                 self.request,
                 _("Account created but unable to load funds onto new "
@@ -161,7 +161,7 @@ class AccountTopUpView(generic.UpdateView):
             facade.transfer(form.get_source_account(), account, amount,
                             user=self.request.user,
                             description=_("Top-up account"))
-        except exceptions.AccountException, e:
+        except exceptions.AccountException as e:
             messages.error(self.request,
                            _("Unable to top-up account: %s") % e)
         else:
@@ -183,7 +183,7 @@ class AccountWithdrawView(generic.UpdateView):
             facade.transfer(account, form.get_source_account(), amount,
                             user=self.request.user,
                             description=_("Return funds to source account"))
-        except exceptions.AccountException, e:
+        except exceptions.AccountException as e:
             messages.error(self.request,
                            _("Unable to withdraw funds from account: %s") % e)
         else:

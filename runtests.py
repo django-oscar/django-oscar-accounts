@@ -10,10 +10,7 @@ from django.conf import settings, global_settings
 
 if not settings.configured:
     from oscar.defaults import *  # noqa
-    extra_settings = {}
-    for key, value in locals().items():
-        if key.startswith('OSCAR'):
-            extra_settings[key] = value
+    extra_settings = {k: v for k, v in locals().items() if k.startswith('OSCAR')}
 
     from oscar import get_core_apps, OSCAR_MAIN_TEMPLATE_DIR
     from accounts import TEMPLATE_DIR as ACCOUNTS_TEMPLATE_DIR

@@ -38,7 +38,7 @@ def redeem(order_number, user, allocations):
         try:
             Transfer.objects.verify_transfer(
                 account, destination, amount, user)
-        except exceptions.AccountException, e:
+        except exceptions.AccountException as e:
             raise UnableToTakePayment(str(e))
 
         transfers.append((account, destination, amount))
