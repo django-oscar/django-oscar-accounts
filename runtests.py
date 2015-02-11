@@ -37,7 +37,6 @@ if not settings.configured:
             'django.contrib.sessions',
             'django.contrib.sites',
             'django.contrib.flatpages',
-            'django.contrib.staticfiles',
             'accounts',
             'compressor',
         ] + get_core_apps(),
