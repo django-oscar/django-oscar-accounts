@@ -1,3 +1,5 @@
+.PHONY: install test sandbox clean update-requirements
+
 install:
 	pip install -r requirements.testing.txt
 	./setup.py develop
