@@ -67,7 +67,7 @@ if not settings.configured:
         COMPRESS_ENABLED=False,
         SITE_ID=1,
         ACCOUNTS_UNIT_NAME='Giftcard',
-        NOSE_ARGS=['-s', '--with-specplugin'],
+        NOSE_ARGS=['--nocapture', '--with-specplugin'],
         USE_TZ=True,
         DDF_FILL_NULLABLE_FIELDS=False,
         ACCOUNTS_DEFERRED_INCOME_ACCOUNT_TYPES=('Test accounts',),
