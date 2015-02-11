@@ -1,6 +1,7 @@
-from django.db.models import get_model
 from django.utils.translation import ugettext_lazy as _
+
 from oscar.apps.payment.exceptions import UnableToTakePayment
+from oscar.core.loading import get_model
 
 from accounts import facade, exceptions, core, codes
 
@@ -37,7 +38,7 @@ def redeem(order_number, user, allocations):
         try:
             Transfer.objects.verify_transfer(
                 account, destination, amount, user)
-        except exceptions.AccountException, e:
+        except exceptions.AccountException as e:
             raise UnableToTakePayment(str(e))
 
         transfers.append((account, destination, amount))
