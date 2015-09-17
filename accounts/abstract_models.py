@@ -454,7 +454,7 @@ class Transaction(models.Model):
 
 
 class IPAddressRecord(models.Model):
-    ip_address = models.IPAddressField(_("IP address"), unique=True)
+    ip_address = models.GenericIPAddressField(_("IP address"), unique=True)
     total_failures = models.PositiveIntegerField(default=0)
     consecutive_failures = models.PositiveIntegerField(default=0)
     date_created = models.DateTimeField(auto_now_add=True)
