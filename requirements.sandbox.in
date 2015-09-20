@@ -1,4 +1,4 @@
-Django>=1.7
+Django>=1.8.4
 django-extensions
-django-oscar>=1.0,<1.1
+django-oscar>=1.1.1
 Werkzeug
