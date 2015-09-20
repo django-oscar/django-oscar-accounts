@@ -479,6 +479,9 @@ class IPAddressRecord(models.Model):
         verbose_name = _("IP address record")
         verbose_name_plural = _("IP address records")
 
+    def __str__(self):
+        return self.ip_address
+
     def increment_failures(self):
         self.total_failures += 1
         self.consecutive_failures += 1
