@@ -161,7 +161,7 @@ class AccountsView(JSONView):
             self.load_account(account, payload)
         except exceptions.AccountException as e:
             account.delete()
-            raise self.forbidden(
+            return self.forbidden(
                 code=errors.CANNOT_CREATE_ACCOUNT,
                 msg=e.message)
         else:
