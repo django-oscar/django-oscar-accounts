@@ -1,25 +1,20 @@
 language: python
 
-python:
-    - 2.6
-    - 2.7
+sudo: false
 
-env:
-    matrix:
-        # Test against each permitted Oscar/Django combination
-        # Oscar 0.5
-        - OSCAR="django-oscar>=0.5,<0.6" DJANGO="Django>=1.4,<1.5"
-        # Oscar 0.6
-        - OSCAR="django-oscar>=0.6,<0.7" DJANGO="Django>=1.4,<1.5"
-        - OSCAR="django-oscar>=0.6,<0.7" DJANGO="Django>=1.5,<1.6"
-        - OSCAR="django-oscar>=0.6,<0.7" DJANGO="Django>=1.6,<1.7"
-        # Oscar 0.7
-        - OSCAR="django-oscar>=0.7,<0.8" DJANGO="Django>=1.5,<1.6"
-        - OSCAR="django-oscar>=0.7,<0.8" DJANGO=Django>=1.6,<1.7"
+python:
+    - 2.7
+    - 3.3
+    - 3.4
+
+matrix:
+    allow_failures:
+        - python: 3.3
+        - python: 3.4
 
 install:
     - make install
-    - pip install $OSCAR $DJANGO
+    - pip install "django-oscar>=1.0,<1.1" "Django>=1.7,<1.8"
 
 script:
     - coverage run ./runtests.py

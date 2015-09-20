@@ -1,6 +1,6 @@
 import logging
 
-from django.db.models import get_model
+from oscar.core.loading import get_model
 
 from accounts import exceptions, core
 
@@ -24,7 +24,7 @@ def close_expired_accounts():
         try:
             transfer(account, destination,
                      balance, description="Closing account")
-        except exceptions.AccountException, e:
+        except exceptions.AccountException as e:
             logger.error("Unable to close account #%d - %s", account.id, e)
         else:
             logger.info(("Account #%d successfully expired - %d transferred "
@@ -63,10 +63,10 @@ def transfer(source, destination, amount,
         transfer = Transfer.objects.create(
             source, destination, amount, parent, user,
             merchant_reference, description)
-    except exceptions.AccountException, e:
+    except exceptions.AccountException as e:
         logger.warning("%s - failed: '%s'", msg, e)
         raise
-    except Exception, e:
+    except Exception as e:
         logger.error("%s - failed: '%s'", msg, e)
         raise exceptions.AccountException(
             "Unable to complete transfer: %s" % e)
@@ -92,10 +92,10 @@ def reverse(transfer, user=None, merchant_reference=None, description=None):
             amount=transfer.amount, user=user,
             merchant_reference=merchant_reference,
             description=description)
-    except exceptions.AccountException, e:
+    except exceptions.AccountException as e:
         logger.warning("%s - failed: '%s'", msg, e)
         raise
-    except Exception, e:
+    except Exception as e:
         logger.error("%s - failed: '%s'", msg, e)
         raise exceptions.AccountException(
             "Unable to reverse transfer: %s" % e)

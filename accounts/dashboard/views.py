@@ -6,9 +6,11 @@ from django.core.urlresolvers import reverse
 from django import http
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
-from django.db.models import get_model, Sum
+from django.db.models import Sum
 from django.contrib import messages
 from django.utils.translation import ugettext_lazy as _
+
+from oscar.core.loading import get_model
 from oscar.templatetags.currency_filters import currency
 
 from accounts.dashboard import forms, reports
@@ -96,7 +98,7 @@ class AccountCreateView(generic.CreateView):
             facade.transfer(source, account, amount,
                             user=self.request.user,
                             description=_("Creation of account"))
-        except exceptions.AccountException, e:
+        except exceptions.AccountException as e:
             messages.error(
                 self.request,
                 _("Account created but unable to load funds onto new "
@@ -159,7 +161,7 @@ class AccountTopUpView(generic.UpdateView):
             facade.transfer(form.get_source_account(), account, amount,
                             user=self.request.user,
                             description=_("Top-up account"))
-        except exceptions.AccountException, e:
+        except exceptions.AccountException as e:
             messages.error(self.request,
                            _("Unable to top-up account: %s") % e)
         else:
@@ -181,7 +183,7 @@ class AccountWithdrawView(generic.UpdateView):
             facade.transfer(account, form.get_source_account(), amount,
                             user=self.request.user,
                             description=_("Return funds to source account"))
-        except exceptions.AccountException, e:
+        except exceptions.AccountException as e:
             messages.error(self.request,
                            _("Unable to withdraw funds from account: %s") % e)
         else:

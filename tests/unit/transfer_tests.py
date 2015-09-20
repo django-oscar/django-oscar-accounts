@@ -53,7 +53,7 @@ class TestATransferToAnInactiveAccount(TestCase):
         try:
             Transfer.objects.create(source, destination,
                                     D('20.00'), user=self.user)
-        except exceptions.AccountException, e:
+        except exceptions.AccountException as e:
             self.fail("Transfer failed: %s" % e)
 
 
@@ -68,7 +68,7 @@ class TestATransferFromAnInactiveAccount(TestCase):
         try:
             Transfer.objects.create(source, destination,
                                     D('20.00'), user=self.user)
-        except exceptions.AccountException, e:
+        except exceptions.AccountException as e:
             self.fail("Transfer failed: %s" % e)
 
 

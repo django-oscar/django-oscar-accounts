@@ -5,10 +5,11 @@ from dateutil import parser
 from django import http
 from django.conf import settings
 from django.core.urlresolvers import reverse
-from django.db.models import get_model
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.views import generic
+
+from oscar.core.loading import get_model
 
 from accounts.api import errors
 from accounts import codes, names, facade, exceptions
@@ -74,15 +75,15 @@ class JSONView(generic.View):
                 msg="JSON payload could not be decoded")
         try:
             self.validate_payload(payload)
-        except InvalidPayload, e:
+        except InvalidPayload as e:
             return self.bad_request(msg=str(e))
-        except ValidationError, e:
+        except ValidationError as e:
             return self.forbidden(code=e.code, msg=errors.message(e.code))
         # We can still get a ValidationError even if the payload itself is
         # valid.
         try:
             return self.valid_payload(payload)
-        except ValidationError, e:
+        except ValidationError as e:
             return self.forbidden(code=e.code, msg=errors.message(e.code))
 
     def validate_payload(self, payload):
@@ -158,7 +159,7 @@ class AccountsView(JSONView):
         account = self.create_account(payload)
         try:
             self.load_account(account, payload)
-        except exceptions.AccountException, e:
+        except exceptions.AccountException as e:
             account.delete()
             raise self.forbidden(
                 code=errors.CANNOT_CREATE_ACCOUNT,
@@ -220,7 +221,7 @@ class AccountRedemptionsView(JSONView):
             transfer = facade.transfer(
                 account, redemptions, amt,
                 merchant_reference=payload.get('merchant_reference', None))
-        except exceptions.AccountException, e:
+        except exceptions.AccountException as e:
             return self.forbidden(
                 code=errors.CANNOT_CREATE_TRANSFER,
                 msg=e.message)
@@ -251,7 +252,7 @@ class AccountRefundsView(JSONView):
             transfer = facade.transfer(
                 redemptions, account, payload['amount'],
                 merchant_reference=payload.get('merchant_reference', None))
-        except exceptions.AccountException, e:
+        except exceptions.AccountException as e:
             return self.forbidden(
                 code=errors.CANNOT_CREATE_TRANSFER,
                 msg=e.message)
@@ -278,7 +279,7 @@ class TransferReverseView(JSONView):
         try:
             transfer = facade.reverse(to_reverse,
                                       merchant_reference=merchant_reference)
-        except exceptions.AccountException, e:
+        except exceptions.AccountException as e:
             return self.forbidden(
                 code=errors.CANNOT_CREATE_TRANSFER,
                 msg=e.message)
@@ -316,7 +317,7 @@ class TransferRefundsView(JSONView):
                 to_refund.destination, to_refund.source,
                 payload['amount'], parent=to_refund,
                 merchant_reference=payload.get('merchant_reference', None))
-        except exceptions.AccountException, e:
+        except exceptions.AccountException as e:
             return self.forbidden(
                 code=errors.CANNOT_CREATE_TRANSFER,
                 msg=e.message)

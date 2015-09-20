@@ -12,12 +12,17 @@ from treebeard.mp_tree import MP_Node
 
 from accounts import exceptions
 
+try:
+    from oscar.core.compat import AUTH_USER_MODEL
+except ImportError:
+    AUTH_USER_MODEL = getattr(settings, 'AUTH_USER_MODEL', 'auth.User')
+
 
 class ActiveAccountManager(models.Manager):
 
-    def get_query_set(self):
+    def get_queryset(self):
         now = timezone.now()
-        qs = super(ActiveAccountManager, self).get_query_set()
+        qs = super(ActiveAccountManager, self).get_queryset()
         return qs.filter(
             models.Q(start_date__lte=now) |
             models.Q(start_date=None)).filter(
@@ -27,9 +32,9 @@ class ActiveAccountManager(models.Manager):
 
 class ExpiredAccountManager(models.Manager):
 
-    def get_query_set(self):
+    def get_queryset(self):
         now = timezone.now()
-        qs = super(ExpiredAccountManager, self).get_query_set()
+        qs = super(ExpiredAccountManager, self).get_queryset()
         return qs.filter(end_date__lt=now)
 
 
@@ -74,10 +79,10 @@ class Account(models.Model):
     #
     # As a rule of thumb, you don't normally need to use both primary_user and
     # secondary_users within the same project - just one or the other.
-    primary_user = models.ForeignKey('auth.User', related_name="accounts",
+    primary_user = models.ForeignKey(AUTH_USER_MODEL, related_name="accounts",
                                      null=True, blank=True,
                                      on_delete=models.SET_NULL)
-    secondary_users = models.ManyToManyField('auth.User', blank=True)
+    secondary_users = models.ManyToManyField(AUTH_USER_MODEL, blank=True)
 
     # Track the status of a account - this is often used so that expired
     # account can have their money transferred back to some parent account and
@@ -273,8 +278,8 @@ class PostingManager(models.Manager):
         # Write out transfer (which involves multiple writes).  We use a
         # database transaction to ensure that all get written out correctly.
         self.verify_transfer(source, destination, amount, user)
-        with transaction.commit_on_success():
-            transfer = self.get_query_set().create(
+        with transaction.atomic():
+            transfer = self.get_queryset().create(
                 source=source,
                 destination=destination,
                 amount=amount,
@@ -349,7 +354,7 @@ class Transfer(models.Model):
     # We record who the user was who authorised this transaction.  As
     # transactions should never be deleted, we allow this field to be null and
     # also record some audit information.
-    user = models.ForeignKey('auth.User', related_name="transfers",
+    user = models.ForeignKey(AUTH_USER_MODEL, related_name="transfers",
                              null=True, on_delete=models.SET_NULL)
     username = models.CharField(max_length=128)
 
