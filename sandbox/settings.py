@@ -191,9 +191,11 @@ INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.flatpages',
     'django.contrib.staticfiles',
+
     # External apps
     'django_extensions',
     'compressor',
+    'widget_tweaks',
 ] + get_core_apps(['apps.shipping']) + ['accounts']
 
 AUTHENTICATION_BACKENDS = (
