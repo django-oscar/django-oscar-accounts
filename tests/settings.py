@@ -68,8 +68,6 @@ TEMPLATE_DIRS = (
     'sandbox/templates',
 )
 
-print TEMPLATE_DIRS
-
 STATIC_URL='/static/'
 
 COMPRESS_ROOT=''
