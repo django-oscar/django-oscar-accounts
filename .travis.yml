@@ -13,6 +13,9 @@ env:
         - DJANGO=Django==1.7.8
         - DJANGO=Django==1.8.4
 
+before_install:
+    - pip install codecov
+
 install:
     - pip install $DJANGO django-oscar==1.1.1
     - pip install -r requirements.testing.txt
@@ -22,4 +25,4 @@ script:
     - coverage run ./runtests.py
 
 after_success:
-    - coveralls
+    - codecov
