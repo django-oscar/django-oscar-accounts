@@ -1,16 +1,15 @@
-from decimal import Decimal as D
 import hmac
-
-from django.conf import settings
-from django.core.urlresolvers import reverse
-from django.db import models
-from django.db import transaction
-from django.db.models import Sum
-from django.utils import timezone
-from django.utils.translation import ugettext_lazy as _
-from treebeard.mp_tree import MP_Node
+from decimal import Decimal as D
 
 from accounts import exceptions
+from django.conf import settings
+from django.core.urlresolvers import reverse
+from django.db import models, transaction
+from django.db.models import Sum
+from django.utils import six, timezone
+from django.utils.encoding import python_2_unicode_compatible
+from django.utils.translation import ugettext_lazy as _
+from treebeard.mp_tree import MP_Node
 
 try:
     from oscar.core.compat import AUTH_USER_MODEL
@@ -38,6 +37,7 @@ class ExpiredAccountManager(models.Manager):
         return qs.filter(end_date__lt=now)
 
 
+@python_2_unicode_compatible
 class AccountType(MP_Node):
     code = models.CharField(max_length=128, unique=True, null=True, blank=True)
     name = models.CharField(max_length=128)
@@ -45,7 +45,7 @@ class AccountType(MP_Node):
     class Meta:
         abstract = True
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     @property
@@ -55,6 +55,7 @@ class AccountType(MP_Node):
         return " / ".join(names)
 
 
+@python_2_unicode_compatible
 class Account(models.Model):
     # Metadata
     name = models.CharField(
@@ -129,7 +130,7 @@ class Account(models.Model):
     class Meta:
         abstract = True
 
-    def __unicode__(self):
+    def __str__(self):
         if self.code:
             return self.code
         if self.name:
@@ -324,6 +325,7 @@ class PostingManager(models.Manager):
                 msg % (amount, source.id))
 
 
+@python_2_unicode_compatible
 class Transfer(models.Model):
     """
     A transfer of funds between two accounts.
@@ -364,7 +366,7 @@ class Transfer(models.Model):
     # account transactions.
     objects = PostingManager()
 
-    def __unicode__(self):
+    def __str__(self):
         return self.reference
 
     class Meta:
@@ -386,8 +388,8 @@ class Transfer(models.Model):
             super(Transfer, self).save()
 
     def _generate_reference(self):
-        obj = hmac.new(key=settings.SECRET_KEY,
-                       msg=unicode(self.id))
+        obj = hmac.new(key=settings.SECRET_KEY.encode(),
+                       msg=six.text_type(self.id).encode())
         return obj.hexdigest().upper()
 
     @property
@@ -427,6 +429,7 @@ class Transfer(models.Model):
                 kwargs={'reference': self.reference})}
 
 
+@python_2_unicode_compatible
 class Transaction(models.Model):
     # Every transfer of money should create two rows in this table.
     # (a) the debit from the source account
@@ -441,7 +444,7 @@ class Transaction(models.Model):
     amount = models.DecimalField(decimal_places=2, max_digits=12)
     date_created = models.DateTimeField(auto_now_add=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return u"Ref: %s, amount: %.2f" % (
             self.transfer.reference, self.amount)
 
@@ -453,6 +456,7 @@ class Transaction(models.Model):
         raise RuntimeError("Transactions cannot be deleted")
 
 
+@python_2_unicode_compatible
 class IPAddressRecord(models.Model):
     ip_address = models.IPAddressField(_("IP address"), unique=True)
     total_failures = models.PositiveIntegerField(default=0)

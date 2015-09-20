@@ -1,13 +1,13 @@
-from decimal import Decimal as D
-import json
 import base64
-
-from django import test
-from django.test.client import Client
-from django.contrib.auth.models import User
-from django.core.urlresolvers import reverse
+import json
+from decimal import Decimal as D
 
 from accounts import models
+from django import test
+from django.contrib.auth.models import User
+from django.core.urlresolvers import reverse
+from django.test.client import Client
+from django.utils.encoding import force_bytes
 
 USERNAME, PASSWORD = 'client', 'password'
 
@@ -20,7 +20,7 @@ def get_headers():
         User.objects.create_user(USERNAME, None, PASSWORD)
     auth = "%s:%s" % (USERNAME, PASSWORD)
     auth_headers = {
-        'HTTP_AUTHORIZATION': 'Basic %s' % base64.b64encode(auth)
+        'HTTP_AUTHORIZATION': b'Basic ' + base64.b64encode(auth.encode('utf-8'))
     }
     return auth_headers
 
@@ -39,6 +39,11 @@ def post(url, payload):
         **get_headers())
 
 
+def to_json(response):
+    return json.loads(response.content.decode('utf-8'))
+
+
+
 class TestCreatingAnAccountErrors(test.TestCase):
 
     def setUp(self):
@@ -53,21 +58,21 @@ class TestCreatingAnAccountErrors(test.TestCase):
         del payload['start_date']
         response = post(reverse('accounts'), payload)
         self.assertEqual(400, response.status_code)
-        self.assertTrue('message' in json.loads(response.content))
+        self.assertTrue('message' in to_json(response))
 
     def test_timezone_naive_start_date(self):
         payload = self.payload.copy()
         payload['start_date'] = '2013-01-01T09:00:00'
         response = post(reverse('accounts'), payload)
         self.assertEqual(400, response.status_code)
-        self.assertTrue('message' in json.loads(response.content))
+        self.assertTrue('message' in to_json(response))
 
     def test_timezone_naive_end_date(self):
         payload = self.payload.copy()
         payload['end_date'] = '2013-06-01T09:00:00'
         response = post(reverse('accounts'), payload)
         self.assertEqual(400, response.status_code)
-        self.assertTrue('message' in json.loads(response.content))
+        self.assertTrue('message' in to_json(response))
 
     def test_dates_in_wrong_order(self):
         payload = self.payload.copy()
@@ -75,21 +80,21 @@ class TestCreatingAnAccountErrors(test.TestCase):
         payload['end_date'] = '2013-01-01T09:00:00+03:00'
         response = post(reverse('accounts'), payload)
         self.assertEqual(400, response.status_code)
-        self.assertTrue('message' in json.loads(response.content))
+        self.assertTrue('message' in to_json(response))
 
     def test_invalid_amount(self):
         payload = self.payload.copy()
         payload['amount'] = 'silly'
         response = post(reverse('accounts'), payload)
         self.assertEqual(400, response.status_code)
-        self.assertTrue('message' in json.loads(response.content))
+        self.assertTrue('message' in to_json(response))
 
     def test_negative_amount(self):
         payload = self.payload.copy()
         payload['amount'] = '-100'
         response = post(reverse('accounts'), payload)
         self.assertEqual(400, response.status_code)
-        self.assertTrue('message' in json.loads(response.content))
+        self.assertTrue('message' in to_json(response))
 
     def test_amount_too_low(self):
         payload = self.payload.copy()
@@ -97,7 +102,7 @@ class TestCreatingAnAccountErrors(test.TestCase):
         with self.settings(ACCOUNTS_MIN_LOAD_VALUE=D('25.00')):
             response = post(reverse('accounts'), payload)
         self.assertEqual(403, response.status_code)
-        data = json.loads(response.content)
+        data = to_json(response)
         self.assertEqual('C101', data['code'])
 
     def test_amount_too_high(self):
@@ -106,7 +111,7 @@ class TestCreatingAnAccountErrors(test.TestCase):
         with self.settings(ACCOUNTS_MAX_ACCOUNT_VALUE=D('500.00')):
             response = post(reverse('accounts'), payload)
         self.assertEqual(403, response.status_code)
-        data = json.loads(response.content)
+        data = to_json(response)
         self.assertEqual('C102', data['code'])
 
 
@@ -125,7 +130,7 @@ class TestSuccessfullyCreatingAnAccount(test.TestCase):
         if 'Location' in self.create_response:
             self.detail_response = get(
                 self.create_response['Location'])
-            self.payload = json.loads(self.detail_response.content)
+            self.payload = to_json(self.detail_response)
             self.account = models.Account.objects.get(
                 code=self.payload['code'])
 
@@ -168,7 +173,7 @@ class TestMakingARedemption(test.TestCase):
         self.create_response = post(reverse('accounts'), self.create_payload)
         self.assertEqual(201, self.create_response.status_code)
         self.detail_response = get(self.create_response['Location'])
-        redemption_url = json.loads(self.detail_response.content)['redemptions_url']
+        redemption_url = to_json(self.detail_response)['redemptions_url']
 
         self.redeem_payload = {
             'amount': '50.00',
@@ -189,7 +194,7 @@ class TestMakingARedemption(test.TestCase):
         self.assertEqual(200, response.status_code)
 
     def test_returns_the_correct_data_in_the_transfer_request(self):
-        data = json.loads(self.transfer_response.content)
+        data = to_json(self.transfer_response)
         keys = ['source_code', 'source_name', 'destination_code',
                 'destination_name', 'amount', 'datetime', 'merchant_reference',
                 'description']
@@ -203,7 +208,7 @@ class TestMakingARedemption(test.TestCase):
         self.redeem_payload = {
             'amount': '10.00',
         }
-        redemption_url = json.loads(self.detail_response.content)['redemptions_url']
+        redemption_url = to_json(self.detail_response)['redemptions_url']
         response = post(redemption_url, self.redeem_payload)
         self.assertEqual(201, response.status_code)
 
@@ -234,7 +239,7 @@ class TestMakingARedemptionThenRefund(test.TestCase):
             'amount': '50.00',
             'merchant_reference': '1234'
         }
-        account_dict = json.loads(self.detail_response.content)
+        account_dict = to_json(self.detail_response)
         redemption_url = account_dict['redemptions_url']
         self.redeem_response = post(redemption_url, self.redeem_payload)
 
@@ -252,7 +257,7 @@ class TestMakingARedemptionThenRefund(test.TestCase):
         self.refund_payload = {
             'amount': '25.00',
         }
-        account_dict = json.loads(self.detail_response.content)
+        account_dict = to_json(self.detail_response)
         refund_url = account_dict['refunds_url']
         self.refund_response = post(refund_url, self.refund_payload)
         self.assertEqual(201, self.refund_response.status_code)
@@ -269,7 +274,7 @@ class TestMakingARedemptionThenReverse(test.TestCase):
         }
         self.create_response = post(reverse('accounts'), self.create_payload)
         self.detail_response = get(self.create_response['Location'])
-        account_dict = json.loads(self.detail_response.content)
+        account_dict = to_json(self.detail_response)
         self.redeem_payload = {
             'amount': '50.00',
             'merchant_reference': '1234'
@@ -278,7 +283,7 @@ class TestMakingARedemptionThenReverse(test.TestCase):
         self.redeem_response = post(redemption_url, self.redeem_payload)
 
         transfer_response = get(self.redeem_response['Location'])
-        transfer_dict = json.loads(transfer_response.content)
+        transfer_dict = to_json(transfer_response)
         self.reverse_payload = {}
         reverse_url = transfer_dict['reverse_url']
         self.reverse_response = post(reverse_url, self.reverse_payload)
@@ -299,13 +304,13 @@ class TestMakingARedemptionThenTransferRefund(test.TestCase):
         self.create_response = post(
             reverse('accounts'), self.create_payload)
         self.detail_response = get(self.create_response['Location'])
-        account_dict = json.loads(self.detail_response.content)
+        account_dict = to_json(self.detail_response)
 
         self.redeem_payload = {'amount': '300.00'}
         redemption_url = account_dict['redemptions_url']
         self.redeem_response = post(redemption_url, self.redeem_payload)
         self.transfer_response = get(self.redeem_response['Location'])
-        transfer_dict = json.loads(self.transfer_response.content)
+        transfer_dict = to_json(self.transfer_response)
 
         self.refund_payload = {
             'amount': '25.00',
@@ -320,14 +325,14 @@ class TestMakingARedemptionThenTransferRefund(test.TestCase):
         # Make another redemption to ensure the redemptions account has enough
         # funds to attemp the below refund
         self.redeem_payload = {'amount': '300.00'}
-        account_dict = json.loads(self.detail_response.content)
+        account_dict = to_json(self.detail_response)
         redemption_url = account_dict['redemptions_url']
         post(redemption_url, self.redeem_payload)
 
         self.refund_payload = {
             'amount': '280.00',
         }
-        transfer_dict = json.loads(self.transfer_response.content)
+        transfer_dict = to_json(self.transfer_response)
         refund_url = transfer_dict['refunds_url']
         response = post(refund_url, self.refund_payload)
         self.assertEqual(403, response.status_code)
