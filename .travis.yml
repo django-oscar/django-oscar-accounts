@@ -12,10 +12,9 @@ env:
     matrix:
         - DJANGO=Django==1.7.8
         - DJANGO=Django==1.8.4
-        - OSCAR=django-oscar==1.1.1
 
 install:
-    - pip install $DJANGO $OSCAR
+    - pip install $DJANGO django-oscar==1.1.1
     - pip install -r requirements.testing.txt
     - pip install .
 
