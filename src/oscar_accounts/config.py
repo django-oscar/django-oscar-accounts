@@ -3,6 +3,6 @@ from django.utils.translation import ugettext_lazy as _
 
 
 class OscarAccountsConfig(AppConfig):
-    label = 'accounts'
+    label = 'oscar_accounts'
     name = 'oscar_accounts'
     verbose_name = _('Accounts')

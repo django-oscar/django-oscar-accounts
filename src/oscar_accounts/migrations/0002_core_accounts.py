@@ -3,8 +3,6 @@ from __future__ import unicode_literals
 
 from django.db import migrations
 
-from oscar_accounts import names
-
 
 def create_core_accounts(apps, schema_editor):
     # Please use `manage.py oscar_accounts_init`

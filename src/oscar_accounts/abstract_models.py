@@ -339,9 +339,9 @@ class Transfer(models.Model):
     # primary keys
     reference = models.CharField(max_length=64, unique=True, null=True)
 
-    source = models.ForeignKey('accounts.Account',
+    source = models.ForeignKey('oscar_accounts.Account',
                                related_name='source_transfers')
-    destination = models.ForeignKey('accounts.Account',
+    destination = models.ForeignKey('oscar_accounts.Account',
                                     related_name='destination_transfers')
     amount = models.DecimalField(decimal_places=2, max_digits=12)
 
@@ -435,9 +435,9 @@ class Transaction(models.Model):
     # Every transfer of money should create two rows in this table.
     # (a) the debit from the source account
     # (b) the credit to the destination account
-    transfer = models.ForeignKey('accounts.Transfer',
+    transfer = models.ForeignKey('oscar_accounts.Transfer',
                                  related_name="transactions")
-    account = models.ForeignKey('accounts.Account',
+    account = models.ForeignKey('oscar_accounts.Account',
                                 related_name='transactions')
 
     # The sum of this field over the whole table should always be 0.
