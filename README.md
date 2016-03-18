@@ -118,10 +118,10 @@ from accounts.dashboard.app import application as accounts_app
 
 # ...
 
-urlpatterns = patterns('',
+urlpatterns = [
     ...
-    (r'^dashboard/accounts/', include(accounts_app.urls)),
-)
+    url(r'^dashboard/accounts/', include(accounts_app.urls)),
+]
 ```
 
 You should also set-up a cronjob that calls:
