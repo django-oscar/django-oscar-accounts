@@ -9,19 +9,26 @@ python:
     - 3.5
 
 env:
-    - DJANGO=Django==1.7.8
-    - DJANGO=Django==1.8.4
+    - DJANGO=Django==1.8.11
+    - DJANGO=Django==1.9.3
 
 matrix:
     exclude:
         - python: 3.5
-          env: DJANGO=Django==1.7.8
+
+matrix:
+    exclude:
+        - python: 3.2
+          env: "DJANGO=Django==1.9.3"
+        - python: 3.3
+          env: "DJANGO=Django==1.9.3"
+
 
 before_install:
     - pip install codecov
 
 install:
-    - pip install $DJANGO django-oscar==1.1.1
+    - pip install --pre $DJANGO django-oscar==1.2rc1
     - pip install -r requirements.testing.txt
     - pip install .
 
