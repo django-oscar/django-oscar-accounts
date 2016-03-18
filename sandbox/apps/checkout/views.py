@@ -8,10 +8,10 @@ from django import http
 from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
 
-from accounts.checkout import forms
-from accounts.checkout.allocation import Allocations
-from accounts.checkout import gateway
-from accounts import security, exceptions as act_exceptions
+from oscar_accounts.checkout import forms
+from oscar_accounts.checkout.allocation import Allocations
+from oscar_accounts.checkout import gateway
+from oscar_accounts import security, exceptions as act_exceptions
 
 
 class PaymentDetailsView(views.PaymentDetailsView):

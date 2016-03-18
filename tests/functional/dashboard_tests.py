@@ -1,17 +1,19 @@
 from decimal import Decimal as D
 
 from django_webtest import WebTest
-from django_dynamic_fixture import G
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
+from oscar.test.factories import UserFactory
 
-from accounts import models
+from oscar_accounts import models
+from tests.conftest import default_accounts
 
 
 class TestAStaffMember(WebTest):
 
     def setUp(self):
-        self.staff = G(User, is_staff=True)
+        default_accounts()
+        self.staff = UserFactory(is_staff=True)
 
     def test_can_browse_accounts(self):
         list_page = self.app.get(reverse('accounts-list'), user=self.staff)

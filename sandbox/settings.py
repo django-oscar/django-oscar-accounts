@@ -1,5 +1,9 @@
 import os
-from django.utils.translation import ugettext_lazy as _
+from decimal import Decimal as D
+
+from oscar_accounts import TEMPLATE_DIR as ACCOUNTS_TEMPLATE_DIR
+from oscar import OSCAR_MAIN_TEMPLATE_DIR, get_core_apps
+from oscar.defaults import *  # noqa
 
 PROJECT_DIR = os.path.dirname(__file__)
 location = lambda x: os.path.join(os.path.dirname(os.path.realpath(__file__)), x)
@@ -70,7 +74,6 @@ STATICFILES_DIRS = ()
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-    'compressor.finders.CompressorFinder',
 )
 
 # Make this unique, and don't share it with anybody.
@@ -112,8 +115,6 @@ INTERNAL_IPS = ('127.0.0.1',)
 
 ROOT_URLCONF = 'urls'
 
-from oscar import OSCAR_MAIN_TEMPLATE_DIR
-from accounts import TEMPLATE_DIR as ACCOUNTS_TEMPLATE_DIR
 TEMPLATE_DIRS = (
     location('templates'),
     OSCAR_MAIN_TEMPLATE_DIR,
@@ -181,7 +182,7 @@ LOGGING = {
 }
 
 
-from oscar import get_core_apps
+
 INSTALLED_APPS = [
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -191,10 +192,11 @@ INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.flatpages',
     'django.contrib.staticfiles',
+
     # External apps
     'django_extensions',
-    'compressor',
-] + get_core_apps(['apps.shipping']) + ['accounts']
+    'widget_tweaks',
+] + get_core_apps(['apps.shipping']) + ['oscar_accounts']
 
 AUTHENTICATION_BACKENDS = (
     'oscar.apps.customer.auth_backends.Emailbackend',
@@ -204,8 +206,6 @@ AUTHENTICATION_BACKENDS = (
 LOGIN_REDIRECT_URL = '/accounts/'
 APPEND_SLASH = True
 
-# Oscar settings
-from oscar.defaults import *
 
 OSCAR_SHOP_TAGLINE = "Accounts"
 
@@ -244,7 +244,6 @@ OSCAR_DASHBOARD_NAVIGATION.append(
         ]
     })
 
-from decimal import Decimal as D
 ACCOUNTS_UNIT_NAME = 'Giftcard'
 ACCOUNTS_UNIT_NAME_PLURAL = 'Giftcards'
 ACCOUNTS_MIN_LOAD_VALUE = D('30.00')

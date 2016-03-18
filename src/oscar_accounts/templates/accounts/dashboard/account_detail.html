@@ -1,0 +1,75 @@
+{% extends 'dashboard/layout.html' %}
+{% load url from future %}
+{% load currency_filters %}
+{% load i18n %}
+
+{% block title %}
+{% trans "Account" %} #{{ account.id }} | {{ block.super }}
+{% endblock %}
+
+{% block breadcrumbs %}
+<ul class="breadcrumb">
+    <li>
+		<a href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a>
+    </li>
+    <li>
+		<a href="{% url 'accounts-list' %}">{% trans "Accounts" %}</a>
+    </li>
+    <li class="active">{{ account }}</li>
+</ul>
+{% endblock %}
+
+{% block header %}
+<div class="page-header">
+    <span class="pull-right">
+        <a class="btn btn-primary" href="{% url 'accounts-update' account.id %}">{% trans "Edit" %}</a>
+        <a href="{% url 'accounts-top-up' account.id %}" class="btn btn-primary">{% trans "Top-up" %}</a>
+        <a href="{% url 'accounts-withdraw' account.id %}" class="btn btn-primary">{% trans "Withdraw" %}</a>
+        {% if not account.is_frozen %}
+        <a href="{% url 'accounts-freeze' account.id %}" class="btn btn-danger">{% trans "Freeze" %}</a>
+        {% else %}
+        <a href="{% url 'accounts-thaw' account.id %}" class="btn btn-success">{% trans "Thaw" %}</a>
+        {% endif %}
+    </span>
+	<h1>{{ account }}</h1>
+</div>
+{% endblock header %}
+
+{% block dashboard_content %}
+
+{% include 'accounts/dashboard/partials/account_detail.html' %}
+
+<div class="panel panel-default">
+    <div class="panel-heading">{% trans "Transaction overview" %}</div>
+    <div class="panel-body">
+        {% if transactions %}
+        <table id="" class="table">
+            <thead>
+                <tr>
+                    <th>{% trans "Transfer" %}</th>
+                    <th>{% trans "Amount" %}</th>
+                    <th>{% trans "Description" %}</th>
+                    <th>{% trans "Authorised by" %}</th>
+                    <th>{% trans "Date" %}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for txn in transactions %}
+                <tr>
+                    <td><a href="{% url 'transfers-detail' txn.transfer.reference %}">{{ txn.transfer }}</a></td>
+                    <td>{{ txn.amount|currency }}</td>
+                    <td>{{ txn.transfer.description|default:"-" }}</td>
+                    <td>{{ txn.transfer.user|default:"-" }}</td>
+                    <td>{{ txn.date_created }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% include "dashboard/partials/pagination.html" %}
+        {% else %}
+        <p>{% trans "No transactions." %}</p>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock dashboard_content %}

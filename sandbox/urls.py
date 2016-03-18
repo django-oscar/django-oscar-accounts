@@ -6,8 +6,8 @@ from django.conf.urls.static import static
 from django.views.generic import TemplateView
 
 from apps.app import application
-from accounts.dashboard.app import application as accounts_app
-from accounts.views import AccountBalanceView
+from oscar_accounts.dashboard.app import application as accounts_app
+from oscar_accounts.views import AccountBalanceView
 
 admin.autodiscover()
 

@@ -3,19 +3,20 @@ from decimal import Decimal as D
 from django.contrib.auth.models import User
 from django.db.models import Sum
 from django.test import TestCase, TransactionTestCase
-from django_dynamic_fixture import G
+from oscar.test.factories import UserFactory
 import mock
 
-from accounts.models import Account, Transfer, Transaction
-from accounts import facade, exceptions
+from oscar_accounts import facade, exceptions
+from oscar_accounts.models import Account, Transfer, Transaction
+from oscar_accounts.test_factories import AccountFactory
 
 
 class TestReversingATransfer(TestCase):
 
     def setUp(self):
-        self.user = G(User)
-        self.source = G(Account, primary_user=None, credit_limit=None)
-        self.destination = G(Account, primary_user=None)
+        self.user = UserFactory()
+        self.source = AccountFactory(primary_user=None, credit_limit=None)
+        self.destination = AccountFactory(primary_user=None)
         self.transfer = facade.transfer(self.source, self.destination,
                                         D('100'), user=self.user,
                                         description="Give money to customer")
@@ -49,11 +50,12 @@ class TestReversingATransfer(TestCase):
 class TestATransfer(TestCase):
 
     def setUp(self):
-        self.user = G(User)
-        self.source = G(Account, credit_limit=None, primary_user=None)
-        self.destination = G(Account)
-        self.transfer = facade.transfer(self.source, self.destination, D('100'),
-                                        user=self.user, description="Give money to customer")
+        self.user = UserFactory()
+        self.source = AccountFactory(credit_limit=None, primary_user=None)
+        self.destination = AccountFactory()
+        self.transfer = facade.transfer(
+            self.source, self.destination, D('100'),
+            user=self.user, description="Give money to customer")
 
     def test_generates_an_unguessable_reference(self):
         self.assertTrue(len(self.transfer.reference) > 0)
@@ -90,8 +92,8 @@ class TestATransfer(TestCase):
 class TestAnAnonymousTransaction(TestCase):
 
     def test_doesnt_explode(self):
-        source = G(Account, credit_limit=None)
-        destination = G(Account)
+        source = AccountFactory(credit_limit=None)
+        destination = AccountFactory()
         facade.transfer(source, destination, D('1'))
 
 
@@ -101,11 +103,11 @@ class TestErrorHandling(TransactionTestCase):
         Account.objects.all().delete()
 
     def test_no_transaction_created_when_exception_raised(self):
-        user = G(User)
-        source = G(Account, credit_limit=None)
-        destination = G(Account)
+        user = UserFactory()
+        source = AccountFactory(credit_limit=None)
+        destination = AccountFactory()
         with mock.patch(
-            'accounts.abstract_models.PostingManager._wrap') as mock_method:
+            'oscar_accounts.abstract_models.PostingManager._wrap') as mock_method:
             mock_method.side_effect = RuntimeError()
             try:
                 facade.transfer(source, destination, D('100'), user)
@@ -115,18 +117,18 @@ class TestErrorHandling(TransactionTestCase):
         self.assertEqual(0, Transaction.objects.all().count())
 
     def test_account_exception_raised_for_invalid_transfer(self):
-        user = G(User)
-        source = G(Account, credit_limit=D('0.00'))
-        destination = G(Account)
+        user = UserFactory()
+        source = AccountFactory(credit_limit=D('0.00'))
+        destination = AccountFactory()
         with self.assertRaises(exceptions.AccountException):
             facade.transfer(source, destination, D('100'), user)
 
     def test_account_exception_raised_for_runtime_error(self):
-        user = G(User)
-        source = G(Account, credit_limit=None)
-        destination = G(Account)
+        user = UserFactory()
+        source = AccountFactory(credit_limit=None)
+        destination = AccountFactory()
         with mock.patch(
-            'accounts.abstract_models.PostingManager._wrap') as mock_method:
+            'oscar_accounts.abstract_models.PostingManager._wrap') as mock_method:
             mock_method.side_effect = RuntimeError()
             with self.assertRaises(exceptions.AccountException):
                 facade.transfer(source, destination, D('100'), user)

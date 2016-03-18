@@ -1,0 +1,55 @@
+{% extends 'dashboard/layout.html' %}
+{% load currency_filters %}
+{% load i18n %}
+
+{% block title %}
+    {% trans "Return funds to source account" %} #{{ account.id }} | {{ block.super }}
+{% endblock %}
+
+{% block breadcrumbs %}
+    <ul class="breadcrumb">
+        <li>
+            <a href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a>
+        </li>
+        <li>
+            <a href="{% url 'accounts-list' %}">{% trans "Accounts" %}</a>
+        </li>
+        <li>
+            <a href="{% url 'accounts-detail' account.id %}">{{ account }}</a>
+        </li>
+        <li class="active">{% trans "Withdraw" %}</li>
+    </ul>
+{% endblock %}
+
+{% block header %}
+    <div class="page-header">
+        <h1>{% trans "Withdraw funds from account?" %}</h1>
+    </div>
+{% endblock header %}
+
+{% block dashboard_content %}
+    {% include 'accounts/dashboard/partials/account_detail.html' %}
+
+    <div class="panel panel-default">
+        <div class="panel-body">
+
+        {% if account.is_open %}
+            <form action="." method="post">
+                {% csrf_token %}
+                <legend>{% trans "Transaction" %}</legend>
+                {% if form.source_account %}
+                    {% include 'partials/form_field.html' with field=form.source_account %}
+                {% endif %}
+                {% include 'partials/form_field.html' with field=form.amount %}
+                <button type="submit" class="btn btn-large btn-success">{% trans "Withdraw" %}</button>
+                or <a href="{% url 'accounts-detail' account.id %}">{% trans "cancel" %}</a>.
+            </form>
+        {% else %}
+        <div class="panel-body">
+            <p>{% trans "This account's funds cannot be withdrawn." %}</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock dashboard_content %}

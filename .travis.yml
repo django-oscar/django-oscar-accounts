@@ -6,18 +6,33 @@ python:
     - 2.7
     - 3.3
     - 3.4
+    - 3.5
+
+env:
+    - DJANGO=Django==1.8.11
+    - DJANGO=Django==1.9.4
 
 matrix:
-    allow_failures:
+    exclude:
+        - python: 3.5
+
+matrix:
+    exclude:
+        - python: 3.2
+          env: "DJANGO=Django==1.9.4"
         - python: 3.3
-        - python: 3.4
+          env: "DJANGO=Django==1.9.4"
+
+
+before_install:
+    - pip install codecov
 
 install:
-    - make install
-    - pip install "django-oscar>=1.0,<1.1" "Django>=1.7,<1.8"
+    - pip install --pre $DJANGO django-oscar==1.2rc1
+    - pip install -e .[test]
 
 script:
     - coverage run ./runtests.py
 
 after_success:
-    - coveralls
+    - codecov
