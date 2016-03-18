@@ -3,6 +3,7 @@
 
 # Packaging
 dist/*
+build/*
 *.egg-info
 
 # Sandbox
