@@ -1,6 +1,6 @@
 from oscar.core.loading import get_model
 
-from accounts import names
+from oscar_accounts import names
 
 Account = get_model('accounts', 'Account')
 

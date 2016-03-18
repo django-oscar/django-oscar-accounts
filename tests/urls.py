@@ -3,8 +3,8 @@ from django.contrib import admin
 
 from oscar.app import application
 
-from accounts.dashboard.app import application as accounts_app
-from accounts.api.app import application as api_app
+from oscar_accounts.dashboard.app import application as accounts_app
+from oscar_accounts.api.app import application as api_app
 
 admin.autodiscover()
 

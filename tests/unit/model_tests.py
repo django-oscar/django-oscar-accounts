@@ -6,9 +6,9 @@ from django.test import TestCase
 from django.utils import timezone
 from oscar.test.factories import UserFactory
 
-from accounts import exceptions
-from accounts.models import Account, Transaction, Transfer
-from accounts.test_factories import AccountFactory, TransactionFactory
+from oscar_accounts import exceptions
+from oscar_accounts.models import Account, Transaction, Transfer
+from oscar_accounts.test_factories import AccountFactory, TransactionFactory
 
 
 class TestAnAccount(TestCase):

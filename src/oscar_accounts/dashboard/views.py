@@ -13,8 +13,8 @@ from django.utils.translation import ugettext_lazy as _
 from oscar.core.loading import get_model
 from oscar.templatetags.currency_filters import currency
 
-from accounts.dashboard import forms, reports
-from accounts import facade, names, exceptions
+from oscar_accounts.dashboard import forms, reports
+from oscar_accounts import facade, names, exceptions
 
 AccountType = get_model('accounts', 'AccountType')
 Account = get_model('accounts', 'Account')

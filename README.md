@@ -68,7 +68,7 @@ Install using pip:
 	pip install django-oscar-accounts
 ```
 
-and add `accounts` to `INSTALLED_APPS`.  Runnning ``manage.py migrate accounts`` will create the appropriate database
+and add `oscar_accounts` to `INSTALLED_APPS`.  Runnning ``manage.py migrate oscar_accounts`` will create the appropriate database
 tables. To create initial some core accounts and account-types use ``manage.py oscar_accounts_init``.  The names of 
 these accounts can be controlled using settings (see below).
 
@@ -114,7 +114,7 @@ OSCAR_DASHBOARD_NAVIGATION.append(
 ```
 Furthermore you need to add the url-pattern to your `urls.py`
 ``` python
-from accounts.dashboard.app import application as accounts_app
+from oscar_accounts.dashboard.app import application as accounts_app
 
 # ...
 
@@ -143,7 +143,7 @@ import datetime
 
 from django.contrib.auth.models import User
 
-from accounts import models
+from oscar_accounts import models
 
 anonymous_account = models.Account.objects.create()
 
@@ -163,7 +163,7 @@ Transfer funds using the facade:
 
 ``` python
 
-from accounts import facade
+from oscar_accounts import facade
 
 staff_member = User.objects.get(username="staff")
 trans = facade.transfer(source=no_credit_limit_account,
@@ -180,12 +180,12 @@ facade.reverse(trans, user=staff_member,
 ```
 
 If the proposed transfer is invalid, an exception will be raised.  All
-exceptions are subclasses of `accounts.exceptions.AccountException`.  Your
+exceptions are subclasses of `oscar_accounts.exceptions.AccountException`.  Your
 client code should look for exceptions of this type and handle them
 appropriately.
  
-Client code should only use the `accounts.models.Budget` class and the
-two functions from `accounts.facade` - nothing else should be required.
+Client code should only use the `oscar_accounts.models.Budget` class and the
+two functions from `oscar_accounts.facade` - nothing else should be required.
 
 Error handling
 --------------
@@ -200,7 +200,7 @@ occurs during your post-payment code, then you roll-back any transfers.
 Here's a toy example:
 
 ``` python
-from accounts import facade
+from oscar_accounts import facade
 
 def submit(self, order_total):
 	# Take payment first
@@ -232,7 +232,7 @@ your business logic and error handling.  Here's an example:
 
 ``` python
 from decimal import Decimal as D
-from accounts import models, exceptions, facade
+from oscar_accounts import models, exceptions, facade
 
 
 def redeem(order_number, user, amount):

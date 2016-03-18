@@ -8,7 +8,7 @@ from oscar.core.loading import get_model
 from oscar.forms.widgets import DatePickerInput
 from oscar.templatetags.currency_filters import currency
 
-from accounts import codes, names
+from oscar_accounts import codes, names
 
 Account = get_model('accounts', 'Account')
 AccountType = get_model('accounts', 'AccountType')

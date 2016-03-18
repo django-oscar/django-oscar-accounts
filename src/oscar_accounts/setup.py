@@ -3,7 +3,7 @@ from oscar.core.loading import get_model
 
 def create_default_accounts():
     """Create the default structure"""
-    from accounts import names
+    from oscar_accounts import names
     AccountType = get_model('accounts', 'AccountType')
 
     assets = AccountType.add_root(name=names.ASSETS)

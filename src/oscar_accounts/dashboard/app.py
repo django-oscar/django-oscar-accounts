@@ -3,7 +3,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 
 from oscar.core.application import Application
 
-from accounts.dashboard import views
+from oscar_accounts.dashboard import views
 
 
 class AccountsDashboardApplication(Application):

@@ -4,7 +4,7 @@ from django.db.models import Sum
 
 from oscar.core.loading import get_model
 
-from accounts import names
+from oscar_accounts import names
 
 AccountType = get_model('accounts', 'AccountType')
 Account = get_model('accounts', 'Account')

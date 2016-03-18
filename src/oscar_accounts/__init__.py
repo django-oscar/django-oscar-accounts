@@ -1,6 +1,6 @@
 import os
 
-VERSION = '0.3'
+VERSION = '0.4'
 
 # Setting for template directory not found by app_directories.Loader.  This
 # allows templates to be identified by two paths which enables a template to be
@@ -10,4 +10,4 @@ TEMPLATE_DIR = os.path.join(
     'templates/accounts')
 
 
-default_app_config = 'accounts.config.AccountsConfig'
+default_app_config = 'oscar_accounts.config.OscarAccountsConfig'

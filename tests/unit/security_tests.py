@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.test.client import RequestFactory
 
-from accounts import security
+from oscar_accounts import security
 
 
 class TestBruteForceAPI(TestCase):

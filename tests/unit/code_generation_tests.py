@@ -2,7 +2,7 @@ import string
 
 from django.test import TestCase
 
-from accounts import codes
+from oscar_accounts import codes
 
 
 class TestCodeGeneration(TestCase):

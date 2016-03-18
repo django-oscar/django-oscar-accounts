@@ -2,7 +2,7 @@ import logging
 
 from oscar.core.loading import get_model
 
-from accounts import exceptions, core
+from oscar_accounts import exceptions, core
 
 Account = get_model('accounts', 'Account')
 Transfer = get_model('accounts', 'Transfer')

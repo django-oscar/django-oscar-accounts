@@ -1,7 +1,7 @@
 import hmac
 from decimal import Decimal as D
 
-from accounts import exceptions
+from oscar_accounts import exceptions
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.db import models, transaction

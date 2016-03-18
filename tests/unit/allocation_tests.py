@@ -2,7 +2,7 @@ from decimal import Decimal as D
 
 from django.test import TestCase
 
-from accounts.checkout.allocation import Allocations
+from oscar_accounts.checkout.allocation import Allocations
 
 
 class TestAllocations(TestCase):

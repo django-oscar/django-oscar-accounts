@@ -5,7 +5,7 @@ from django.conf import global_settings, settings
 from oscar import OSCAR_MAIN_TEMPLATE_DIR, get_core_apps
 from oscar.defaults import *  # noqa
 
-from accounts import TEMPLATE_DIR as ACCOUNTS_TEMPLATE_DIR
+from oscar_accounts import TEMPLATE_DIR as ACCOUNTS_TEMPLATE_DIR
 
 DATABASES = {
     'default': {
@@ -13,11 +13,10 @@ DATABASES = {
     }
 }
 
-STATICFILES_FINDERS=(
+STATICFILES_FINDERS = [
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-    'compressor.finders.CompressorFinder',
-)
+]
 
 SECRET_KEY = str(uuid.uuid4())
 
@@ -29,8 +28,7 @@ INSTALLED_APPS=[
     'django.contrib.sessions',
     'django.contrib.sites',
     'django.contrib.flatpages',
-    'accounts',
-    'compressor',
+    'oscar_accounts',
     'widget_tweaks',
 ] + get_core_apps()
 

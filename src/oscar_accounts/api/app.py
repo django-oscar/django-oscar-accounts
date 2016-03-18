@@ -3,7 +3,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from oscar.core.application import Application
 
-from accounts.api import views, decorators
+from oscar_accounts.api import views, decorators
 
 
 class APIApplication(Application):

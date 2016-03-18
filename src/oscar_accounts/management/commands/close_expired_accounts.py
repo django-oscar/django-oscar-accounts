@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 
-from accounts import facade
+from oscar_accounts import facade
 
 
 class Command(BaseCommand):

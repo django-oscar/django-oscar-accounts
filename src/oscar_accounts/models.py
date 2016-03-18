@@ -1,6 +1,6 @@
 from oscar.core.loading import is_model_registered
 
-from accounts import abstract_models
+from oscar_accounts import abstract_models
 
 
 if not is_model_registered('accounts', 'AccountType'):

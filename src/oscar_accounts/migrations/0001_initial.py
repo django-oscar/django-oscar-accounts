@@ -73,7 +73,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('amount', models.DecimalField(max_digits=12, decimal_places=2)),
                 ('date_created', models.DateTimeField(auto_now_add=True)),
-                ('account', models.ForeignKey(related_name='transactions', to='accounts.Account')),
+                ('account', models.ForeignKey(related_name='transactions', to='oscar_accounts.Account')),
             ],
             options={
                 'abstract': False,
@@ -90,9 +90,9 @@ class Migration(migrations.Migration):
                 ('description', models.CharField(max_length=256, null=True)),
                 ('username', models.CharField(max_length=128)),
                 ('date_created', models.DateTimeField(auto_now_add=True)),
-                ('destination', models.ForeignKey(related_name='destination_transfers', to='accounts.Account')),
-                ('parent', models.ForeignKey(related_name='related_transfers', to='accounts.Transfer', null=True)),
-                ('source', models.ForeignKey(related_name='source_transfers', to='accounts.Account')),
+                ('destination', models.ForeignKey(related_name='destination_transfers', to='oscar_accounts.Account')),
+                ('parent', models.ForeignKey(related_name='related_transfers', to='oscar_accounts.Transfer', null=True)),
+                ('source', models.ForeignKey(related_name='source_transfers', to='oscar_accounts.Account')),
                 ('user', models.ForeignKey(related_name='transfers', on_delete=django.db.models.deletion.SET_NULL, to=settings.AUTH_USER_MODEL, null=True)),
             ],
             options={
@@ -104,7 +104,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='transaction',
             name='transfer',
-            field=models.ForeignKey(related_name='transactions', to='accounts.Transfer'),
+            field=models.ForeignKey(related_name='transactions', to='oscar_accounts.Transfer'),
             preserve_default=True,
         ),
         migrations.AlterUniqueTogether(
@@ -114,7 +114,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='account',
             name='account_type',
-            field=models.ForeignKey(related_name='accounts', to='accounts.AccountType', null=True),
+            field=models.ForeignKey(related_name='accounts', to='oscar_accounts.AccountType', null=True),
             preserve_default=True,
         ),
         migrations.AddField(

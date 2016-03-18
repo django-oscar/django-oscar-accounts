@@ -2,7 +2,7 @@ import os
 import django
 
 import pytest
-from accounts import setup
+from oscar_accounts import setup
 
 
 

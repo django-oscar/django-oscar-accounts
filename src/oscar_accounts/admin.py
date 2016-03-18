@@ -1,7 +1,7 @@
 from django.contrib import admin
 from treebeard.admin import TreeAdmin
 
-from accounts import models
+from oscar_accounts import models
 
 
 class AccountAdmin(admin.ModelAdmin):

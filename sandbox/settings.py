@@ -1,7 +1,7 @@
 import os
 from decimal import Decimal as D
 
-from accounts import TEMPLATE_DIR as ACCOUNTS_TEMPLATE_DIR
+from oscar_accounts import TEMPLATE_DIR as ACCOUNTS_TEMPLATE_DIR
 from oscar import OSCAR_MAIN_TEMPLATE_DIR, get_core_apps
 from oscar.defaults import *  # noqa
 
@@ -196,7 +196,7 @@ INSTALLED_APPS = [
     # External apps
     'django_extensions',
     'widget_tweaks',
-] + get_core_apps(['apps.shipping']) + ['accounts']
+] + get_core_apps(['apps.shipping']) + ['oscar_accounts']
 
 AUTHENTICATION_BACKENDS = (
     'oscar.apps.customer.auth_backends.Emailbackend',

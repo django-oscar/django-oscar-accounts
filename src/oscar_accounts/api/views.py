@@ -11,8 +11,8 @@ from django.views import generic
 
 from oscar.core.loading import get_model
 
-from accounts.api import errors
-from accounts import codes, names, facade, exceptions
+from oscar_accounts.api import errors
+from oscar_accounts import codes, names, facade, exceptions
 
 Account = get_model('accounts', 'Account')
 AccountType = get_model('accounts', 'AccountType')

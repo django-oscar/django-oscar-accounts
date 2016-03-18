@@ -1,7 +1,13 @@
 #!/usr/bin/env python
-from setuptools import setup, find_packages
+import os
+import sys
 
-from accounts import VERSION
+from setuptools import find_packages, setup
+
+PROJECT_DIR = os.path.dirname(__file__)
+sys.path.append(os.path.join(PROJECT_DIR, 'src'))
+from oscar_accounts import VERSION # isort:skip
+
 
 tests_require = [
     'django-webtest==1.7.8',
@@ -18,7 +24,8 @@ setup(
     description="Managed accounts for django-oscar",
     long_description=open('README.md').read(),
     license=open('LICENSE').read(),
-    packages=find_packages(exclude=['sandbox*', 'tests*']),
+    package_dir={'': 'src'},
+    packages=find_packages('src'),
     include_package_data=True,
     classifiers=[
         'Development Status :: 4 - Beta',

@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 
 from django.db import migrations
 
-from accounts import names
+from oscar_accounts import names
 
 
 def create_core_accounts(apps, schema_editor):
@@ -14,7 +14,7 @@ def create_core_accounts(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('accounts', '0001_initial'),
+        ('oscar_accounts', '0001_initial'),
     ]
 
     operations = [

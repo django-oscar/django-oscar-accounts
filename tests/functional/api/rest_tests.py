@@ -2,7 +2,7 @@ import base64
 import json
 from decimal import Decimal as D
 
-from accounts import models
+from oscar_accounts import models
 from django import test
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse

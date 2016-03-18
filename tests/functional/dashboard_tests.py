@@ -5,7 +5,7 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 from oscar.test.factories import UserFactory
 
-from accounts import models
+from oscar_accounts import models
 from tests.conftest import default_accounts
 
 
