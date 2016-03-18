@@ -69,8 +69,8 @@ Install using pip:
 ```
 
 and add `accounts` to `INSTALLED_APPS`.  Runnning ``manage.py migrate accounts`` will create the appropriate database
-tables and also initial some core accounts and account-types.  The names of these accounts can be controlled using
-settings (see below).
+tables. To create initial some core accounts and account-types use ``manage.py oscar_accounts_init``.  The names of 
+these accounts can be controlled using settings (see below).
 
 If running with Oscar, add an additional path to your `TEMPLATE_DIRS`:
 ``` python
