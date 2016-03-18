@@ -1,6 +1,6 @@
-import factory
 from decimal import Decimal as D
 
+import factory
 from oscar.core.loading import get_model
 
 

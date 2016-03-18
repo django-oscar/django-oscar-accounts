@@ -1,5 +1,6 @@
 import json
-from decimal import Decimal as D, InvalidOperation
+from decimal import Decimal as D
+from decimal import InvalidOperation
 
 from dateutil import parser
 from django import http
@@ -8,11 +9,10 @@ from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.views import generic
-
 from oscar.core.loading import get_model
 
+from oscar_accounts import codes, exceptions, facade, names
 from oscar_accounts.api import errors
-from oscar_accounts import codes, names, facade, exceptions
 
 Account = get_model('accounts', 'Account')
 AccountType = get_model('accounts', 'AccountType')

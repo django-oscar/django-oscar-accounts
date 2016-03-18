@@ -1,20 +1,19 @@
 import datetime
 from decimal import Decimal as D
 
-from django.views import generic
-from django.core.urlresolvers import reverse
 from django import http
-from django.utils import timezone
-from django.shortcuts import get_object_or_404
-from django.db.models import Sum
 from django.contrib import messages
+from django.core.urlresolvers import reverse
+from django.db.models import Sum
+from django.shortcuts import get_object_or_404
+from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
-
+from django.views import generic
 from oscar.core.loading import get_model
 from oscar.templatetags.currency_filters import currency
 
+from oscar_accounts import exceptions, facade, names
 from oscar_accounts.dashboard import forms, reports
-from oscar_accounts import facade, names, exceptions
 
 AccountType = get_model('accounts', 'AccountType')
 Account = get_model('accounts', 'Account')

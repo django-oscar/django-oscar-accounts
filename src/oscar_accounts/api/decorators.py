@@ -1,8 +1,8 @@
 import base64
 
-from django.http import HttpResponse
-from django.contrib.auth import authenticate
 from django.conf import settings
+from django.contrib.auth import authenticate
+from django.http import HttpResponse
 
 
 def view_or_basicauth(view, request, *args, **kwargs):

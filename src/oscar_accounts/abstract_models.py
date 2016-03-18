@@ -1,7 +1,6 @@
 import hmac
 from decimal import Decimal as D
 
-from oscar_accounts import exceptions
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.db import models, transaction
@@ -10,6 +9,8 @@ from django.utils import six, timezone
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 from treebeard.mp_tree import MP_Node
+
+from oscar_accounts import exceptions
 
 try:
     from oscar.core.compat import AUTH_USER_MODEL

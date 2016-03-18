@@ -1,7 +1,7 @@
 from django.views import generic
 
-from oscar_accounts.forms import AccountForm
 from oscar_accounts import security
+from oscar_accounts.forms import AccountForm
 
 
 class AccountBalanceView(generic.FormView):

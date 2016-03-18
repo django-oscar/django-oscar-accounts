@@ -1,9 +1,8 @@
 from django.conf.urls import patterns, url
 from django.views.decorators.csrf import csrf_exempt
-
 from oscar.core.application import Application
 
-from oscar_accounts.api import views, decorators
+from oscar_accounts.api import decorators, views
 
 
 class APIApplication(Application):

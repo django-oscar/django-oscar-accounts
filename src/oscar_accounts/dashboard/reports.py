@@ -1,7 +1,6 @@
 from decimal import Decimal as D
 
 from django.db.models import Sum
-
 from oscar.core.loading import get_model
 
 from oscar_accounts import names
