@@ -158,7 +158,7 @@ Furthermore you need to add the url-pattern to your `urls.py`
     ]
 
 
-You should also set-up a cronjob that calls:
+You should also set-up a cronjob that calls::
 
     ./manage.py close_expired_accounts
 
@@ -351,30 +351,32 @@ parentheses.
 
 - **Assets**
 
-    - **Sales**
-        - Redemptions (`ACCOUNTS_REDEMPTIONS_NAME`) - where money is
-          transferred to when an account is used to pay for something.  
-        - Lapsed (`ACCOUNTS_LAPSED_NAME`) - where money is transferred to
-          when an account expires.  This is done by the
-          'close_expired_accounts' management command.  The name of this
-          account can be set using the `ACCOUNTS_LAPSED_NAME`.
+  - **Sales**
 
-    - **Cash**
-        - "Bank" (`ACCOUNTS_BANK_NAME`) - the source account for creating new
-          accounts that are paid for by the customer (eg a giftcard).  This
-          account will not have a credit limit and will normally have a
-          negative balance as money is only transferred out.
+    - Redemptions (`ACCOUNTS_REDEMPTIONS_NAME`) - where money is
+      transferred to when an account is used to pay for something.  
+    - Lapsed (`ACCOUNTS_LAPSED_NAME`) - where money is transferred to
+      when an account expires.  This is done by the
+      'close_expired_accounts' management command.  The name of this
+      account can be set using the `ACCOUNTS_LAPSED_NAME`.
 
-    - **Unpaid** - This contains accounts that are used as sources for other
-      accounts but aren't paid for by the customer.  For instance, you might
-      allow admins to create new accounts in the dashboard.  An account of this
-      type will be the source account for the initial transfer.
+  - **Cash**
+
+    - "Bank" (`ACCOUNTS_BANK_NAME`) - the source account for creating new
+      accounts that are paid for by the customer (eg a giftcard).  This
+      account will not have a credit limit and will normally have a
+      negative balance as money is only transferred out.
+
+  - **Unpaid** - This contains accounts that are used as sources for other
+    accounts but aren't paid for by the customer.  For instance, you might
+    allow admins to create new accounts in the dashboard.  An account of this
+    type will be the source account for the initial transfer.
 
 - **Liabilities**
 
-    - **Deferred income** - This contains customer accounts/giftcards.  You may
-      want to create additional account types within this type to categorise
-      accounts.
+  - **Deferred income** - This contains customer accounts/giftcards.  You may
+    want to create additional account types within this type to categorise
+    accounts.
 
 Example transactions
 --------------------
@@ -429,10 +431,10 @@ account types:
 Contributing
 ------------
 
-Fork repo, set-up virtualenv and run:
+Fork repo, set-up virtualenv and run::
 
     make install
 
-Run tests with:
+Run tests with::
     
     ./runtests.py
