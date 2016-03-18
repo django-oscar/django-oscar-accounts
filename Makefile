@@ -1,7 +1,7 @@
 .PHONY: install test sandbox clean update-requirements
 
 install:
-	pip install -e .[test]
+	pip install --pre -e .[test]
 
 test:
 	./runtests.py
@@ -17,4 +17,4 @@ clean:
 	rm -rf htmlcov *.egg-info *.pdf dist
 
 update-requirements:
-	pip-compile requirements.sandbox.in || echo "\n\nPlease install pip-compile: pip install pip-tools"
+	pip-compile --rebuild --pre requirements.sandbox.in || echo "\n\nPlease install pip-compile: pip install pip-tools"
