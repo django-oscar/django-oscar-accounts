@@ -70,7 +70,6 @@ STATICFILES_DIRS = ()
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-    'compressor.finders.CompressorFinder',
 )
 
 # Make this unique, and don't share it with anybody.
@@ -194,7 +193,6 @@ INSTALLED_APPS = [
 
     # External apps
     'django_extensions',
-    'compressor',
     'widget_tweaks',
 ] + get_core_apps(['apps.shipping']) + ['accounts']
 
