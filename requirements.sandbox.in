@@ -1,4 +1,4 @@
-Django>=1.8.4
+Django>=1.8.11
 django-extensions
 django-oscar>=1.1.1
 Werkzeug
