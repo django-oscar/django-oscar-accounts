@@ -1,6 +1,10 @@
 import os
 import django
 
+import pytest
+from accounts import setup
+
+
 
 # It should be possible to just set DJANGO_SETTINGS_MODULE in setup.cfg
 # or pytest.ini, but it doesn't work because pytest tries to do some
@@ -9,3 +13,8 @@ import django
 def pytest_configure():
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'tests.settings')
     django.setup()
+
+
+@pytest.fixture
+def default_accounts():
+    setup.create_default_accounts()

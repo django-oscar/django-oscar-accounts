@@ -7,10 +7,13 @@ from django.contrib.auth.models import User
 
 from accounts import models
 
+from tests.conftest import default_accounts
+
 
 class TestAStaffMember(WebTest):
 
     def setUp(self):
+        default_accounts()
         self.staff = G(User, is_staff=True)
 
     def test_can_browse_accounts(self):
