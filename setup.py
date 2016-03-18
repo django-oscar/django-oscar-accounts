@@ -4,14 +4,13 @@ import sys
 
 from setuptools import find_packages, setup
 
-PROJECT_DIR = os.path.dirname(__file__)
-sys.path.append(os.path.join(PROJECT_DIR, 'src'))
+sys.path.append(os.path.join(os.path.dirname(__file__), 'src'))
 from oscar_accounts import VERSION # isort:skip
 
 
 tests_require = [
     'django-webtest==1.7.8',
-    'pytest==2.8.0',
+    'pytest==2.9.0',
     'pytest-cov==2.1.0',
     'pytest-django==2.8.0',
 ]
@@ -23,7 +22,7 @@ setup(
     author_email="david.winterbottom@tangentlabs.co.uk",
     description="Managed accounts for django-oscar",
     long_description=open('README.md').read(),
-    license=open('LICENSE').read(),
+    license='BSD',
     package_dir={'': 'src'},
     packages=find_packages('src'),
     include_package_data=True,
@@ -31,10 +30,18 @@ setup(
         'Development Status :: 4 - Beta',
         'Environment :: Web Environment',
         'Framework :: Django',
+        'Framework :: Django :: 1.7',
+        'Framework :: Django :: 1.8',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: BSD License',
         'Operating System :: Unix',
         'Programming Language :: Python'
+        'Programming Language :: Python :: 2',
+        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.3',
+        'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
     ],
     install_requires=[
         'django-oscar>=1.1.1',
