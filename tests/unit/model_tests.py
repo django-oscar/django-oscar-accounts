@@ -1,13 +1,14 @@
-from decimal import Decimal as D
 import datetime
+from decimal import Decimal as D
 
 from django.contrib.auth.models import User
 from django.test import TestCase
 from django.utils import timezone
-from django_dynamic_fixture import G
+from oscar.test.factories import UserFactory
 
 from accounts import exceptions
-from accounts.models import Account, Transfer, Transaction
+from accounts.models import Account, Transaction, Transfer
+from accounts.test_factories import AccountFactory, TransactionFactory
 
 
 class TestAnAccount(TestCase):
@@ -32,12 +33,12 @@ class TestAnAccount(TestCase):
 
     def test_can_be_authorised_by_anyone_by_default(self):
         self.account.save()
-        user = G(User)
+        user = UserFactory()
         self.assertTrue(self.account.can_be_authorised_by(user))
 
     def test_can_only_be_authorised_by_primary_user_when_set(self):
-        primary = G(User)
-        other = G(User)
+        primary = UserFactory()
+        other = UserFactory()
         self.account.primary_user = primary
         self.account.save()
 
@@ -46,8 +47,8 @@ class TestAnAccount(TestCase):
 
     def test_can_only_be_authorised_by_secondary_users_when_set(self):
         self.account.save()
-        users = [G(User), G(User)]
-        other = G(User)
+        users = [UserFactory(), UserFactory()]
+        other = UserFactory()
         for user in users:
             self.account.secondary_users.add(user)
 
@@ -116,7 +117,8 @@ class TestANewZeroCreditLimitAccount(TestCase):
 class TestAFixedCreditLimitAccount(TestCase):
 
     def setUp(self):
-        self.account = G(Account, credit_limit=D('500'), start_date=None, end_date=None)
+        self.account = AccountFactory(
+            credit_limit=D('500'), start_date=None, end_date=None)
 
     def test_permits_smaller_and_equal_debits(self):
         for amt in (D('0.00'), D('1.00'), D('500')):
@@ -130,7 +132,8 @@ class TestAFixedCreditLimitAccount(TestCase):
 class TestAnUnlimitedCreditLimitAccount(TestCase):
 
     def setUp(self):
-        self.account = G(Account, credit_limit=None, start_date=None, end_date=None)
+        self.account = AccountFactory(
+            credit_limit=None, start_date=None, end_date=None)
 
     def test_permits_any_debit(self):
         for amt in (D('0.00'), D('1.00'), D('1000000')):
@@ -141,10 +144,8 @@ class TestAccountExpiredManager(TestCase):
 
     def test_includes_only_expired_accounts(self):
         now = timezone.now()
-        G(Account, start_date=None,
-          end_date=now - datetime.timedelta(days=1))
-        G(Account, start_date=None,
-          end_date=now + datetime.timedelta(days=1))
+        AccountFactory(end_date=now - datetime.timedelta(days=1))
+        AccountFactory(end_date=now + datetime.timedelta(days=1))
         accounts = Account.expired.all()
         self.assertEqual(1, accounts.count())
 
@@ -153,9 +154,9 @@ class TestAccountActiveManager(TestCase):
 
     def test_includes_only_active_accounts(self):
         now = timezone.now()
-        expired = G(Account, start_date=None, end_date=now - datetime.timedelta(days=1))
-        G(Account, start_date=None, end_date=now + datetime.timedelta(days=1))
-        G(Account, start_date=now, end_date=now + datetime.timedelta(days=1))
+        expired = AccountFactory(end_date=now - datetime.timedelta(days=1))
+        AccountFactory(end_date=now + datetime.timedelta(days=1))
+        AccountFactory(start_date=now, end_date=now + datetime.timedelta(days=1))
         accounts = Account.active.all()
         self.assertTrue(expired not in accounts)
 
@@ -163,14 +164,14 @@ class TestAccountActiveManager(TestCase):
 class TestATransaction(TestCase):
 
     def test_cannot_be_deleted(self):
-        txn = G(Transaction)
+        txn = TransactionFactory()
         with self.assertRaises(RuntimeError):
             txn.delete()
 
     def test_is_not_deleted_when_the_authorisor_is_deleted(self):
-        user = G(User)
-        source = G(Account, credit_limit=None, primary_user=user, start_date=None, end_date=None)
-        destination = G(Account, start_date=None, end_date=None)
+        user = UserFactory()
+        source = AccountFactory(credit_limit=None, primary_user=user, start_date=None, end_date=None)
+        destination = AccountFactory(start_date=None, end_date=None)
         txn = Transfer.objects.create(source, destination,
                                       D('20.00'), user=user)
         self.assertEqual(2, txn.transactions.all().count())

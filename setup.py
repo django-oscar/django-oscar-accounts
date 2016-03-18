@@ -4,7 +4,6 @@ from setuptools import setup, find_packages
 from accounts import VERSION
 
 tests_require = [
-    'django-dynamic-fixture==1.8.5',
     'django-webtest==1.7.8',
     'pytest==2.8.0',
     'pytest-cov==2.1.0',

@@ -2,7 +2,7 @@
 
 install:
 	pip install -r requirements.testing.txt
-	./setup.py develop
+	pip install -e .[test]
 
 test:
 	./runtests.py

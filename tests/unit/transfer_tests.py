@@ -3,19 +3,19 @@ from decimal import Decimal as D
 from django.contrib.auth.models import User
 from django.test import TestCase
 from django.utils import timezone
-from django_dynamic_fixture import G
+from oscar.test.factories import UserFactory
 
 from accounts import exceptions
 from accounts.models import Account, Transfer
+from accounts.test_factories import AccountFactory
 
 
 class TestASuccessfulTransfer(TestCase):
 
     def setUp(self):
-        self.user = G(User, username="barry")
-        source = G(Account, start_date=None, end_date=None, primary_user=None,
-                   credit_limit=None)
-        destination = G(Account, start_date=None, end_date=None)
+        self.user = UserFactory(username="barry")
+        source = AccountFactory(primary_user=None, credit_limit=None)
+        destination = AccountFactory()
         self.transfer = Transfer.objects.create(source, destination,
                                                 D('10.00'), user=self.user)
 
@@ -45,11 +45,10 @@ class TestASuccessfulTransfer(TestCase):
 class TestATransferToAnInactiveAccount(TestCase):
 
     def test_is_permitted(self):
-        self.user = G(User)
+        self.user = UserFactory()
         now = timezone.now()
-        source = G(Account, start_date=None, end_date=None, primary_user=None, credit_limit=None)
-        destination = G(Account, start_date=None,
-            end_date=now - timezone.timedelta(days=1))
+        source = AccountFactory(primary_user=None, credit_limit=None)
+        destination = AccountFactory(end_date=now - timezone.timedelta(days=1))
         try:
             Transfer.objects.create(source, destination,
                                     D('20.00'), user=self.user)
@@ -60,14 +59,15 @@ class TestATransferToAnInactiveAccount(TestCase):
 class TestATransferFromAnInactiveAccount(TestCase):
 
     def test_is_permitted(self):
-        self.user = G(User)
+        self.user = UserFactory()
         now = timezone.now()
-        source = G(Account, credit_limit=None, primary_user=None,
-                   start_date=None, end_date=now - timezone.timedelta(days=1))
-        destination = G(Account, start_date=None, end_date=None)
+        source = AccountFactory(
+            credit_limit=None, primary_user=None,
+            end_date=now - timezone.timedelta(days=1))
+        destination = AccountFactory()
         try:
-            Transfer.objects.create(source, destination,
-                                    D('20.00'), user=self.user)
+            Transfer.objects.create(
+                source, destination, D('20.00'), user=self.user)
         except exceptions.AccountException as e:
             self.fail("Transfer failed: %s" % e)
 
@@ -75,35 +75,33 @@ class TestATransferFromAnInactiveAccount(TestCase):
 class TestAnAttemptedTransfer(TestCase):
 
     def setUp(self):
-        self.user = G(User)
+        self.user = UserFactory()
 
     def test_raises_an_exception_when_trying_to_exceed_credit_limit_of_source(self):
-        source = G(Account, start_date=None, end_date=None,
-                   primary_user=None, credit_limit=D('10.00'))
-        destination = G(Account, start_date=None, end_date=None)
+        source = AccountFactory(primary_user=None, credit_limit=D('10.00'))
+        destination = AccountFactory()
         with self.assertRaises(exceptions.InsufficientFunds):
             Transfer.objects.create(source, destination,
                                     D('20.00'), user=self.user)
 
     def test_raises_an_exception_when_trying_to_debit_negative_value(self):
-        source = G(Account, credit_limit=None, start_date=None, end_date=None)
-        destination = G(Account, start_date=None, end_date=None)
+        source = AccountFactory(credit_limit=None)
+        destination = AccountFactory()
         with self.assertRaises(exceptions.InvalidAmount):
             Transfer.objects.create(source, destination,
                                     D('-20.00'), user=self.user)
 
     def test_raises_an_exception_when_trying_to_use_closed_source(self):
-        source = G(Account, credit_limit=None, start_date=None, end_date=None)
+        source = AccountFactory(credit_limit=None)
         source.close()
-        destination = G(Account, start_date=None, end_date=None)
+        destination = AccountFactory()
         with self.assertRaises(exceptions.ClosedAccount):
             Transfer.objects.create(source, destination,
                                     D('20.00'), user=self.user)
 
     def test_raises_an_exception_when_trying_to_use_closed_destination(self):
-        source = G(Account, primary_user=None, credit_limit=None,
-                   start_date=None, end_date=None)
-        destination = G(Account, start_date=None, end_date=None)
+        source = AccountFactory(primary_user=None, credit_limit=None)
+        destination = AccountFactory()
         destination.close()
         with self.assertRaises(exceptions.ClosedAccount):
             Transfer.objects.create(
