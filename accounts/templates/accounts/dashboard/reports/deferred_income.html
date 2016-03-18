@@ -11,11 +11,9 @@
 <ul class="breadcrumb">
     <li>
 		<a href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a>
-        <span class="divider">/</span>
     </li>
     <li>
 		<a href="{% url 'accounts-list' %}">{% trans "Accounts" %}</a>
-        <span class="divider">/</span>
     </li>
 	<li class="active">{{ title }}</li>
 </ul>
@@ -25,10 +23,12 @@
 
 {% block dashboard_content %}
 
-<form class="form-horizontal well" action="." method="get">
-	{% include 'partials/form_fields.html' %}
-	<button type="submit" class="btn btn-primary">{% trans "Fetch report" %}</button>
+<div class="well">
+<form class="form-inline" action="." method="get">
+	{% include 'dashboard/partials/form_fields_inline.html' with form=form %}
+	<button type="submit" class="btn btn-primary" data-loading-text="{% trans 'Fetching...' %}">{% trans "Fetch report" %}</button>
 </form>
+</div>
 
 {% if rows %}
 <h2>{% trans "Position at" %} {{ report_date }}</h2>

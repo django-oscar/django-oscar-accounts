@@ -11,11 +11,9 @@
     <ul class="breadcrumb">
         <li>
             <a href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a>
-            <span class="divider">/</span>
         </li>
         <li>
             <a href=".">{% trans "Accounts" %}</a>
-            <span class="divider">/</span>
         </li>
         <li class="active">{{ title }}</li>
     </ul>
@@ -29,25 +27,22 @@
 {% endblock header %}
 
 {% block dashboard_content %}
-
-    <div class="well">
-        <div class="sub-header">
-            <h2>{% trans "Search" %}</h2>
-        </div>
-
-        <form method="get" action="." class="form-horizontal">
-            {% include 'partials/form_fields.html' %}
+<div class="panel panel-default">
+    <div class="panel-heading">{% trans "Search" %}</div>
+    <div class="panel-body">
+        <form method="get" action="." class="form-inline">
+            {% include 'dashboard/partials/form_fields_inline.html' %}
             <button type="submit" class="btn btn-primary">{% trans "Search" %}</button>
             {% trans "or" %} <a href="{% url 'accounts-list' %}">{% trans "reset" %}</a>.
         </form>
     </div>
+</div>
 
-    <div class="sub-header">
-        <h2>{{ queryset_description }}</h2>
-    </div>
 
+<div class="panel panel-default">
+    <div class="panel-heading">{{ queryset_description }}</div>
     {% if accounts.count %}
-        <table class="table table-striped table-bordered">
+        <table class="table table-striped panel-body">
             <tr>
                 <th>{% trans "Name" %}</th>
                 <th>{% trans "Code" %}</th>
@@ -72,21 +67,21 @@
                     <td>{{ account.date_created }}</td>
                     <td>
                         {% if account.is_editable %}
-                            <a href="{% url 'accounts-update' account.id %}" class="btn">{% trans "Edit" %}</a>
+                            <a href="{% url 'accounts-update' account.id %}" class="btn btn-primary">{% trans "Edit" %}</a>
                         {% else %}
-                            <a href="#" class="btn disabled">{% trans "Edit" %}</a>
+                            <a href="#" class="btn btn-primary disabled">{% trans "Edit" %}</a>
                         {% endif %}
-                        <a href="{% url 'accounts-detail' account.id %}" class="btn">{% trans "Transactions" %}</a>
+                        <a href="{% url 'accounts-detail' account.id %}" class="btn btn-primary">{% trans "Transactions" %}</a>
                         {% if account.is_editable %}
-                            <a href="{% url 'accounts-top-up' account.id %}" class="btn">{% trans "Top-up" %}</a>
-                            <a href="{% url 'accounts-withdraw' account.id %}" class="btn">{% trans "Withdraw" %}</a>
+                            <a href="{% url 'accounts-top-up' account.id %}" class="btn btn-primary">{% trans "Top-up" %}</a>
+                            <a href="{% url 'accounts-withdraw' account.id %}" class="btn btn-primary">{% trans "Withdraw" %}</a>
                             {% if not account.is_frozen %}
                                 <a href="{% url 'accounts-freeze' account.id %}" class="btn btn-danger">{% trans "Freeze" %}</a>
                             {% else %}
                                 <a href="{% url 'accounts-thaw' account.id %}" class="btn btn-success">{% trans "Thaw" %}</a>
                             {% endif %}
                         {% else %}
-                            <a href="#" class="btn disabled">{% trans "Top-up" %}</a>
+                            <a href="#" class="btn btn-primary disabled">{% trans "Top-up" %}</a>
                         {% endif %}
                     </td>
                 </tr>
@@ -94,6 +89,10 @@
         </table>
         {% include "partials/pagination.html" %}
     {% else %}
-        <p>{% trans "No results found." %}</p>
+        <div class="panel-body">
+            <p>{% trans "No results found." %}</p>
+        </div>
     {% endif %}
+</div>
+
 {% endblock dashboard_content %}

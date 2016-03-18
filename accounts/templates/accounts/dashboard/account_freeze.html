@@ -11,15 +11,12 @@
 <ul class="breadcrumb">
     <li>
 		<a href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a>
-        <span class="divider">/</span>
     </li>
     <li>
 		<a href="{% url 'accounts-list' %}">{% trans "Accounts" %}</a>
-        <span class="divider">/</span>
     </li>
     <li>
         <a href="{% url 'accounts-detail' account.id %}">{{ account }}</a>
-        <span class="divider">/</span>
     </li>
 	<li class="active">{% trans "Freeze" %}</li>
 </ul>

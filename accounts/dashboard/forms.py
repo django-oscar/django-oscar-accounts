@@ -4,9 +4,10 @@ from django import forms
 from django.conf import settings
 from django.core import exceptions
 from django.utils.translation import ugettext_lazy as _
-
 from oscar.core.loading import get_model
+from oscar.forms.widgets import DatePickerInput
 from oscar.templatetags.currency_filters import currency
+
 from accounts import codes, names
 
 Account = get_model('accounts', 'Account')
@@ -26,12 +27,20 @@ class SearchForm(forms.Form):
 
 class TransferSearchForm(forms.Form):
     reference = forms.CharField(required=False)
-    start_date = forms.DateField(required=False)
-    end_date = forms.DateField(required=False)
+    start_date = forms.DateField(required=False, widget=DatePickerInput)
+    end_date = forms.DateField(required=False, widget=DatePickerInput)
 
 
 class EditAccountForm(forms.ModelForm):
     name = forms.CharField(label=_("Name"), required=True)
+
+    class Meta:
+        model = Account
+        exclude = ['status', 'code', 'credit_limit', 'balance']
+        widgets = {
+            'start_date': DatePickerInput,
+            'end_date': DatePickerInput,
+        }
 
     def __init__(self, *args, **kwargs):
         super(EditAccountForm, self).__init__(*args, **kwargs)
@@ -51,9 +60,6 @@ class EditAccountForm(forms.ModelForm):
             raise exceptions.ImproperlyConfigured(
                 "You need to define some 'deferred income' account types")
 
-    class Meta:
-        model = Account
-        exclude = ['status', 'code', 'credit_limit', 'balance']
 
 
 class SourceAccountMixin(object):
@@ -201,9 +207,9 @@ class WithdrawFromAccountForm(SourceAccountMixin, forms.Form):
 
 
 class DateForm(forms.Form):
-    date = forms.DateField()
+    date = forms.DateField(widget=DatePickerInput)
 
 
 class DateRangeForm(forms.Form):
-    start_date = forms.DateField(label=_("From"))
-    end_date = forms.DateField(label=_("To"))
+    start_date = forms.DateField(label=_("From"), widget=DatePickerInput)
+    end_date = forms.DateField(label=_("To"), widget=DatePickerInput)
