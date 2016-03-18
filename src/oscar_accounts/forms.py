@@ -2,7 +2,7 @@ from django import forms
 from django.utils.translation import ugettext_lazy as _
 from oscar.core.loading import get_model
 
-Account = get_model('accounts', 'Account')
+Account = get_model('oscar_accounts', 'Account')
 
 
 class AccountForm(forms.Form):

@@ -1,6 +1,6 @@
 from oscar.core.loading import get_model
 
-IPAddressRecord = get_model('accounts', 'IPAddressRecord')
+IPAddressRecord = get_model('oscar_accounts', 'IPAddressRecord')
 
 
 def record_failed_request(request):

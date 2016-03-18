@@ -15,10 +15,10 @@ from oscar.templatetags.currency_filters import currency
 from oscar_accounts import exceptions, facade, names
 from oscar_accounts.dashboard import forms, reports
 
-AccountType = get_model('accounts', 'AccountType')
-Account = get_model('accounts', 'Account')
-Transfer = get_model('accounts', 'Transfer')
-Transaction = get_model('accounts', 'Transaction')
+AccountType = get_model('oscar_accounts', 'AccountType')
+Account = get_model('oscar_accounts', 'Account')
+Transfer = get_model('oscar_accounts', 'Transfer')
+Transaction = get_model('oscar_accounts', 'Transaction')
 
 
 class AccountListView(generic.ListView):

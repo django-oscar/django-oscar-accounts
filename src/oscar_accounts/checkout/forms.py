@@ -5,7 +5,7 @@ from django.utils.translation import ugettext_lazy as _
 from oscar.core.loading import get_model
 from oscar.templatetags.currency_filters import currency
 
-Account = get_model('accounts', 'Account')
+Account = get_model('oscar_accounts', 'Account')
 
 
 class ValidAccountForm(forms.Form):

@@ -3,7 +3,7 @@ import string
 
 from oscar.core.loading import get_model
 
-Account = get_model('accounts', 'Account')
+Account = get_model('oscar_accounts', 'Account')
 
 
 def generate(size=12, chars=None):

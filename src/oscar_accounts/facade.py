@@ -4,10 +4,10 @@ from oscar.core.loading import get_model
 
 from oscar_accounts import core, exceptions
 
-Account = get_model('accounts', 'Account')
-Transfer = get_model('accounts', 'Transfer')
+Account = get_model('oscar_accounts', 'Account')
+Transfer = get_model('oscar_accounts', 'Transfer')
 
-logger = logging.getLogger('accounts')
+logger = logging.getLogger('oscar_accounts')
 
 
 def close_expired_accounts():

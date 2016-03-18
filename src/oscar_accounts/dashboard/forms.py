@@ -10,8 +10,8 @@ from oscar.templatetags.currency_filters import currency
 
 from oscar_accounts import codes, names
 
-Account = get_model('accounts', 'Account')
-AccountType = get_model('accounts', 'AccountType')
+Account = get_model('oscar_accounts', 'Account')
+AccountType = get_model('oscar_accounts', 'AccountType')
 
 
 class SearchForm(forms.Form):

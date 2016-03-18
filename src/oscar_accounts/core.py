@@ -2,7 +2,7 @@ from oscar.core.loading import get_model
 
 from oscar_accounts import names
 
-Account = get_model('accounts', 'Account')
+Account = get_model('oscar_accounts', 'Account')
 
 
 def redemptions_account():

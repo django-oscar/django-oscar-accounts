@@ -14,9 +14,9 @@ from oscar.core.loading import get_model
 from oscar_accounts import codes, exceptions, facade, names
 from oscar_accounts.api import errors
 
-Account = get_model('accounts', 'Account')
-AccountType = get_model('accounts', 'AccountType')
-Transfer = get_model('accounts', 'Transfer')
+Account = get_model('oscar_accounts', 'Account')
+AccountType = get_model('oscar_accounts', 'AccountType')
+Transfer = get_model('oscar_accounts', 'Transfer')
 
 
 class InvalidPayload(Exception):

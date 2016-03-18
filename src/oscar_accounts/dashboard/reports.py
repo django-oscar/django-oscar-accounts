@@ -5,9 +5,9 @@ from oscar.core.loading import get_model
 
 from oscar_accounts import names
 
-AccountType = get_model('accounts', 'AccountType')
-Account = get_model('accounts', 'Account')
-Transfer = get_model('accounts', 'Transfer')
+AccountType = get_model('oscar_accounts', 'AccountType')
+Account = get_model('oscar_accounts', 'Account')
+Transfer = get_model('oscar_accounts', 'Transfer')
 
 
 class ProfitLossReport(object):

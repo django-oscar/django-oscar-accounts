@@ -9,7 +9,7 @@ class AccountFactory(factory.DjangoModelFactory):
     end_date = None
 
     class Meta:
-        model = get_model('accounts', 'Account')
+        model = get_model('oscar_accounts', 'Account')
 
 
 class TransferFactory(factory.DjangoModelFactory):
@@ -17,7 +17,7 @@ class TransferFactory(factory.DjangoModelFactory):
     destination = factory.SubFactory(AccountFactory)
 
     class Meta:
-        model = get_model('accounts', 'Transfer')
+        model = get_model('oscar_accounts', 'Transfer')
 
     @classmethod
     def _create(cls, model_class, *args, **kwargs):
@@ -33,4 +33,4 @@ class TransactionFactory(factory.DjangoModelFactory):
     account = factory.SubFactory(AccountFactory)
 
     class Meta:
-        model = get_model('accounts', 'Transaction')
+        model = get_model('oscar_accounts', 'Transaction')
