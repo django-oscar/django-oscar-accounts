@@ -1,7 +1,6 @@
 .PHONY: install test sandbox clean update-requirements
 
 install:
-	pip install -r requirements.testing.txt
 	pip install -e .[test]
 
 test:

@@ -29,8 +29,7 @@ before_install:
 
 install:
     - pip install --pre $DJANGO django-oscar==1.2rc1
-    - pip install -r requirements.testing.txt
-    - pip install .
+    - pip install -e .[test]
 
 script:
     - coverage run ./runtests.py
