@@ -22,12 +22,8 @@ MANAGERS = ADMINS
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
+        'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(os.path.dirname(__file__), 'db.sqlite'),
-        'USER': '',                      # Not used with sqlite3.
-        'PASSWORD': '',                  # Not used with sqlite3.
-        'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
-        'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
     }
 }
 ATOMIC_REQUESTS = True
@@ -140,12 +136,12 @@ LOGGING = {
     },
     'handlers': {
         'null': {
-            'level':'DEBUG',
-            'class':'django.utils.log.NullHandler',
+            'level': 'DEBUG',
+            'class': 'django.utils.log.NullHandler',
         },
-        'console':{
-            'level':'DEBUG',
-            'class':'logging.StreamHandler',
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
             'formatter': 'verbose'
         },
         'mail_admins': {
@@ -183,7 +179,6 @@ LOGGING = {
 }
 
 
-
 INSTALLED_APPS = [
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -195,7 +190,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # External apps
-    'django_extensions',
     'widget_tweaks',
 ] + get_core_apps(['apps.shipping']) + ['oscar_accounts']
 
