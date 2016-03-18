@@ -17,4 +17,4 @@ clean:
 	rm -rf htmlcov *.egg-info *.pdf dist
 
 update-requirements:
-	pip-compile --rebuild --pre requirements.sandbox.in || echo "\n\nPlease install pip-compile: pip install pip-tools"
+	pip-compile --upgrade --rebuild --pre requirements.sandbox.in || echo "\n\nPlease install pip-compile: pip install pip-tools"
