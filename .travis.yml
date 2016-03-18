@@ -32,7 +32,7 @@ install:
     - pip install -e .[test]
 
 script:
-    - coverage run ./runtests.py
+    - py.test --cov=oscar_accounts
 
 after_success:
     - codecov
