@@ -10,7 +10,7 @@ python:
 
 env:
     - DJANGO=Django==1.8.11
-    - DJANGO=Django==1.9.3
+    - DJANGO=Django==1.9.4
 
 matrix:
     exclude:
@@ -19,9 +19,9 @@ matrix:
 matrix:
     exclude:
         - python: 3.2
-          env: "DJANGO=Django==1.9.3"
+          env: "DJANGO=Django==1.9.4"
         - python: 3.3
-          env: "DJANGO=Django==1.9.3"
+          env: "DJANGO=Django==1.9.4"
 
 
 before_install:
