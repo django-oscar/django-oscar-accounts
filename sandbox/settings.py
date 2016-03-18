@@ -1,9 +1,10 @@
 import os
 from decimal import Decimal as D
 
-from oscar_accounts import TEMPLATE_DIR as ACCOUNTS_TEMPLATE_DIR
 from oscar import OSCAR_MAIN_TEMPLATE_DIR, get_core_apps
 from oscar.defaults import *  # noqa
+
+from oscar_accounts import TEMPLATE_DIR as ACCOUNTS_TEMPLATE_DIR
 
 PROJECT_DIR = os.path.dirname(__file__)
 location = lambda x: os.path.join(os.path.dirname(os.path.realpath(__file__)), x)

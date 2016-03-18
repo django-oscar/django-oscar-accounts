@@ -1,17 +1,17 @@
 from decimal import Decimal as D
 
-from oscar.apps.checkout import views
-from oscar.apps.payment import exceptions
-from oscar.apps.payment.models import SourceType, Source
-from django.contrib import messages
 from django import http
+from django.contrib import messages
 from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
+from oscar.apps.checkout import views
+from oscar.apps.payment import exceptions
+from oscar.apps.payment.models import Source, SourceType
 
-from oscar_accounts.checkout import forms
+from oscar_accounts import exceptions as act_exceptions
+from oscar_accounts import security
+from oscar_accounts.checkout import forms, gateway
 from oscar_accounts.checkout.allocation import Allocations
-from oscar_accounts.checkout import gateway
-from oscar_accounts import security, exceptions as act_exceptions
 
 
 class PaymentDetailsView(views.PaymentDetailsView):

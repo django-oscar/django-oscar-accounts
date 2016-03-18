@@ -1,4 +1,5 @@
 from decimal import Decimal as D
+
 from oscar.apps.shipping.methods import FixedPrice, NoShippingRequired
 from oscar.apps.shipping.repository import Repository as CoreRepository
 
