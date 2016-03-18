@@ -23,49 +23,50 @@
 
 {% block dashboard_content %}
 
-    <div class="well">
-        <div class="sub-header">
-            <h2>{% trans "Search" %}</h2>
-        </div>
-
-        <form class="form-horizontal" method="get" action=".">
-            {% include 'partials/form_fields.html' %}
+<div class="panel panel-default">
+    <div class="panel-heading">{% trans "Search" %}</div>
+    <div class="panel-body">
+        <form class="form-inline" method="get" action=".">
+            {% include 'dashboard/partials/form_fields_inline.html' %}
             <button type="submit" class="btn btn-primary">{% trans "Search" %}</button>
             or <a href="{% url 'transfers-list' %}">{% trans "reset" %}</a>.
         </form>
     </div>
+</div>
 
-	<div class="sub-header">
-		<h2>{{ queryset_description }}</h2>
-	</div>
-
-	{% if transfers %}
-		<table class="table table-striped table-bordered">
-			<tr>
-				<th>{% trans "Reference" %}</th>
-				<th>{% trans "Source" %}</th>
-				<th>{% trans "Destination" %}</th>
-				<th>{% trans "Amount" %}</th>
-				<th>{% trans "Order number" %}</th>
-				<th>{% trans "Description" %}</th>
-				<th>{% trans "Authorised by" %}</th>
-				<th>{% trans "Date created" %}</th>
-			</tr>
-			{% for transfer in transfers %}
-			<tr>
-				<td><a href="{% url 'transfers-detail' transfer.reference %}">{{ transfer.reference }}</a></td>
-				<td><a href="{% url 'accounts-detail' transfer.source.id %}">{{ transfer.source }}</a></td>
-				<td><a href="{% url 'accounts-detail' transfer.destination.id %}">{{ transfer.destination }}</a></td>
-				<td>{{ transfer.amount|currency }}</td>
-				<td>{{ transfer.merchant_reference|default:"-" }}</td>
-				<td>{{ transfer.description|default:"-" }}</td>
-				<td>{{ transfer.user|default:"-" }}</td>
-				<td>{{ transfer.date_created }}</td>
-			</tr>
-			{% endfor %}
-		</table>
+<div class="panel panel-default">
+    <div class="panel-heading">{{ queryset_description }}</div>
+    {% if transfers %}
+        <table class="table table-striped panel-body">
+            <tr>
+                <th>{% trans "Reference" %}</th>
+                <th>{% trans "Source" %}</th>
+                <th>{% trans "Destination" %}</th>
+                <th>{% trans "Amount" %}</th>
+                <th>{% trans "Order number" %}</th>
+                <th>{% trans "Description" %}</th>
+                <th>{% trans "Authorised by" %}</th>
+                <th>{% trans "Date created" %}</th>
+            </tr>
+            {% for transfer in transfers %}
+            <tr>
+                <td><a href="{% url 'transfers-detail' transfer.reference %}">{{ transfer.reference }}</a></td>
+                <td><a href="{% url 'accounts-detail' transfer.source.id %}">{{ transfer.source }}</a></td>
+                <td><a href="{% url 'accounts-detail' transfer.destination.id %}">{{ transfer.destination }}</a></td>
+                <td>{{ transfer.amount|currency }}</td>
+                <td>{{ transfer.merchant_reference|default:"-" }}</td>
+                <td>{{ transfer.description|default:"-" }}</td>
+                <td>{{ transfer.user|default:"-" }}</td>
+                <td>{{ transfer.date_created }}</td>
+            </tr>
+            {% endfor %}
+        </table>
         {% include "partials/pagination.html" %}
-	{% else %}
-		<p>{% trans "No transfers found." %}</p>
-	{% endif %}
+    {% else %}
+        <div class="panel-body">
+            <p>{% trans "No transfers found." %}</p>
+        </div>
+    {% endif %}
+</div>
+
 {% endblock dashboard_content %}
