@@ -376,7 +376,7 @@ class Transfer(models.Model):
     def save(self, *args, **kwargs):
         # Store audit information about authorising user (if one is set)
         if self.user:
-            self.username = self.user.username
+            self.username = self.user.get_username()
         # We generate a transaction reference using the PK of the transfer so
         # we save the transfer first
         super(Transfer, self).save(*args, **kwargs)
@@ -392,7 +392,7 @@ class Transfer(models.Model):
     @property
     def authorisor_username(self):
         if self.user:
-            return self.user.username
+            return self.user.get_username()
         return self.username
 
     def max_refund(self):

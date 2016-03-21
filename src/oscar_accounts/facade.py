@@ -56,7 +56,7 @@ def transfer(source, destination, amount,
     msg = "Transfer of %.2f from account #%d to account #%d" % (
         amount, source.id, destination.id)
     if user:
-        msg += " authorised by user #%d (%s)" % (user.id, user.username,)
+        msg += " authorised by user #%d (%s)" % (user.id, user.get_username())
     if description:
         msg += " '%s'" % description
     try:
@@ -82,7 +82,7 @@ def reverse(transfer, user=None, merchant_reference=None, description=None):
     """
     msg = "Reverse of transfer #%d" % transfer.id
     if user:
-        msg += " authorised by user #%d (%s)" % (user.id, user.username,)
+        msg += " authorised by user #%d (%s)" % (user.id, user.get_username())
     if description:
         msg += " '%s'" % description
     try:
