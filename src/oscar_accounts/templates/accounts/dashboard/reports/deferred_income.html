@@ -23,11 +23,14 @@
 
 {% block dashboard_content %}
 
-<div class="well">
-<form class="form-inline" action="." method="get">
-	{% include 'dashboard/partials/form_fields_inline.html' with form=form %}
-	<button type="submit" class="btn btn-primary" data-loading-text="{% trans 'Fetching...' %}">{% trans "Fetch report" %}</button>
-</form>
+<div class="panel panel-default">
+    <div class="panel-heading">{% trans "Search" %}</div>
+    <div class="panel-body">
+        <form class="form-inline" action="." method="get">
+            {% include 'dashboard/partials/form_fields_inline.html' with form=form %}
+            <button type="submit" class="btn btn-primary" data-loading-text="{% trans 'Fetching...' %}">{% trans "Fetch report" %}</button>
+        </form>
+    </div>
 </div>
 
 {% if rows %}
