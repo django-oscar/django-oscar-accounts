@@ -1,0 +1,28 @@
+root = true
+
+[*.{css,js}]
+line_length = 119
+end_of_line = lf
+insert_final_newline = true
+indent_style = space
+indent_size = 4
+trim_trailing_whitespace = true
+
+[*.html]
+indent_style = space
+indent_size = 4
+
+[*.py]
+line_length = 79
+multi_line_output = 4
+balanced_wrapping = true
+known_first_party = oscar_accounts,tests
+use_parentheses = true
+skip_glob=src/oscar_accounts/**/migrations/*.py,*/tests/**/*.py
+
+[*.yml]
+indent_size = 4
+
+[Makefile]
+indent_style = tab
+indent_size = 4
