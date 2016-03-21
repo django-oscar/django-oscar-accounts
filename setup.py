@@ -4,9 +4,6 @@ import sys
 
 from setuptools import find_packages, setup
 
-sys.path.append(os.path.join(os.path.dirname(__file__), 'src'))
-from oscar_accounts import VERSION # isort:skip
-
 install_requires=[
     'django-oscar>=1.1.1',
     'python-dateutil>=2.4,<3.0',
@@ -19,9 +16,13 @@ tests_require = [
     'pytest-django==2.8.0',
 ]
 
+setup_requires = [
+    'setuptools_scm==1.10.1'
+]
+
+
 setup(
     name='django-oscar-accounts',
-    version=VERSION,
     author="David Winterbottom",
     author_email="david.winterbottom@tangentlabs.co.uk",
     description="Managed accounts for django-oscar",
@@ -48,8 +49,10 @@ setup(
         'Programming Language :: Python :: 3.5',
     ],
     install_requires=install_requires,
+    tests_require=tests_require,
+    setup_requires=setup_requires,
     extras_require={
         'test': tests_require,
     },
-    tests_require=tests_require,
+    use_scm_version=True,
 )

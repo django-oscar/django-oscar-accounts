@@ -1,7 +1,3 @@
-import os
-
-VERSION = '0.4rc1'
-
 # Setting for template directory not found by app_directories.Loader.  This
 # allows templates to be identified by two paths which enables a template to be
 # extended by a template with the same identifier.
