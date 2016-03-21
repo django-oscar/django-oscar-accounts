@@ -18,3 +18,9 @@ clean:
 
 update-requirements:
 	pip-compile --upgrade --rebuild --pre requirements.sandbox.in || echo "\n\nPlease install pip-compile: pip install pip-tools"
+
+release:
+	pip install twine wheel
+	rm -rf dist/*
+	python setup.py sdist bdist_wheel
+	twine upload dist/*
