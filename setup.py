@@ -7,6 +7,10 @@ from setuptools import find_packages, setup
 sys.path.append(os.path.join(os.path.dirname(__file__), 'src'))
 from oscar_accounts import VERSION # isort:skip
 
+install_requires=[
+    'django-oscar>=1.1.1',
+    'python-dateutil>=2.4,<3.0',
+]
 
 tests_require = [
     'django-webtest==1.7.8',
@@ -43,10 +47,7 @@ setup(
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
     ],
-    install_requires=[
-        'django-oscar>=1.1.1',
-        'python-dateutil>=2.4,<2.5'
-    ],
+    install_requires=install_requires,
     extras_require={
         'test': tests_require,
     },
