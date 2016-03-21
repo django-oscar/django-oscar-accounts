@@ -18,10 +18,10 @@ including:
 Basically anything that involves tracking the movement of funds within a closed
 system.
 
-This package uses `double-entry bookkeeping`_
-where every transaction is recorded twice (once for the source and once for the
-destination).  This ensures the books always balance and there is full audit
-trail of all transactional activity.  
+This package uses `double-entry bookkeeping`_ where every transaction is
+recorded twice (once for the source and once for the destination).  This
+ensures the books always balance and there is full audit trail of all
+transactional activity.  
 
 If your project manages money, you should be using a library like this.  Your
 finance people will thank you.
@@ -38,8 +38,11 @@ finance people will thank you.
      :target: https://requires.io/github/django-oscar/django-oscar-accounts/requirements/?branch=master
      :alt: Requirements Status
 
+.. image:: https://img.shields.io/pypi/v/django-oscar-accounts.svg
+    :target: https://pypi.python.org/pypi/django-oscar-accounts/
 
-_`double-entry bookkeeping`: http://en.wikipedia.org/wiki/Double-entry_bookkeeping_system
+
+.. _double-entry bookkeeping: http://en.wikipedia.org/wiki/Double-entry_bookkeeping_system
 
 
 Features
