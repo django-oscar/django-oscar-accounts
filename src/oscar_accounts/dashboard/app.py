@@ -7,6 +7,7 @@ from oscar_accounts.dashboard import views
 
 class AccountsDashboardApplication(Application):
     name = None
+    default_permissions = ['is_staff', ]
 
     account_list_view = views.AccountListView
     account_create_view = views.AccountCreateView
@@ -24,7 +25,7 @@ class AccountsDashboardApplication(Application):
     report_profit_loss = views.ProfitLossReportView
 
     def get_urls(self):
-        urlpatterns = patterns('',
+        urlpatterns = [
             url(r'^$',
                 self.account_list_view.as_view(),
                 name='accounts-list'),
@@ -53,11 +54,8 @@ class AccountsDashboardApplication(Application):
             url(r'^reports/profit-loss/$',
                 self.report_profit_loss.as_view(),
                 name='report-profit-loss'),
-        )
+        ]
         return self.post_process_urls(urlpatterns)
-
-    def get_url_decorator(self, url_name):
-        return staff_member_required
 
 
 application = AccountsDashboardApplication()
