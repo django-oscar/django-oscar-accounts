@@ -164,11 +164,13 @@ class TopUpAccountForm(SourceAccountMixin, forms.Form):
 
     def clean_amount(self):
         amt = self.cleaned_data['amount']
-        max_amount = settings.ACCOUNTS_MAX_ACCOUNT_VALUE - self.account.balance
-        if amt > max_amount:
-            raise forms.ValidationError(_(
-                "The maximum permitted top-up amount is %s") % (
-                    currency(max_amount)))
+        if hasattr(settings, 'ACCOUNTS_MAX_ACCOUNT_VALUE'):
+            max_amount = (
+                settings.ACCOUNTS_MAX_ACCOUNT_VALUE - self.account.balance)
+            if amt > max_amount:
+                raise forms.ValidationError(_(
+                    "The maximum permitted top-up amount is %s") % (
+                        currency(max_amount)))
         return amt
 
     def clean(self):
