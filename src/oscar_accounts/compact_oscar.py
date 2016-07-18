@@ -7,6 +7,7 @@ except ImportError:
     from django.apps.config import MODELS_MODULE_NAME
     from django.conf import settings
     from django.core.exceptions import ImproperlyConfigured, AppRegistryNotReady
+    from django import forms
 
     # from oscar.core.compat
     # A setting that can be used in foreign key declarations
@@ -63,7 +64,32 @@ except ImportError:
         else:
             return True
 
+    # from oscar.apps.payment.exceptions
+    class UnableToTakePayment(Exception):
+        """
+        Exception to be used for ANTICIPATED payment errors (eg card number wrong,
+        expiry date has passed).  The message passed here will be shown to the end
+        user.
+        """
+
+    # dummy for oscar.templatetags.currency_filters.currency
+    def currency(value, currency=None):
+        return value
+
+    # dummy for oscar.forms.widgets.DatePickerInput
+    DatePickerInput = forms.DateInput
+
+    # dummy for oscar.application.Application
+    class Application(object):
+        def post_process_urls(self, urlpatterns):
+            return urlpatterns
+
+
 else:  # oscar is installed, use it.
+    from oscar.apps.payment.exceptions import UnableToTakePayment
+    from oscar.core.application import Application
     from oscar.core.compat import AUTH_USER_MODEL
     from oscar.core.loading import get_model, is_model_registered
+    from oscar.forms.widgets import DatePickerInput
+    from oscar.templatetags.currency_filters import currency
 

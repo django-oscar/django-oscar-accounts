@@ -2,8 +2,8 @@ from decimal import Decimal as D
 
 from django import forms
 from django.utils.translation import ugettext_lazy as _
-from oscar.core.loading import get_model
-from oscar.templatetags.currency_filters import currency
+
+from oscar_accounts.compact_oscar import get_model, currency
 
 Account = get_model('oscar_accounts', 'Account')
 

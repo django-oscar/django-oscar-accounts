@@ -4,11 +4,9 @@ from django import forms
 from django.conf import settings
 from django.core import exceptions
 from django.utils.translation import ugettext_lazy as _
-from oscar.core.loading import get_model
-from oscar.forms.widgets import DatePickerInput
-from oscar.templatetags.currency_filters import currency
 
 from oscar_accounts import codes, names
+from oscar_accounts.compact_oscar import get_model, currency, DatePickerInput
 
 Account = get_model('oscar_accounts', 'Account')
 AccountType = get_model('oscar_accounts', 'AccountType')

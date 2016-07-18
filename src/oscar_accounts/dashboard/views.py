@@ -9,10 +9,9 @@ from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from django.views import generic
-from oscar.core.loading import get_model
-from oscar.templatetags.currency_filters import currency
 
 from oscar_accounts import exceptions, facade, names
+from oscar_accounts.compact_oscar import get_model, currency
 from oscar_accounts.dashboard import forms, reports
 
 AccountType = get_model('oscar_accounts', 'AccountType')
