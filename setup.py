@@ -5,7 +5,6 @@ import sys
 from setuptools import find_packages, setup
 
 install_requires=[
-    'django-oscar>=1.1.1',
     'python-dateutil>=2.4,<3.0',
 ]
 
@@ -53,6 +52,7 @@ setup(
     setup_requires=setup_requires,
     extras_require={
         'test': tests_require,
+        'oscar': ['django-oscar>=1.1.1', ],
     },
     use_scm_version=True,
 )
