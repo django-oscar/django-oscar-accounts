@@ -1,6 +1,5 @@
-from oscar.core.loading import is_model_registered
-
 from oscar_accounts import abstract_models
+from oscar_accounts.compact_oscar import is_model_registered
 
 if not is_model_registered('oscar_accounts', 'AccountType'):
     class AccountType(abstract_models.AccountType):

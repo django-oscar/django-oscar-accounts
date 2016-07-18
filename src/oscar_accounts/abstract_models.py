@@ -8,10 +8,10 @@ from django.db.models import Sum
 from django.utils import six, timezone
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
-from oscar.core.compat import AUTH_USER_MODEL
 from treebeard.mp_tree import MP_Node
 
 from oscar_accounts import exceptions
+from oscar_accounts.compact_oscar import AUTH_USER_MODEL
 
 
 class ActiveAccountManager(models.Manager):
