@@ -9,6 +9,7 @@ install_requires=[
 ]
 
 tests_require = [
+    'django-oscar>=1.1.1',
     'django-webtest==1.7.8',
     'pytest==2.9.0',
     'pytest-cov==2.1.0',
@@ -52,7 +53,6 @@ setup(
     setup_requires=setup_requires,
     extras_require={
         'test': tests_require,
-        'oscar': ['django-oscar>=1.1.1', ],
     },
     use_scm_version=True,
 )
