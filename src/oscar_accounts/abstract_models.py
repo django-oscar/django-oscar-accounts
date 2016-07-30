@@ -3,7 +3,7 @@ from decimal import Decimal as D
 
 from django.conf import settings
 from django.core.urlresolvers import reverse
-from django.db import models, transaction
+from django.db import models
 from django.db.models import Sum
 from django.utils import six, timezone
 from django.utils.encoding import python_2_unicode_compatible
@@ -13,6 +13,12 @@ from treebeard.mp_tree import MP_Node
 
 from oscar_accounts import exceptions
 
+from django.db import transaction
+# django 1.6, 1.5 and 1.4 supports
+try:
+    atomic = transaction.atomic
+except AttributeError:
+    atomic = transaction.commit_on_success
 
 class ActiveAccountManager(models.Manager):
 
@@ -276,7 +282,7 @@ class PostingManager(models.Manager):
         # Write out transfer (which involves multiple writes).  We use a
         # database transaction to ensure that all get written out correctly.
         self.verify_transfer(source, destination, amount, user)
-        with transaction.atomic():
+        with atomic():
             transfer = self.get_queryset().create(
                 source=source,
                 destination=destination,
