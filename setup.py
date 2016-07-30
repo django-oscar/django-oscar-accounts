@@ -5,11 +5,11 @@ import sys
 from setuptools import find_packages, setup
 
 install_requires=[
-    'django-oscar>=1.1.1',
     'python-dateutil>=2.4,<3.0',
 ]
 
 tests_require = [
+    'django-oscar>=1.1.1',
     'django-webtest==1.7.8',
     'pytest==2.9.0',
     'pytest-cov==2.1.0',

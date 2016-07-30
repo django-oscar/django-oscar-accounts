@@ -1,7 +1,7 @@
 from decimal import Decimal as D
 
 import factory
-from oscar.core.loading import get_model
+from oscar_accounts.compact_oscar import get_model
 
 
 class AccountFactory(factory.DjangoModelFactory):

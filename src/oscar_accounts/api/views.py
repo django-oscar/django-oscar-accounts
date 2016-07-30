@@ -9,10 +9,10 @@ from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.views import generic
-from oscar.core.loading import get_model
 
 from oscar_accounts import codes, exceptions, facade, names
 from oscar_accounts.api import errors
+from oscar_accounts.compact_oscar import get_model
 
 Account = get_model('oscar_accounts', 'Account')
 AccountType = get_model('oscar_accounts', 'AccountType')

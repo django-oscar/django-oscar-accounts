@@ -1,9 +1,9 @@
 from decimal import Decimal as D
 
 from django.db.models import Sum
-from oscar.core.loading import get_model
 
 from oscar_accounts import names
+from oscar_accounts.compact_oscar import get_model
 
 AccountType = get_model('oscar_accounts', 'AccountType')
 Account = get_model('oscar_accounts', 'Account')
