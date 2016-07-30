@@ -1,9 +1,10 @@
-from oscar_accounts.compact_oscar import get_model
 
 
 def create_default_accounts():
     """Create the default structure"""
     from oscar_accounts import names
+    from oscar_accounts.compact_oscar import get_model
+
     AccountType = get_model('oscar_accounts', 'AccountType')
 
     assets = AccountType.add_root(name=names.ASSETS)
