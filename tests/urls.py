@@ -1,4 +1,4 @@
-from django.conf.urls import patterns, include
+from django.conf.urls import url, include
 from django.contrib import admin
 
 from oscar.app import application
@@ -8,8 +8,8 @@ from oscar_accounts.api.app import application as api_app
 
 admin.autodiscover()
 
-urlpatterns = patterns('',
-    (r'^dashboard/accounts/', include(accounts_app.urls)),
-    (r'^api/', include(api_app.urls)),
-    (r'', include(application.urls)),
-)
+urlpatterns = [
+    url(r'^dashboard/accounts/', include(accounts_app.urls)),
+    url(r'^api/', include(api_app.urls)),
+    url(r'', include(application.urls)),
+]
