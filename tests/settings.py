@@ -32,7 +32,7 @@ INSTALLED_APPS = [
     'widget_tweaks',
 ] + get_core_apps()
 
-MIDDLEWARE_CLASSES = global_settings.MIDDLEWARE_CLASSES + [
+MIDDLEWARE_CLASSES = list(global_settings.MIDDLEWARE_CLASSES) + [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
