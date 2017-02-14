@@ -7,28 +7,34 @@ python:
     - 3.3
     - 3.4
     - 3.5
+    - 3.6
 
 env:
-    - DJANGO=Django==1.8.11
-    - DJANGO=Django==1.9.4
+    - DJANGO=Django==1.8.17 OSCAR=django-oscar==1.2 FACTORY=fake-factory==0.5.7
+    - DJANGO=Django==1.8.17 OSCAR=django-oscar==1.3 FACTORY=fake-factory==0.5.7
+    - DJANGO=Django==1.8.17 OSCAR=django-oscar==1.4 FACTORY=fake-factory==0.5.7
+    - DJANGO=Django==1.9.12 OSCAR=django-oscar==1.2 FACTORY=fake-factory==0.5.7
+    - DJANGO=Django==1.9.12 OSCAR=django-oscar==1.3 FACTORY=fake-factory==0.5.7
+    - DJANGO=Django==1.9.12 OSCAR=django-oscar==1.4 FACTORY=fake-factory==0.5.7
+    - DJANGO=Django==1.10.5 OSCAR=django-oscar==1.4
 
 matrix:
     exclude:
-        - python: 3.5
-
-matrix:
-    exclude:
-        - python: 3.2
-          env: "DJANGO=Django==1.9.4"
         - python: 3.3
-          env: "DJANGO=Django==1.9.4"
+          env: "DJANGO=Django==1.9.12 OSCAR=django-oscar==1.2 FACTORY=fake-factory==0.5.7"
+        - python: 3.3
+          env: "DJANGO=Django==1.9.12 OSCAR=django-oscar==1.3 FACTORY=fake-factory==0.5.7"
+        - python: 3.3
+          env: "DJANGO=Django==1.9.12 OSCAR=django-oscar==1.4 FACTORY=fake-factory==0.5.7"
+        - python: 3.3
+          env: "DJANGO=Django==1.10.5 OSCAR=django-oscar==1.4"
 
 
 before_install:
     - pip install codecov
 
 install:
-    - pip install --pre $DJANGO django-oscar==1.2rc1
+    - pip install --pre $DJANGO $OSCAR $FACTORY
     - pip install -e .[test]
 
 script:

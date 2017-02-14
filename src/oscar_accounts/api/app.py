@@ -1,4 +1,4 @@
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 from django.views.decorators.csrf import csrf_exempt
 from oscar.core.application import Application
 
@@ -18,7 +18,7 @@ class APIApplication(Application):
     transfer_refunds_view = views.TransferRefundsView
 
     def get_urls(self):
-        urlpatterns = patterns('',
+        urlpatterns = [
             url(r'^accounts/$',
                 self.accounts_view.as_view(),
                 name='accounts'),
@@ -40,7 +40,7 @@ class APIApplication(Application):
             url(r'^transfers/(?P<reference>[A-Z0-9]{32})/refunds/$',
                 self.transfer_refunds_view.as_view(),
                 name='transfer-refunds'),
-        )
+        ]
         return self.post_process_urls(urlpatterns)
 
     def get_url_decorator(self, url_name):

@@ -20,7 +20,7 @@ STATICFILES_FINDERS = [
 
 SECRET_KEY = str(uuid.uuid4())
 
-INSTALLED_APPS=[
+INSTALLED_APPS = [
     'django.contrib.auth',
     'django.contrib.admin',
     'django.contrib.contenttypes',
@@ -32,20 +32,44 @@ INSTALLED_APPS=[
     'widget_tweaks',
 ] + get_core_apps()
 
-MIDDLEWARE_CLASSES=global_settings.MIDDLEWARE_CLASSES + (
+MIDDLEWARE_CLASSES = list(global_settings.MIDDLEWARE_CLASSES) + [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'oscar.apps.basket.middleware.BasketMiddleware',
-)
+]
 
-TEMPLATE_CONTEXT_PROCESSORS=global_settings.TEMPLATE_CONTEXT_PROCESSORS + (
-    'django.core.context_processors.request',
-    'oscar.apps.search.context_processors.search_form',
-    'oscar.apps.promotions.context_processors.promotions',
-    'oscar.apps.checkout.context_processors.checkout',
-    'oscar.core.context_processors.metadata',
-)
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [
+            OSCAR_MAIN_TEMPLATE_DIR,
+            os.path.join(OSCAR_MAIN_TEMPLATE_DIR, 'templates'),
+            ACCOUNTS_TEMPLATE_DIR,
+            # Include sandbox templates as they patch from templates that
+            # are in Oscar 0.4 but not 0.3
+            'sandbox/templates',
+        ],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.contrib.auth.context_processors.auth',
+                'django.template.context_processors.request',
+                'django.template.context_processors.debug',
+                'django.template.context_processors.i18n',
+                'django.template.context_processors.media',
+                'django.template.context_processors.static',
+                'django.contrib.messages.context_processors.messages',
+
+                # Oscar specific
+                'oscar.apps.search.context_processors.search_form',
+                'oscar.apps.promotions.context_processors.promotions',
+                'oscar.apps.checkout.context_processors.checkout',
+                'oscar.core.context_processors.metadata',
+            ],
+        },
+    },
+]
 
 DEBUG=False
 
@@ -57,16 +81,7 @@ HAYSTACK_CONNECTIONS = {
 
 ROOT_URLCONF = 'tests.urls'
 
-TEMPLATE_DIRS = (
-    OSCAR_MAIN_TEMPLATE_DIR,
-    os.path.join(OSCAR_MAIN_TEMPLATE_DIR, 'templates'),
-    ACCOUNTS_TEMPLATE_DIR,
-    # Include sandbox templates as they patch from templates that
-    # are in Oscar 0.4 but not 0.3
-    'sandbox/templates',
-)
-
-STATIC_URL='/static/'
+STATIC_URL = '/static/'
 
 SITE_ID=1
 ACCOUNTS_UNIT_NAME='Giftcard'
