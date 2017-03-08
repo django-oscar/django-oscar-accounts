@@ -5,6 +5,7 @@
 dist/*
 build/*
 *.egg-info
+.eggs
 
 # Sandbox
 sandbox/db.sqlite
@@ -14,3 +15,6 @@ settings_local.py
 .coverage
 .coveralls.yml
 .tox
+
+# ide
+.idea
