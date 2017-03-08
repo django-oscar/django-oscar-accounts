@@ -1,8 +1,7 @@
 from django.contrib import admin
 from treebeard.admin import TreeAdmin
 
-from oscar_accounts import models
-
+from oscar.core.loading import get_model
 
 class AccountAdmin(admin.ModelAdmin):
     list_display = ['id', 'code', 'name', 'balance', 'credit_limit', 'primary_user',
@@ -30,8 +29,8 @@ class IPAddressAdmin(admin.ModelAdmin):
     readonly_fields = ('ip_address', 'total_failures', 'date_last_failure')
 
 
-admin.site.register(models.AccountType, TreeAdmin)
-admin.site.register(models.Account, AccountAdmin)
-admin.site.register(models.Transfer, TransferAdmin)
-admin.site.register(models.Transaction, TransactionAdmin)
-admin.site.register(models.IPAddressRecord, IPAddressAdmin)
+admin.site.register(get_model('oscar_accounts', 'AccountType'), TreeAdmin)
+admin.site.register(get_model('oscar_accounts', 'Account'), AccountAdmin)
+admin.site.register(get_model('oscar_accounts', 'Transfer'), TransferAdmin)
+admin.site.register(get_model('oscar_accounts', 'Transaction'), TransactionAdmin)
+admin.site.register(get_model('oscar_accounts', 'IPAddressRecord'), IPAddressAdmin)
