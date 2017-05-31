@@ -25,7 +25,7 @@ def close_expired_accounts():
             transfer(account, destination,
                      balance, description="Closing account")
         except exceptions.AccountException as e:
-            logger.error("Unable to close account #%d - %s", account.id, e)
+            logger.error(u"Unable to close account #%d - %s", account.id, e)
         else:
             logger.info(("Account #%d successfully expired - %d transferred "
                          "to sales account"), account.id, balance)
@@ -53,25 +53,25 @@ def transfer(source, destination, amount,
             "The source and destination accounts for a transfer "
             "must be different."
         )
-    msg = "Transfer of %.2f from account #%d to account #%d" % (
+    msg = u"Transfer of %.2f from account #%d to account #%d" % (
         amount, source.id, destination.id)
     if user:
-        msg += " authorised by user #%d (%s)" % (user.id, user.get_username())
+        msg += u" authorised by user #%d (%s)" % (user.id, user.get_username())
     if description:
-        msg += " '%s'" % description
+        msg += u" '%s'" % description
     try:
         transfer = Transfer.objects.create(
             source, destination, amount, parent, user,
             merchant_reference, description)
     except exceptions.AccountException as e:
-        logger.warning("%s - failed: '%s'", msg, e)
+        logger.warning(u"%s - failed: '%s'", msg, e)
         raise
     except Exception as e:
-        logger.error("%s - failed: '%s'", msg, e)
+        logger.error(u"%s - failed: '%s'", msg, e)
         raise exceptions.AccountException(
-            "Unable to complete transfer: %s" % e)
+            u"Unable to complete transfer: %s" % e)
     else:
-        logger.info("%s - successful, transfer: %s", msg,
+        logger.info(u"%s - successful, transfer: %s", msg,
                     transfer.reference)
         return transfer
 
@@ -80,11 +80,11 @@ def reverse(transfer, user=None, merchant_reference=None, description=None):
     """
     Reverse a previous transfer, returning the money to the original source.
     """
-    msg = "Reverse of transfer #%d" % transfer.id
+    msg = u"Reverse of transfer #%d" % transfer.id
     if user:
-        msg += " authorised by user #%d (%s)" % (user.id, user.get_username())
+        msg += u" authorised by user #%d (%s)" % (user.id, user.get_username())
     if description:
-        msg += " '%s'" % description
+        msg += u" '%s'" % description
     try:
         transfer = Transfer.objects.create(
             source=transfer.destination,
@@ -93,13 +93,13 @@ def reverse(transfer, user=None, merchant_reference=None, description=None):
             merchant_reference=merchant_reference,
             description=description)
     except exceptions.AccountException as e:
-        logger.warning("%s - failed: '%s'", msg, e)
+        logger.warning(u"%s - failed: '%s'", msg, e)
         raise
     except Exception as e:
-        logger.error("%s - failed: '%s'", msg, e)
+        logger.error(u"%s - failed: '%s'", msg, e)
         raise exceptions.AccountException(
-            "Unable to reverse transfer: %s" % e)
+            u"Unable to reverse transfer: %s" % e)
     else:
-        logger.info("%s - successful, transfer: %s", msg,
+        logger.info(u"%s - successful, transfer: %s", msg,
                     transfer.reference)
         return transfer
