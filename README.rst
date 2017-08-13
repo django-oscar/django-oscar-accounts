@@ -21,7 +21,7 @@ system.
 This package uses `double-entry bookkeeping`_ where every transaction is
 recorded twice (once for the source and once for the destination).  This
 ensures the books always balance and there is full audit trail of all
-transactional activity.  
+transactional activity.
 
 If your project manages money, you should be using a library like this.  Your
 finance people will thank you.
@@ -157,7 +157,7 @@ Furthermore you need to add the url-pattern to your `urls.py`
 
     urlpatterns = [
         ...
-        url(r'^dashboard/accounts/', include(accounts_app.urls)),
+        url(r'^dashboard/accounts/', accounts_app.urls),
     ]
 
 
@@ -212,14 +212,14 @@ Reverse transfers:
 
 .. code-block:: python
 
-    facade.reverse(trans, user=staff_member, 
+    facade.reverse(trans, user=staff_member,
                    description="Just an example")
 
 If the proposed transfer is invalid, an exception will be raised.  All
 exceptions are subclasses of `oscar_accounts.exceptions.AccountException`.
 Your client code should look for exceptions of this type and handle them
 appropriately.
- 
+
 Client code should only use the `oscar_accounts.models.Budget` class and the
 two functions from `oscar_accounts.facade` - nothing else should be required.
 
@@ -307,8 +307,8 @@ encapsulate your business logic and error handling.  Here's an example:
                 for transfer in completed_transfers:
                     facade.reverse(transfer)
             except Exception, reverse_exc:
-                # Uh oh: No man's land.  We could be left with a partial 
-                # redemption. This will require an admin to intervene.  Make 
+                # Uh oh: No man's land.  We could be left with a partial
+                # redemption. This will require an admin to intervene.  Make
                 # sure your logger mails admins on error.
                 logger.error("Order %s, transfers failed (%s) and reverse failed (%s)",
                              order_number, transfer_exc, reverse_exc)
@@ -350,14 +350,14 @@ Core accounts and account types
 
 A post-syncdb signal will create the common structure for account types and
 accounts.  Some names can be controlled with settings, as indicated in
-parentheses. 
+parentheses.
 
 - **Assets**
 
   - **Sales**
 
     - Redemptions (`ACCOUNTS_REDEMPTIONS_NAME`) - where money is
-      transferred to when an account is used to pay for something.  
+      transferred to when an account is used to pay for something.
     - Lapsed (`ACCOUNTS_LAPSED_NAME`) - where money is transferred to
       when an account expires.  This is done by the
       'close_expired_accounts' management command.  The name of this
@@ -387,13 +387,13 @@ Example transactions
 Consider the following accounts and account types:
 
 - **Assets**
-    - **Sales** 
-        - Redemptions 
+    - **Sales**
+        - Redemptions
         - Lapsed
     - **Cash**
-        - Bank 
+        - Bank
     - **Unpaid**
-        - Merchant funded 
+        - Merchant funded
 - **Liabilities**
     - **Deferred income**
 
@@ -439,5 +439,5 @@ Fork repo, set-up virtualenv and run::
     make install
 
 Run tests with::
-    
-    ./runtests.py
+
+    pytest

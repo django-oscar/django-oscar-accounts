@@ -5,6 +5,7 @@
 dist/*
 build/*
 *.egg-info
+.eggs
 
 # Sandbox
 sandbox/db.sqlite
@@ -12,5 +13,5 @@ settings_local.py
 
 # Testing
 .coverage
-.coveralls.yml
 .tox
+.cache

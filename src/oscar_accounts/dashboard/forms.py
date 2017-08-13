@@ -61,7 +61,6 @@ class EditAccountForm(forms.ModelForm):
                 "You need to define some 'deferred income' account types")
 
 
-
 class SourceAccountMixin(object):
 
     def __init__(self, *args, **kwargs):

@@ -1,9 +1,8 @@
-import uuid
 import os.path
+import uuid
 
-from django.conf import global_settings, settings
 from oscar import OSCAR_MAIN_TEMPLATE_DIR, get_core_apps
-from oscar.defaults import *  # noqa
+from oscar.defaults import *  # noqa F401
 
 from oscar_accounts import TEMPLATE_DIR as ACCOUNTS_TEMPLATE_DIR
 
@@ -20,7 +19,7 @@ STATICFILES_FINDERS = [
 
 SECRET_KEY = str(uuid.uuid4())
 
-INSTALLED_APPS=[
+INSTALLED_APPS = [
     'django.contrib.auth',
     'django.contrib.admin',
     'django.contrib.contenttypes',
@@ -32,22 +31,16 @@ INSTALLED_APPS=[
     'widget_tweaks',
 ] + get_core_apps()
 
-MIDDLEWARE_CLASSES=global_settings.MIDDLEWARE_CLASSES + (
+MIDDLEWARE_CLASSES = [
+    'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'oscar.apps.basket.middleware.BasketMiddleware',
-)
+]
 
-TEMPLATE_CONTEXT_PROCESSORS=global_settings.TEMPLATE_CONTEXT_PROCESSORS + (
-    'django.core.context_processors.request',
-    'oscar.apps.search.context_processors.search_form',
-    'oscar.apps.promotions.context_processors.promotions',
-    'oscar.apps.checkout.context_processors.checkout',
-    'oscar.core.context_processors.metadata',
-)
-
-DEBUG=False
+DEBUG = False
 
 HAYSTACK_CONNECTIONS = {
     'default': {
@@ -57,20 +50,42 @@ HAYSTACK_CONNECTIONS = {
 
 ROOT_URLCONF = 'tests.urls'
 
-TEMPLATE_DIRS = (
-    OSCAR_MAIN_TEMPLATE_DIR,
-    os.path.join(OSCAR_MAIN_TEMPLATE_DIR, 'templates'),
-    ACCOUNTS_TEMPLATE_DIR,
-    # Include sandbox templates as they patch from templates that
-    # are in Oscar 0.4 but not 0.3
-    'sandbox/templates',
-)
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [
+            os.path.join(OSCAR_MAIN_TEMPLATE_DIR, 'templates'),
+            OSCAR_MAIN_TEMPLATE_DIR,
+            ACCOUNTS_TEMPLATE_DIR,
+        ],
+        'OPTIONS': {
+            'loaders': [
+                'django.template.loaders.filesystem.Loader',
+                'django.template.loaders.app_directories.Loader',
+            ],
+            'context_processors': [
+                'django.contrib.auth.context_processors.auth',
+                'django.template.context_processors.request',
+                'django.template.context_processors.debug',
+                'django.template.context_processors.i18n',
+                'django.template.context_processors.media',
+                'django.template.context_processors.static',
+                'django.contrib.messages.context_processors.messages',
 
-STATIC_URL='/static/'
+                'oscar.apps.search.context_processors.search_form',
+                'oscar.apps.promotions.context_processors.promotions',
+                'oscar.apps.checkout.context_processors.checkout',
+                'oscar.core.context_processors.metadata',
+            ],
+        }
+    }
+]
 
-SITE_ID=1
-ACCOUNTS_UNIT_NAME='Giftcard'
-USE_TZ=True
+STATIC_URL = '/static/'
 
-DDF_FILL_NULLABLE_FIELDS=False
-ACCOUNTS_DEFERRED_INCOME_ACCOUNT_TYPES=('Test accounts',)
+SITE_ID = 1
+ACCOUNTS_UNIT_NAME = 'Giftcard'
+USE_TZ = True
+
+DDF_FILL_NULLABLE_FIELDS = False
+ACCOUNTS_DEFERRED_INCOME_ACCOUNT_TYPES = ('Test accounts',)

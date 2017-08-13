@@ -12,12 +12,12 @@ from oscar_accounts.views import AccountBalanceView
 admin.autodiscover()
 
 urlpatterns = [
-    url(r'^admin/', include(admin.site.urls)),
+    url(r'^admin/', admin.site.urls),
     url(r'^i18n/', include('django.conf.urls.i18n')),
     url(r'^giftcard-balance/', AccountBalanceView.as_view(),
         name="account-balance"),
-    url(r'^dashboard/accounts/', include(accounts_app.urls)),
-    url(r'', include(application.urls)),
+    url(r'^dashboard/accounts/', accounts_app.urls),
+    url(r'', application.urls),
 ]
 
 if settings.DEBUG:

@@ -2,7 +2,6 @@ from decimal import Decimal as D
 
 from django_webtest import WebTest
 from django.core.urlresolvers import reverse
-from django.contrib.auth.models import User
 from oscar.test.factories import UserFactory
 
 from oscar_accounts import models

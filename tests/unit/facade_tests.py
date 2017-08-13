@@ -1,6 +1,5 @@
 from decimal import Decimal as D
 
-from django.contrib.auth.models import User
 from django.db.models import Sum
 from django.test import TestCase, TransactionTestCase
 from oscar.test.factories import UserFactory
@@ -106,8 +105,7 @@ class TestErrorHandling(TransactionTestCase):
         user = UserFactory()
         source = AccountFactory(credit_limit=None)
         destination = AccountFactory()
-        with mock.patch(
-            'oscar_accounts.abstract_models.PostingManager._wrap') as mock_method:
+        with mock.patch('oscar_accounts.abstract_models.PostingManager._wrap') as mock_method:
             mock_method.side_effect = RuntimeError()
             try:
                 facade.transfer(source, destination, D('100'), user)
@@ -127,8 +125,7 @@ class TestErrorHandling(TransactionTestCase):
         user = UserFactory()
         source = AccountFactory(credit_limit=None)
         destination = AccountFactory()
-        with mock.patch(
-            'oscar_accounts.abstract_models.PostingManager._wrap') as mock_method:
+        with mock.patch('oscar_accounts.abstract_models.PostingManager._wrap') as mock_method:
             mock_method.side_effect = RuntimeError()
             with self.assertRaises(exceptions.AccountException):
                 facade.transfer(source, destination, D('100'), user)
