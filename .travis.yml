@@ -1,38 +1,40 @@
 language: python
-
 sudo: false
 
-python:
-    - 2.7
-    - 3.3
-    - 3.4
-    - 3.5
-
-env:
-    - DJANGO=Django==1.8.11
-    - DJANGO=Django==1.9.4
-
 matrix:
-    exclude:
-        - python: 3.5
+  include:
+    - python: 2.7
+      env: TOXENV=py27-django18
+    - python: 2.7
+      env: TOXENV=py27-django110
+    - python: 2.7
+      env: TOXENV=py27-django111
+    - python: 3.3
+      env: TOXENV=py33-django18
+    - python: 3.4
+      env: TOXENV=py34-django18
+    - python: 3.4
+      env: TOXENV=py34-django110
+    - python: 3.4
+      env: TOXENV=py34-django111
+    - python: 3.5
+      env: TOXENV=py35-django18
+    - python: 3.5
+      env: TOXENV=py35-django110
+    - python: 3.5
+      env: TOXENV=py35-django111
+    - python: 3.6
+      env: TOXENV=py36-django111
 
-matrix:
-    exclude:
-        - python: 3.2
-          env: "DJANGO=Django==1.9.4"
-        - python: 3.3
-          env: "DJANGO=Django==1.9.4"
-
-
-before_install:
-    - pip install codecov
+    - python: 3.5
+      env: TOXENV=lint
 
 install:
-    - pip install --pre $DJANGO django-oscar==1.2rc1
-    - pip install -e .[test]
+    - pip install tox codecov
 
 script:
-    - py.test --cov=oscar_accounts
+    - tox
 
 after_success:
-    - codecov
+  - tox -e coverage-report
+  - codecov

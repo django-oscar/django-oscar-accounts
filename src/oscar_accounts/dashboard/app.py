@@ -1,5 +1,4 @@
-from django.conf.urls import patterns, url
-from django.contrib.admin.views.decorators import staff_member_required
+from django.conf.urls import url
 from oscar.core.application import Application
 
 from oscar_accounts.dashboard import views
@@ -25,7 +24,7 @@ class AccountsDashboardApplication(Application):
     report_profit_loss = views.ProfitLossReportView
 
     def get_urls(self):
-        urlpatterns = [
+        urls = [
             url(r'^$',
                 self.account_list_view.as_view(),
                 name='accounts-list'),
@@ -55,7 +54,7 @@ class AccountsDashboardApplication(Application):
                 self.report_profit_loss.as_view(),
                 name='report-profit-loss'),
         ]
-        return self.post_process_urls(urlpatterns)
+        return self.post_process_urls(urls)
 
 
 application = AccountsDashboardApplication()

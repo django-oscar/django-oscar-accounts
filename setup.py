@@ -1,19 +1,16 @@
 #!/usr/bin/env python
-import os
-import sys
-
 from setuptools import find_packages, setup
 
-install_requires=[
-    'django-oscar>=1.1.1',
-    'python-dateutil>=2.4,<3.0',
+install_requires = [
+    'django-oscar>=1.2,<1.6',
+    'python-dateutil>=2.6,<3.0',
 ]
 
 tests_require = [
-    'django-webtest==1.7.8',
-    'pytest==2.9.0',
-    'pytest-cov==2.1.0',
-    'pytest-django==2.8.0',
+    'django-webtest==1.9.2',
+    'pytest==3.2.1',
+    'pytest-cov==2.5.1',
+    'pytest-django==3.1.2',
 ]
 
 setup_requires = [
@@ -35,8 +32,9 @@ setup(
         'Development Status :: 4 - Beta',
         'Environment :: Web Environment',
         'Framework :: Django',
-        'Framework :: Django :: 1.7',
         'Framework :: Django :: 1.8',
+        'Framework :: Django :: 1.10',
+        'Framework :: Django :: 1.11',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: BSD License',
         'Operating System :: Unix',
@@ -47,6 +45,7 @@ setup(
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
     ],
     install_requires=install_requires,
     tests_require=tests_require,

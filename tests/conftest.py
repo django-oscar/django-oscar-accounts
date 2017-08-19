@@ -1,9 +1,9 @@
 import os
+
 import django
-
 import pytest
-from oscar_accounts import setup
 
+from oscar_accounts import setup
 
 
 # It should be possible to just set DJANGO_SETTINGS_MODULE in setup.cfg

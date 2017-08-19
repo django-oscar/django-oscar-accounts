@@ -1,12 +1,11 @@
 from decimal import Decimal as D
 
-from django.contrib.auth.models import User
 from django.test import TestCase
 from django.utils import timezone
 from oscar.test.factories import UserFactory
 
 from oscar_accounts import exceptions
-from oscar_accounts.models import Account, Transfer
+from oscar_accounts.models import Transfer
 from oscar_accounts.test_factories import AccountFactory
 
 

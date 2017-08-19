@@ -7,7 +7,6 @@ from django import test
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.test.client import Client
-from django.utils.encoding import force_bytes
 
 from tests.conftest import default_accounts
 
@@ -43,7 +42,6 @@ def post(url, payload):
 
 def to_json(response):
     return json.loads(response.content.decode('utf-8'))
-
 
 
 class TestCreatingAnAccountErrors(test.TestCase):
