@@ -9,6 +9,7 @@ build/*
 
 # Sandbox
 sandbox/db.sqlite
+sandbox/assets
 settings_local.py
 
 # Testing
