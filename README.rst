@@ -425,7 +425,7 @@ Settings
 There are settings to control the naming and initial unpaid and deferred income
 account types:
 
-* `ACCOUNTS_MIN_INITIAL_VALUE` The minimum value that can be used to create an
+* `ACCOUNTS_MIN_LOAD_VALUE` The minimum value that can be used to create an
   account (or for a top-up)
 
 * `ACCOUNTS_MAX_INITIAL_VALUE` The maximum value that can be transferred to an
