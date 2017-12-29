@@ -2,7 +2,7 @@
 from setuptools import find_packages, setup
 
 install_requires = [
-    'django-oscar>=1.2,<1.6',
+    'django-oscar>=1.5,<1.6',
     'python-dateutil>=2.6,<3.0',
 ]
 
@@ -32,8 +32,6 @@ setup(
         'Development Status :: 4 - Beta',
         'Environment :: Web Environment',
         'Framework :: Django',
-        'Framework :: Django :: 1.8',
-        'Framework :: Django :: 1.10',
         'Framework :: Django :: 1.11',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: BSD License',

@@ -1,5 +1,4 @@
 {% extends 'oscar/checkout/payment_details.html' %}
-{% load url from future %}
 {% load currency_filters %}
 {% load i18n %}
 
@@ -75,7 +74,7 @@
 	</table>
 	{% endwith %}
 	<h3>{% trans "Choose allocation" %}</h3>
-	<p>{% trans "The order total is" %} {{ order_total_incl_tax|currency }}.</p>
+	<p>{% trans "The order total is" %} {% if order_total.is_tax_known %}{{ order_total.incl_tax|currency }}{% else %}{{ order_total.excl_tax|currency }}{% endif %}.</p>
 	<p>{% trans "The maximum allocation from this account is" %} {{ allocation_form.max_allocation|currency }}.</p>
 	<form action="." method="post">
 		{% csrf_token %}
@@ -122,7 +121,7 @@
 {% if to_allocate == 0 %}
 	<a href="{% url 'checkout:preview' %}" class="btn btn-primary btn-large">{% trans "Continue" %}</a>
 {% else %}
-<p>{% trans "Order total" %}: {{ order_total_incl_tax|currency }}. {% trans "You need to allocate another" %}
+<p>{% trans "Order total" %}: {% if order_total.is_tax_known %}{{ order_total.incl_tax|currency }}{% else %}{{ order_total.excl_tax|currency }}{% endif %}. {% trans "You need to allocate another" %}
 	{{ to_allocate|currency }}</p>
 {% endif %}
 

@@ -35,7 +35,9 @@ class PaymentDetailsView(views.PaymentDetailsView):
         # Add existing allocations to context
         allocations = self.get_account_allocations()
         ctx['account_allocations'] = allocations
-        ctx['to_allocate'] = ctx['order_total_incl_tax'] - allocations.total
+        order_total = ctx['order_total']
+        total_for_allocation = order_total.incl_tax if order_total.is_tax_known else order_total.excl_tax
+        ctx['to_allocate'] = total_for_allocation - allocations.total
 
         return ctx
 
@@ -54,7 +56,7 @@ class PaymentDetailsView(views.PaymentDetailsView):
     def handle_payment(self, order_number, total, **kwargs):
         # Override payment method to use accounts to pay for the order
         allocations = self.get_account_allocations()
-        if allocations.total != total:
+        if allocations.total != total.incl_tax:
             raise exceptions.UnableToTakePayment(
                 "Your account allocations do not cover the order total")
 
@@ -73,7 +75,7 @@ class PaymentDetailsView(views.PaymentDetailsView):
                 source_type=source_type,
                 amount_debited=amount, reference=code)
             self.add_payment_source(source)
-        self.add_payment_event("Settle", total)
+        self.add_payment_event("Settle", total.incl_tax)
 
     # Custom form-handling methods
 
@@ -99,8 +101,8 @@ class PaymentDetailsView(views.PaymentDetailsView):
         security.record_successful_request(self.request)
         ctx['allocation_form'] = forms.AllocationForm(
             form.account, self.request.basket,
-            ctx['shipping_total_incl_tax'],
-            ctx['order_total_incl_tax'],
+            ctx['shipping_charge'].incl_tax if ctx['shipping_charge'].is_tax_known else ctx['shipping_charge'].excl_tax,
+            ctx['order_total'].incl_tax if ctx['order_total'].is_tax_known else ctx['order_total'].excl_tax,
             self.get_account_allocations())
         return self.render_to_response(ctx)
 
@@ -119,8 +121,8 @@ class PaymentDetailsView(views.PaymentDetailsView):
         ctx = self.get_context_data()
         allocation_form = forms.AllocationForm(
             account_form.account, self.request.basket,
-            ctx['shipping_total_incl_tax'],
-            ctx['order_total_incl_tax'],
+            ctx['shipping_charge'].incl_tax if ctx['shipping_charge'].is_tax_known else ctx['shipping_charge'].excl_tax,
+            ctx['order_total'].incl_tax if ctx['order_total'].is_tax_known else ctx['order_total'].excl_tax,
             self.get_account_allocations(),
             data=self.request.POST)
         if not allocation_form.is_valid():
@@ -160,9 +162,8 @@ class PaymentDetailsView(views.PaymentDetailsView):
     # simplicity
 
     def get_account_allocations(self):
-        return self.checkout_session._get('accounts', 'allocations',
-                                          Allocations())
+        allocation_data = self.checkout_session._get('accounts', 'allocations', '{}')
+        return Allocations.deserialize(allocation_data)
 
     def set_account_allocations(self, allocations):
-        return self.checkout_session._set('accounts',
-                                          'allocations', allocations)
+        return self.checkout_session._set('accounts', 'allocations', Allocations.serialize(allocations))
