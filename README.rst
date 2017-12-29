@@ -4,7 +4,7 @@ Managed accounts for Django
 
 A 'managed account' is an allocation of money that can be debited and credited.
 This package provides managed account functionality for use with the e-commerce
-framework `Oscar`_.  It can also be used standalone without Oscar.
+framework `Oscar`_.
 
 .. _`Oscar`: https://github.com/django-oscar/django-oscar
 
