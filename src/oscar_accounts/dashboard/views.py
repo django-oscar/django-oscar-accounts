@@ -28,7 +28,7 @@ class AccountListView(generic.ListView):
     template_name = 'accounts/dashboard/account_list.html'
     form_class = forms.SearchForm
     description = _("All %s") % names.UNIT_NAME_PLURAL.lower()
-    paginate_by = getattr(settings, 'OSCAR_ACCOUNTS_ACCOUNTS_PER_PAGE', 20)
+    paginate_by = getattr(settings, 'OSCAR_ACCOUNTS_DASHBOARD_ITEMS_PER_PAGE', 20)
 
     def get_context_data(self, **kwargs):
         ctx = super(AccountListView, self).get_context_data(**kwargs)
@@ -199,7 +199,7 @@ class AccountTransactionsView(generic.ListView):
     model = Transaction
     context_object_name = 'transactions'
     template_name = 'accounts/dashboard/account_detail.html'
-    paginate_by = getattr(settings, 'OSCAR_ACCOUNTS_TRANSACTIONS_PER_PAGE', 20)
+    paginate_by = getattr(settings, 'OSCAR_ACCOUNTS_DASHBOARD_ITEMS_PER_PAGE', 20)
 
     def get(self, request, *args, **kwargs):
         self.account = get_object_or_404(Account, id=kwargs['pk'])
@@ -221,7 +221,7 @@ class TransferListView(generic.ListView):
     template_name = 'accounts/dashboard/transfer_list.html'
     form_class = forms.TransferSearchForm
     description = _("All transfers")
-    paginate_by = getattr(settings, 'OSCAR_ACCOUNTS_TRANSFERS_PER_PAGE', 20)
+    paginate_by = getattr(settings, 'OSCAR_ACCOUNTS_DASHBOARD_ITEMS_PER_PAGE', 20)
 
     def get_context_data(self, **kwargs):
         ctx = super(TransferListView, self).get_context_data(**kwargs)

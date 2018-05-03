@@ -431,9 +431,7 @@ account types:
 * `ACCOUNTS_MAX_INITIAL_VALUE` The maximum value that can be transferred to an
   account.
 
-* `OSCAR_ACCOUNTS_ACCOUNTS_PER_PAGE` The amount of accounts that show in AccountListView per page(default=20).
-* `OSCAR_ACCOUNTS_TRANSACTIONS_PER_PAGE` The amount of transactions that show in AccountTransactionsView per page(default=20).
-* `OSCAR_ACCOUNTS_TRANSFERS_PER_PAGE` The amount of transfers that show in TransferListView per page(default=20).
+* `OSCAR_ACCOUNTS_DASHBOARD_ITEMS_PER_PAGE` The amount of items per page that show in dashboard(default=20).
 
 Contributing
 ------------
