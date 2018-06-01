@@ -431,6 +431,8 @@ account types:
 * `ACCOUNTS_MAX_INITIAL_VALUE` The maximum value that can be transferred to an
   account.
 
+* `OSCAR_ACCOUNTS_DASHBOARD_ITEMS_PER_PAGE` The amount of items per page that show in dashboard(default=20).
+
 Contributing
 ------------
 
