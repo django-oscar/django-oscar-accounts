@@ -5,8 +5,8 @@ from decimal import InvalidOperation
 from dateutil import parser
 from django import http
 from django.conf import settings
-from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404
+from django.urls import reverse
 from django.utils import timezone
 from django.views import generic
 from oscar.core.loading import get_model

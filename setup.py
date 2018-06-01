@@ -2,19 +2,15 @@
 from setuptools import find_packages, setup
 
 install_requires = [
-    'django-oscar>=1.5,<1.6',
+    'django>=1.11,<2.1',
+    'django-oscar>=1.5,<1.7',
     'python-dateutil>=2.6,<3.0',
 ]
 
 tests_require = [
-    'django-webtest==1.9.2',
-    'pytest==3.2.1',
-    'pytest-cov==2.5.1',
-    'pytest-django==3.1.2',
-]
-
-setup_requires = [
-    'setuptools_scm==1.10.1'
+    'django-webtest==1.9.3',
+    'pytest-cov>=2.5,<2.6',
+    'pytest-django>=3.2,<3.3',
 ]
 
 
@@ -40,13 +36,12 @@ setup(
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
     ],
     install_requires=install_requires,
     tests_require=tests_require,
-    setup_requires=setup_requires,
+    setup_requires=['setuptools_scm'],
     extras_require={
         'test': tests_require,
     },

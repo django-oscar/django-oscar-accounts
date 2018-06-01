@@ -1,10 +1,9 @@
-django-oscar>=1.2,<1.6
+django-oscar>=1.5,<1.7
 
 # Testing
-coverage==4.4.1
-django-webtest==1.9.2
-factory-boy>=2.9,<2.10
+coverage==4.5.1
+django-webtest==1.9.3
+factory-boy>=2.10,<2.11
 mock==2.0.0
-pytest-django==3.1.2
-pytest==3.2.1
-tox==2.7.0
+pytest-django>=3.2,<3.3
+tox>=2.9,<2.10

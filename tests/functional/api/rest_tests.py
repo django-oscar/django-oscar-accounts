@@ -5,7 +5,7 @@ from decimal import Decimal as D
 from oscar_accounts import models
 from django import test
 from django.contrib.auth.models import User
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.test.client import Client
 
 from tests.conftest import default_accounts
@@ -21,7 +21,7 @@ def get_headers():
         User.objects.create_user(USERNAME, None, PASSWORD)
     auth = "%s:%s" % (USERNAME, PASSWORD)
     auth_headers = {
-        'HTTP_AUTHORIZATION': b'Basic ' + base64.b64encode(auth.encode('utf-8'))
+        'HTTP_AUTHORIZATION': 'Basic ' + base64.b64encode(auth.encode('utf-8')).decode('utf-8')
     }
     return auth_headers
 

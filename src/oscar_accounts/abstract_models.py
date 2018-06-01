@@ -2,9 +2,9 @@ import hmac
 from decimal import Decimal as D
 
 from django.conf import settings
-from django.core.urlresolvers import reverse
 from django.db import models, transaction
 from django.db.models import Sum
+from django.urls import reverse
 from django.utils import six, timezone
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
@@ -61,7 +61,7 @@ class Account(models.Model):
         null=True, blank=True, help_text=_(
             "This text is shown to customers during checkout"))
     account_type = models.ForeignKey(
-        'AccountType', related_name='accounts', null=True)
+        'AccountType', models.CASCADE, related_name='accounts', null=True)
 
     # Some accounts are not linked to a specific user but are activated by
     # entering a code at checkout.
@@ -77,9 +77,10 @@ class Account(models.Model):
     #
     # As a rule of thumb, you don't normally need to use both primary_user and
     # secondary_users within the same project - just one or the other.
-    primary_user = models.ForeignKey(AUTH_USER_MODEL, related_name="accounts",
-                                     null=True, blank=True,
-                                     on_delete=models.SET_NULL)
+    primary_user = models.ForeignKey(
+        AUTH_USER_MODEL, models.SET_NULL, related_name="accounts",
+        null=True, blank=True
+    )
     secondary_users = models.ManyToManyField(AUTH_USER_MODEL, blank=True)
 
     # Track the status of a account - this is often used so that expired
@@ -109,7 +110,7 @@ class Account(models.Model):
 
     # Accounts are sometimes restricted to only work on a specific range of
     # products.  This is the only link with Oscar.
-    product_range = models.ForeignKey('offer.Range', null=True, blank=True)
+    product_range = models.ForeignKey('offer.Range', models.CASCADE, null=True, blank=True)
 
     # Allow accounts to be restricted for products only (ie can't be used to
     # pay for shipping)
@@ -335,15 +336,15 @@ class Transfer(models.Model):
     # primary keys
     reference = models.CharField(max_length=64, unique=True, null=True)
 
-    source = models.ForeignKey('oscar_accounts.Account',
+    source = models.ForeignKey('oscar_accounts.Account', models.CASCADE,
                                related_name='source_transfers')
-    destination = models.ForeignKey('oscar_accounts.Account',
+    destination = models.ForeignKey('oscar_accounts.Account', models.CASCADE,
                                     related_name='destination_transfers')
     amount = models.DecimalField(decimal_places=2, max_digits=12)
 
     # We keep track of related transfers (eg multiple refunds of the same
     # redemption) using a parent system
-    parent = models.ForeignKey('self', null=True,
+    parent = models.ForeignKey('self', models.CASCADE, null=True,
                                related_name='related_transfers')
 
     # Optional meta-data about transfer
@@ -353,8 +354,7 @@ class Transfer(models.Model):
     # We record who the user was who authorised this transaction.  As
     # transactions should never be deleted, we allow this field to be null and
     # also record some audit information.
-    user = models.ForeignKey(AUTH_USER_MODEL, related_name="transfers",
-                             null=True, on_delete=models.SET_NULL)
+    user = models.ForeignKey(AUTH_USER_MODEL, models.SET_NULL, related_name="transfers", null=True)
     username = models.CharField(max_length=128)
 
     date_created = models.DateTimeField(auto_now_add=True)
@@ -431,9 +431,9 @@ class Transaction(models.Model):
     # Every transfer of money should create two rows in this table.
     # (a) the debit from the source account
     # (b) the credit to the destination account
-    transfer = models.ForeignKey('oscar_accounts.Transfer',
+    transfer = models.ForeignKey('oscar_accounts.Transfer', models.CASCADE,
                                  related_name="transactions")
-    account = models.ForeignKey('oscar_accounts.Account',
+    account = models.ForeignKey('oscar_accounts.Account', models.CASCADE,
                                 related_name='transactions')
 
     # The sum of this field over the whole table should always be 0.

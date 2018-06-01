@@ -31,7 +31,7 @@ INSTALLED_APPS = [
     'widget_tweaks',
 ] + get_core_apps()
 
-MIDDLEWARE_CLASSES = [
+MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',

@@ -16,3 +16,4 @@ settings_local.py
 .coverage
 .tox
 .cache
+.pytest_cache

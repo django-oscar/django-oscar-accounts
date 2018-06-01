@@ -4,9 +4,9 @@ from decimal import Decimal as D
 from django import http
 from django.contrib import messages
 from django.conf import settings
-from django.core.urlresolvers import reverse
 from django.db.models import Sum
 from django.shortcuts import get_object_or_404
+from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from django.views import generic
