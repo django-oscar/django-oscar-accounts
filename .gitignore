@@ -17,3 +17,6 @@ settings_local.py
 .tox
 .cache
 .pytest_cache
+
+# Virtual environment
+venv

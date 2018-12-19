@@ -9,7 +9,8 @@ test:
 sandbox: install
 	-rm sandbox/db.sqlite
 	sandbox/manage.py migrate
-	sandbox/manage.py loaddata sandbox/fixtures/users.json
+	sandbox/manage.py loaddata sandbox/fixtures/*.json
+	sandbox/manage.py oscar_import_catalogue sandbox/fixtures/catalogue.csv
 	sandbox/manage.py oscar_accounts_init
 
 clean:
