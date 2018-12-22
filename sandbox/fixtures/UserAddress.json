@@ -1,0 +1,28 @@
+[
+{
+  "model": "address.useraddress",
+  "pk": 1,
+  "fields": {
+    "title": "Dr",
+    "first_name": "Barry",
+    "last_name": "Barrington",
+    "line1": "1 King Road",
+    "line2": "",
+    "line3": "",
+    "line4": "London",
+    "state": "",
+    "postcode": "SW1 9RE",
+    "country": "GB",
+    "search_text": "Barry Barrington 1 King Road London SW1 9RE UNITED KINGDOM",
+    "phone_number": "+493513296645",
+    "notes": "Instructions Instructions Instructions Instructions Instructions \r\nInstructions Instructions Instructions Instructions Instructions\r\nInstructions Instructions Instructions Instructions Instructions",
+    "user": 1,
+    "is_default_for_shipping": false,
+    "is_default_for_billing": false,
+    "num_orders_as_shipping_address": 1,
+    "num_orders_as_billing_address": 1,
+    "hash": "912316276",
+    "date_created": "2018-12-10T15:35:12.399Z"
+  }
+}
+]
