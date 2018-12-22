@@ -5,13 +5,13 @@ from django.urls import reverse
 from oscar.test.factories import UserFactory
 
 from oscar_accounts import models
-from tests.conftest import default_accounts
+from oscar_accounts.setup import create_default_accounts
 
 
 class TestAStaffMember(WebTest):
 
     def setUp(self):
-        default_accounts()
+        create_default_accounts()
         self.staff = UserFactory(is_staff=True)
 
     def test_can_browse_accounts(self):

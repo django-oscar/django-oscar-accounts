@@ -8,7 +8,7 @@ from django.contrib.auth.models import User
 from django.urls import reverse
 from django.test.client import Client
 
-from tests.conftest import default_accounts
+from oscar_accounts.setup import create_default_accounts
 
 USERNAME, PASSWORD = 'client', 'password'
 
@@ -47,7 +47,7 @@ def to_json(response):
 class TestCreatingAnAccountErrors(test.TestCase):
 
     def setUp(self):
-        default_accounts()
+        create_default_accounts()
         self.payload = {
             'start_date': '2012-01-01T09:00:00+03:00',
             'end_date': '2019-06-01T09:00:00+03:00',
@@ -119,7 +119,7 @@ class TestCreatingAnAccountErrors(test.TestCase):
 class TestSuccessfullyCreatingAnAccount(test.TestCase):
 
     def setUp(self):
-        default_accounts()
+        create_default_accounts()
         self.payload = {
             'start_date': '2013-01-01T09:00:00+03:00',
             'end_date': '2019-06-01T09:00:00+03:00',
@@ -166,7 +166,7 @@ class TestSuccessfullyCreatingAnAccount(test.TestCase):
 class TestMakingARedemption(test.TestCase):
 
     def setUp(self):
-        default_accounts()
+        create_default_accounts()
         self.create_payload = {
             'start_date': '2012-01-01T09:00:00+03:00',
             'end_date': '2019-06-01T09:00:00+03:00',
@@ -228,7 +228,7 @@ class TestTransferView(test.TestCase):
 class TestMakingARedemptionThenRefund(test.TestCase):
 
     def setUp(self):
-        default_accounts()
+        create_default_accounts()
         self.create_payload = {
             'start_date': '2012-01-01T09:00:00+03:00',
             'end_date': '2019-06-01T09:00:00+03:00',
@@ -270,7 +270,7 @@ class TestMakingARedemptionThenRefund(test.TestCase):
 class TestMakingARedemptionThenReverse(test.TestCase):
 
     def setUp(self):
-        default_accounts()
+        create_default_accounts()
         self.create_payload = {
             'start_date': '2012-01-01T09:00:00+03:00',
             'end_date': '2019-06-01T09:00:00+03:00',
@@ -300,7 +300,7 @@ class TestMakingARedemptionThenReverse(test.TestCase):
 class TestMakingARedemptionThenTransferRefund(test.TestCase):
 
     def setUp(self):
-        default_accounts()
+        create_default_accounts()
         self.create_payload = {
             'start_date': '2012-01-01T09:00:00+03:00',
             'end_date': '2019-06-01T09:00:00+03:00',
