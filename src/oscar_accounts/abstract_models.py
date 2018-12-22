@@ -20,10 +20,9 @@ class ActiveAccountManager(models.Manager):
         now = timezone.now()
         qs = super(ActiveAccountManager, self).get_queryset()
         return qs.filter(
-            models.Q(start_date__lte=now) |
-            models.Q(start_date=None)).filter(
-                models.Q(end_date__gte=now) |
-                models.Q(end_date=None))
+            models.Q(start_date__lte=now) | models.Q(start_date=None)).filter(
+                models.Q(end_date__gte=now) | models.Q(end_date=None)
+        )
 
 
 class ExpiredAccountManager(models.Manager):
@@ -494,8 +493,7 @@ class IPAddressRecord(models.Model):
         self.save()
 
     def is_blocked(self):
-        return (self.is_temporarily_blocked() or
-                self.is_permanently_blocked())
+        return (self.is_temporarily_blocked() or self.is_permanently_blocked())
 
     def is_temporarily_blocked(self):
         if self.consecutive_failures < self.FREEZE_THRESHOLD:

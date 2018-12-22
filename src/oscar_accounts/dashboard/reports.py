@@ -24,8 +24,7 @@ class ProfitLossReport(object):
 
         # Totals
         ctx['increase_total'] = (
-            ctx['cash_total'] + ctx['unpaid_total'] +
-            ctx['refund_total'])
+            ctx['cash_total'] + ctx['unpaid_total'] + ctx['refund_total'])
         ctx['reduction_total'] = ctx['redeem_total'] + ctx['closure_total']
         ctx['position_difference'] = (
             ctx['increase_total'] - ctx['reduction_total'])
