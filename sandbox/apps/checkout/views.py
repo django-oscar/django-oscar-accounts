@@ -29,7 +29,7 @@ class PaymentDetailsView(views.PaymentDetailsView):
         ctx['account_form'] = form
 
         # Add accounts that are linked to this user
-        if self.request.user.is_authenticated():
+        if self.request.user.is_authenticated:
             ctx['user_accounts'] = gateway.user_accounts(self.request.user)
 
         # Add existing allocations to context
