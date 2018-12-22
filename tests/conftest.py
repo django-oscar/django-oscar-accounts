@@ -1,7 +1,6 @@
 import os
 
 import django
-import pytest
 
 
 # It should be possible to just set DJANGO_SETTINGS_MODULE in setup.cfg
