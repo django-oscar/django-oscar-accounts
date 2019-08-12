@@ -1,4 +1,4 @@
-{% extends 'dashboard/layout.html' %}
+{% extends 'oscar/dashboard/layout.html' %}
 {% load currency_filters %}
 {% load i18n %}
 
@@ -20,7 +20,7 @@
 
 {% block header %}
     <div class="page-header">
-        <a id="create_new_account" href="{% url 'accounts-create' %}" class="btn btn-large btn-primary pull-right">{% trans "Create a new " %} {{ unit_name|lower }}</a></p>
+        <a id="create_new_account" href="{% url 'accounts_dashboard:accounts-create' %}" class="btn btn-large btn-primary pull-right">{% trans "Create a new " %} {{ unit_name|lower }}</a></p>
     <h1>{{ title }}</h1>
 </div>
 {% endblock header %}
@@ -30,9 +30,9 @@
     <div class="panel-heading">{% trans "Search" %}</div>
     <div class="panel-body">
         <form method="get" action="." class="form-inline">
-            {% include 'dashboard/partials/form_fields_inline.html' %}
+            {% include 'oscar/dashboard/partials/form_fields_inline.html' %}
             <button type="submit" class="btn btn-primary">{% trans "Search" %}</button>
-            {% trans "or" %} <a href="{% url 'accounts-list' %}">{% trans "reset" %}</a>.
+            {% trans "or" %} <a href="{% url 'accounts_dashboard:accounts-list' %}">{% trans "reset" %}</a>.
         </form>
     </div>
 </div>
@@ -56,7 +56,7 @@
             {% for account in accounts %}
                 {# When we're using bootstrap 2.1, we can use table row colors #}
                 <tr {% if account.is_frozen %}style="color: #aaa"{% endif %}>
-                    <td><a href="{% url 'accounts-detail' account.id %}">{{ account.name|default:"-" }}</a></td>
+                    <td><a href="{% url 'accounts_dashboard:accounts-detail' account.id %}">{{ account.name|default:"-" }}</a></td>
                     <td>{{ account.code|default:"-" }}</td>
                     <td>{{ account.status }}</td>
                     <td>{{ account.start_date|default:"-" }}</td>
@@ -66,18 +66,18 @@
                     <td>{{ account.date_created }}</td>
                     <td>
                         {% if account.is_editable %}
-                            <a href="{% url 'accounts-update' account.id %}" class="btn btn-primary">{% trans "Edit" %}</a>
+                            <a href="{% url 'accounts_dashboard:accounts-update' account.id %}" class="btn btn-primary">{% trans "Edit" %}</a>
                         {% else %}
                             <a href="#" class="btn btn-primary disabled">{% trans "Edit" %}</a>
                         {% endif %}
-                        <a href="{% url 'accounts-detail' account.id %}" class="btn btn-primary">{% trans "Transactions" %}</a>
+                        <a href="{% url 'accounts_dashboard:accounts-detail' account.id %}" class="btn btn-primary">{% trans "Transactions" %}</a>
                         {% if account.is_editable %}
-                            <a href="{% url 'accounts-top-up' account.id %}" class="btn btn-primary">{% trans "Top-up" %}</a>
-                            <a href="{% url 'accounts-withdraw' account.id %}" class="btn btn-primary">{% trans "Withdraw" %}</a>
+                            <a href="{% url 'accounts_dashboard:accounts-top-up' account.id %}" class="btn btn-primary">{% trans "Top-up" %}</a>
+                            <a href="{% url 'accounts_dashboard:accounts-withdraw' account.id %}" class="btn btn-primary">{% trans "Withdraw" %}</a>
                             {% if not account.is_frozen %}
-                                <a href="{% url 'accounts-freeze' account.id %}" class="btn btn-danger">{% trans "Freeze" %}</a>
+                                <a href="{% url 'accounts_dashboard:accounts-freeze' account.id %}" class="btn btn-danger">{% trans "Freeze" %}</a>
                             {% else %}
-                                <a href="{% url 'accounts-thaw' account.id %}" class="btn btn-success">{% trans "Thaw" %}</a>
+                                <a href="{% url 'accounts_dashboard:accounts-thaw' account.id %}" class="btn btn-success">{% trans "Thaw" %}</a>
                             {% endif %}
                         {% else %}
                             <a href="#" class="btn btn-primary disabled">{% trans "Top-up" %}</a>
@@ -86,7 +86,7 @@
                 </tr>
             {% endfor %}
         </table>
-        {% include "partials/pagination.html" %}
+        {% include "oscar/partials/pagination.html" %}
     {% else %}
         <div class="panel-body">
             <p>{% trans "No results found." %}</p>

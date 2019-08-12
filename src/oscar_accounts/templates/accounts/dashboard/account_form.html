@@ -1,4 +1,4 @@
-{% extends 'dashboard/layout.html' %}
+{% extends 'oscar/dashboard/layout.html' %}
 {% load currency_filters %}
 {% load i18n %}
 
@@ -12,11 +12,11 @@
             <a href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a>
         </li>
         <li>
-            <a href="{% url 'accounts-list' %}">{% trans "Accounts" %}</a>
+            <a href="{% url 'accounts_dashboard:accounts-list' %}">{% trans "Accounts" %}</a>
         </li>
         {% if account %}
             <li>
-                <a href="{% url 'accounts-detail' account.id %}">{{ account }}</a>
+                <a href="{% url 'accounts_dashboard:accounts-detail' account.id %}">{{ account }}</a>
             </li>
             <li class="active">{% trans "Update" %}</li>
         {% else %}
@@ -40,35 +40,35 @@
         <form action="." method="post">
             {% csrf_token %}
             <span class="help-block">{{ form.non_field_errors }}</span>
-            {% include 'dashboard/partials/form_field.html' with field=form.name %}
-            {% include 'dashboard/partials/form_field.html' with field=form.description %}
+            {% include 'oscar/dashboard/partials/form_field.html' with field=form.name %}
+            {% include 'oscar/dashboard/partials/form_field.html' with field=form.description %}
             {% if form.account_type %}
-                {% include 'partials/form_field.html' with field=form.account_type %}
+                {% include 'oscar/partials/form_field.html' with field=form.account_type %}
             {% endif %}
 
             {% if form.initial_amount %}
                 <legend>{% trans "Initial transaction" %}</legend>
                 {% if form.source_account %}
-                    {% include 'dashboard/partials/form_field.html' with field=form.source_account %}
+                    {% include 'oscar/dashboard/partials/form_field.html' with field=form.source_account %}
                 {% endif %}
-                {% include 'dashboard/partials/form_field.html' with field=form.initial_amount %}
+                {% include 'oscar/dashboard/partials/form_field.html' with field=form.initial_amount %}
             {% endif %}
 
             <legend>{% trans "Restrictions" %}</legend>
             <h4>{% trans "Restrict WHEN the account can be used" %}</h4>
-                {% include 'dashboard/partials/form_field.html' with field=form.start_date %}
-                {% include 'dashboard/partials/form_field.html' with field=form.end_date %}
+                {% include 'oscar/dashboard/partials/form_field.html' with field=form.start_date %}
+                {% include 'oscar/dashboard/partials/form_field.html' with field=form.end_date %}
             <h4>{% trans "Restrict WHO can use the account" %}</h4>
-                {% include 'dashboard/partials/form_field.html' with field=form.primary_user %}
-                {% include 'dashboard/partials/form_field.html' with field=form.secondary_users %}
+                {% include 'oscar/dashboard/partials/form_field.html' with field=form.primary_user %}
+                {% include 'oscar/dashboard/partials/form_field.html' with field=form.secondary_users %}
             <h4>{% trans "Restrict WHAT can be bought" %}</h4>
-                {% include 'dashboard/partials/form_field.html' with field=form.product_range %}
-                {% include 'dashboard/partials/form_field.html' with field=form.can_be_used_for_non_products %}
+                {% include 'oscar/dashboard/partials/form_field.html' with field=form.product_range %}
+                {% include 'oscar/dashboard/partials/form_field.html' with field=form.can_be_used_for_non_products %}
 
             <div class="form-actions">
                 <button class="btn btn-primary btn-large" type="submit">{% trans "Save" %}</button>
                 {% trans "or" %}
-                <a href="{% url 'accounts-list' %}">{% trans "cancel" %}</a>
+                <a href="{% url 'accounts_dashboard:accounts-list' %}">{% trans "cancel" %}</a>
             </div>
         </form>
     </div>

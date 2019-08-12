@@ -1,21 +1,28 @@
 from django.conf.urls import url
+from django.utils.translation import gettext_lazy as _
 from django.views.decorators.csrf import csrf_exempt
-from oscar.core.application import Application
+from oscar.core.application import OscarConfig
 
-from oscar_accounts.api import decorators, views
+from oscar_accounts.api import decorators
 
 
-class APIApplication(Application):
-    name = None
+class AccountsAPIConfig(OscarConfig):
+    name = 'oscar_accounts.api'
+    verbose_name = _('Accounts API')
+    label = 'oscar_accounts_api'
+    namespace = 'oscar_accounts_api'
 
-    accounts_view = views.AccountsView
-    account_view = views.AccountView
-    account_redemptions_view = views.AccountRedemptionsView
-    account_refunds_view = views.AccountRefundsView
+    def ready(self):
+        from oscar_accounts.api import views
 
-    transfer_view = views.TransferView
-    transfer_reverse_view = views.TransferReverseView
-    transfer_refunds_view = views.TransferRefundsView
+        self.accounts_view = views.AccountsView
+        self.account_view = views.AccountView
+        self.account_redemptions_view = views.AccountRedemptionsView
+        self.account_refunds_view = views.AccountRefundsView
+
+        self.transfer_view = views.TransferView
+        self.transfer_reverse_view = views.TransferReverseView
+        self.transfer_refunds_view = views.TransferRefundsView
 
     def get_urls(self):
         urls = [
@@ -45,6 +52,3 @@ class APIApplication(Application):
 
     def get_url_decorator(self, url_name):
         return lambda x: csrf_exempt(decorators.basicauth(x))
-
-
-application = APIApplication()

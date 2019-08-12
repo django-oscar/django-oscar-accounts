@@ -1,4 +1,4 @@
-{% extends 'dashboard/layout.html' %}
+{% extends 'oscar/dashboard/layout.html' %}
 {% load currency_filters %}
 {% load i18n %}
 
@@ -12,7 +12,7 @@
     	<a href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a>
     </li>
     <li>
-	    <a href="{% url 'accounts-list' %}">{% trans "Accounts" %}</a>
+	    <a href="{% url 'accounts_dashboard:accounts-list' %}">{% trans "Accounts" %}</a>
     </li>
 	<li class="active">{% trans "Transfers" %}</li>
 </ul>
@@ -26,7 +26,7 @@
     <div class="panel-heading">{% trans "Search" %}</div>
     <div class="panel-body">
         <form class="form-inline" method="get" action=".">
-            {% include 'dashboard/partials/form_fields_inline.html' %}
+            {% include 'oscar/dashboard/partials/form_fields_inline.html' %}
             <button type="submit" class="btn btn-primary">{% trans "Search" %}</button>
             or <a href="{% url 'transfers-list' %}">{% trans "reset" %}</a>.
         </form>
@@ -49,9 +49,9 @@
             </tr>
             {% for transfer in transfers %}
             <tr>
-                <td><a href="{% url 'transfers-detail' transfer.reference %}">{{ transfer.reference }}</a></td>
-                <td><a href="{% url 'accounts-detail' transfer.source.id %}">{{ transfer.source }}</a></td>
-                <td><a href="{% url 'accounts-detail' transfer.destination.id %}">{{ transfer.destination }}</a></td>
+                <td><a href="{% url 'accounts_dashboard:transfers-detail' transfer.reference %}">{{ transfer.reference }}</a></td>
+                <td><a href="{% url 'accounts_dashboard:accounts-detail' transfer.source.id %}">{{ transfer.source }}</a></td>
+                <td><a href="{% url 'accounts_dashboard:accounts-detail' transfer.destination.id %}">{{ transfer.destination }}</a></td>
                 <td>{{ transfer.amount|currency }}</td>
                 <td>{{ transfer.merchant_reference|default:"-" }}</td>
                 <td>{{ transfer.description|default:"-" }}</td>
@@ -60,7 +60,7 @@
             </tr>
             {% endfor %}
         </table>
-        {% include "partials/pagination.html" %}
+        {% include "oscar/partials/pagination.html" %}
     {% else %}
         <div class="panel-body">
             <p>{% trans "No transfers found." %}</p>

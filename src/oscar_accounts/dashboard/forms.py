@@ -43,7 +43,7 @@ class EditAccountForm(forms.ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
-        super(EditAccountForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields['product_range'].help_text = (
             "You may need to create a product range first")
 
@@ -64,7 +64,7 @@ class EditAccountForm(forms.ModelForm):
 class SourceAccountMixin(object):
 
     def __init__(self, *args, **kwargs):
-        super(SourceAccountMixin, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         # Add field for source account (if there is a choice)
         unpaid_sources = AccountType.objects.get(
@@ -92,7 +92,7 @@ class NewAccountForm(SourceAccountMixin, EditAccountForm):
         decimal_places=2)
 
     def __init__(self, *args, **kwargs):
-        super(NewAccountForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         # Add field for source account (if there is a choice)
         unpaid_sources = AccountType.objects.get(
@@ -109,7 +109,7 @@ class NewAccountForm(SourceAccountMixin, EditAccountForm):
 
     def save(self, *args, **kwargs):
         kwargs['commit'] = False
-        account = super(NewAccountForm, self).save(*args, **kwargs)
+        account = super().save(*args, **kwargs)
         account.code = codes.generate()
         if hasattr(self, '_account_type'):
             account.account_type = self._account_type
@@ -133,7 +133,7 @@ class ChangeStatusForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         kwargs['initial']['status'] = self.new_status
-        super(ChangeStatusForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     class Meta:
         model = Account
@@ -159,7 +159,7 @@ class TopUpAccountForm(SourceAccountMixin, forms.Form):
 
     def __init__(self, *args, **kwargs):
         self.account = kwargs.pop('instance')
-        super(TopUpAccountForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def clean_amount(self):
         amt = self.cleaned_data['amount']
@@ -188,7 +188,7 @@ class WithdrawFromAccountForm(SourceAccountMixin, forms.Form):
 
     def __init__(self, *args, **kwargs):
         self.account = kwargs.pop('instance')
-        super(WithdrawFromAccountForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def clean_amount(self):
         amt = self.cleaned_data['amount']

@@ -1,10 +1,7 @@
-import os.path
 import uuid
 
-from oscar import OSCAR_MAIN_TEMPLATE_DIR, get_core_apps
+import oscar
 from oscar.defaults import *  # noqa F401
-
-from oscar_accounts import TEMPLATE_DIR as ACCOUNTS_TEMPLATE_DIR
 
 DATABASES = {
     'default': {
@@ -20,16 +17,11 @@ STATICFILES_FINDERS = [
 SECRET_KEY = str(uuid.uuid4())
 
 INSTALLED_APPS = [
-    'django.contrib.auth',
-    'django.contrib.admin',
-    'django.contrib.contenttypes',
-    'django.contrib.staticfiles',
-    'django.contrib.sessions',
-    'django.contrib.sites',
-    'django.contrib.flatpages',
-    'oscar_accounts',
-    'widget_tweaks',
-] + get_core_apps()
+    'oscar_accounts.apps.AccountsConfig',
+    'oscar_accounts.dashboard.apps.AccountsDashboardConfig',
+    'oscar_accounts.api.apps.AccountsAPIConfig',
+    'sorl.thumbnail',
+] + oscar.INSTALLED_APPS
 
 MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
@@ -53,11 +45,7 @@ ROOT_URLCONF = 'tests.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [
-            os.path.join(OSCAR_MAIN_TEMPLATE_DIR, 'templates'),
-            OSCAR_MAIN_TEMPLATE_DIR,
-            ACCOUNTS_TEMPLATE_DIR,
-        ],
+        'DIRS': [],
         'OPTIONS': {
             'loaders': [
                 'django.template.loaders.filesystem.Loader',
@@ -73,7 +61,6 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
 
                 'oscar.apps.search.context_processors.search_form',
-                'oscar.apps.promotions.context_processors.promotions',
                 'oscar.apps.checkout.context_processors.checkout',
                 'oscar.core.context_processors.metadata',
             ],

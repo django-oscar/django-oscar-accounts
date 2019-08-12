@@ -1,6 +1,6 @@
 from decimal import Decimal as D
 
-from oscar.apps.shipping.methods import FixedPrice, NoShippingRequired
+from oscar.apps.shipping.methods import FixedPrice
 from oscar.apps.shipping.repository import Repository as CoreRepository
 
 # Dummy shipping methods

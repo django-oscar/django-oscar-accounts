@@ -2,8 +2,8 @@ import datetime
 from decimal import Decimal as D
 
 from django import http
-from django.contrib import messages
 from django.conf import settings
+from django.contrib import messages
 from django.db.models import Sum
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
@@ -31,7 +31,7 @@ class AccountListView(generic.ListView):
     paginate_by = getattr(settings, 'OSCAR_ACCOUNTS_DASHBOARD_ITEMS_PER_PAGE', 20)
 
     def get_context_data(self, **kwargs):
-        ctx = super(AccountListView, self).get_context_data(**kwargs)
+        ctx = super().get_context_data(**kwargs)
         ctx['form'] = self.form
         ctx['title'] = names.UNIT_NAME_PLURAL
         ctx['unit_name'] = names.UNIT_NAME
@@ -85,7 +85,7 @@ class AccountCreateView(generic.CreateView):
     form_class = forms.NewAccountForm
 
     def get_context_data(self, **kwargs):
-        ctx = super(AccountCreateView, self).get_context_data(**kwargs)
+        ctx = super().get_context_data(**kwargs)
         ctx['title'] = _("Create a new %s") % names.UNIT_NAME.lower()
         return ctx
 
@@ -109,7 +109,7 @@ class AccountCreateView(generic.CreateView):
                 self.request,
                 _("New account created with code '%s'") % account.code)
         return http.HttpResponseRedirect(
-            reverse('accounts-detail', kwargs={'pk': account.id}))
+            reverse('accounts_dashboard:accounts-detail', kwargs={'pk': account.id}))
 
 
 class AccountUpdateView(generic.UpdateView):
@@ -119,7 +119,7 @@ class AccountUpdateView(generic.UpdateView):
     form_class = forms.UpdateAccountForm
 
     def get_context_data(self, **kwargs):
-        ctx = super(AccountUpdateView, self).get_context_data(**kwargs)
+        ctx = super().get_context_data(**kwargs)
         ctx['title'] = _("Update '%s' account") % self.object.name
         return ctx
 
@@ -127,7 +127,7 @@ class AccountUpdateView(generic.UpdateView):
         account = form.save()
         messages.success(self.request, _("Account saved"))
         return http.HttpResponseRedirect(
-            reverse('accounts-detail', kwargs={'pk': account.id}))
+            reverse('accounts_dashboard:accounts-detail', kwargs={'pk': account.id}))
 
 
 class AccountFreezeView(generic.UpdateView):
@@ -137,7 +137,7 @@ class AccountFreezeView(generic.UpdateView):
 
     def get_success_url(self):
         messages.success(self.request, _("Account frozen"))
-        return reverse('accounts-list')
+        return reverse('accounts_dashboard:accounts-list')
 
 
 class AccountThawView(generic.UpdateView):
@@ -147,7 +147,7 @@ class AccountThawView(generic.UpdateView):
 
     def get_success_url(self):
         messages.success(self.request, _("Account thawed"))
-        return reverse('accounts-list')
+        return reverse('accounts_dashboard:accounts-list')
 
 
 class AccountTopUpView(generic.UpdateView):
@@ -168,7 +168,7 @@ class AccountTopUpView(generic.UpdateView):
         else:
             messages.success(
                 self.request, _("%s added to account") % currency(amount))
-        return http.HttpResponseRedirect(reverse('accounts-detail',
+        return http.HttpResponseRedirect(reverse('accounts_dashboard:accounts-detail',
                                                  kwargs={'pk': account.id}))
 
 
@@ -191,7 +191,7 @@ class AccountWithdrawView(generic.UpdateView):
             messages.success(
                 self.request,
                 _("%s withdrawn from account") % currency(amount))
-        return http.HttpResponseRedirect(reverse('accounts-detail',
+        return http.HttpResponseRedirect(reverse('accounts_dashboard:accounts-detail',
                                                  kwargs={'pk': account.id}))
 
 
@@ -203,14 +203,13 @@ class AccountTransactionsView(generic.ListView):
 
     def get(self, request, *args, **kwargs):
         self.account = get_object_or_404(Account, id=kwargs['pk'])
-        return super(AccountTransactionsView, self).get(
-            request, *args, **kwargs)
+        return super().get(request, *args, **kwargs)
 
     def get_queryset(self):
         return self.account.transactions.all().order_by('-date_created')
 
     def get_context_data(self, **kwargs):
-        ctx = super(AccountTransactionsView, self).get_context_data(**kwargs)
+        ctx = super().get_context_data(**kwargs)
         ctx['account'] = self.account
         return ctx
 
@@ -224,7 +223,7 @@ class TransferListView(generic.ListView):
     paginate_by = getattr(settings, 'OSCAR_ACCOUNTS_DASHBOARD_ITEMS_PER_PAGE', 20)
 
     def get_context_data(self, **kwargs):
-        ctx = super(TransferListView, self).get_context_data(**kwargs)
+        ctx = super().get_context_data(**kwargs)
         ctx['form'] = self.form
         ctx['queryset_description'] = self.description
         return ctx
@@ -293,14 +292,13 @@ class DeferredIncomeReportView(generic.FormView):
     def get(self, request, *args, **kwargs):
         if self.is_form_submitted():
             return self.validate()
-        return super(DeferredIncomeReportView, self).get(request, *args,
-                                                         **kwargs)
+        return super().get(request, *args, **kwargs)
 
     def is_form_submitted(self):
         return 'date' in self.request.GET
 
     def get_context_data(self, **kwargs):
-        ctx = super(DeferredIncomeReportView, self).get_context_data(**kwargs)
+        ctx = super().get_context_data(**kwargs)
         ctx['title'] = 'Deferred income report'
         return ctx
 
@@ -391,14 +389,13 @@ class ProfitLossReportView(generic.FormView):
     def get(self, request, *args, **kwargs):
         if self.is_form_submitted():
             return self.validate()
-        return super(ProfitLossReportView, self).get(request, *args,
-                                                     **kwargs)
+        return super().get(request, *args, **kwargs)
 
     def is_form_submitted(self):
         return 'start_date' in self.request.GET
 
     def get_context_data(self, **kwargs):
-        ctx = super(ProfitLossReportView, self).get_context_data(**kwargs)
+        ctx = super().get_context_data(**kwargs)
         ctx['title'] = 'Profit and loss report'
         return ctx
 

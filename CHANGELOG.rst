@@ -2,6 +2,12 @@
 Changelog
 =========
 
+2.0 (2019-08-12)
+----------------
+- Added support for Oscar 2.
+- Dropped support for Oscar 1.6 and lower, and dropped support for Python 2.
+
+
 1.0 (2018-10-14)
 ---------------
 - Added support for Oscar 1.6 and Django 1.11, 2.0 and 2.1.

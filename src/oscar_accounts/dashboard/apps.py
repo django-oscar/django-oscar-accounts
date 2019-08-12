@@ -1,27 +1,32 @@
 from django.conf.urls import url
-from oscar.core.application import Application
+from oscar.core.application import OscarDashboardConfig
+from oscar.core.loading import get_class
 
-from oscar_accounts.dashboard import views
 
+class AccountsDashboardConfig(OscarDashboardConfig):
 
-class AccountsDashboardApplication(Application):
-    name = None
-    default_permissions = ['is_staff', ]
+    name = 'oscar_accounts.dashboard'
+    label = 'accounts_dashboard'
 
-    account_list_view = views.AccountListView
-    account_create_view = views.AccountCreateView
-    account_update_view = views.AccountUpdateView
-    account_transactions_view = views.AccountTransactionsView
-    account_freeze_view = views.AccountFreezeView
-    account_thaw_view = views.AccountThawView
-    account_top_up_view = views.AccountTopUpView
-    account_withdraw_view = views.AccountWithdrawView
+    namespace = 'accounts_dashboard'
 
-    transfer_list_view = views.TransferListView
-    transfer_detail_view = views.TransferDetailView
+    default_permissions = ['is_staff']
 
-    report_deferred_income = views.DeferredIncomeReportView
-    report_profit_loss = views.ProfitLossReportView
+    def ready(self):
+        self.account_list_view = get_class('oscar_accounts.dashboard.views', 'AccountListView')
+        self.account_create_view = get_class('oscar_accounts.dashboard.views', 'AccountCreateView')
+        self.account_update_view = get_class('oscar_accounts.dashboard.views', 'AccountUpdateView')
+        self.account_transactions_view = get_class('oscar_accounts.dashboard.views', 'AccountTransactionsView')
+        self.account_freeze_view = get_class('oscar_accounts.dashboard.views', 'AccountFreezeView')
+        self.account_thaw_view = get_class('oscar_accounts.dashboard.views', 'AccountThawView')
+        self.account_top_up_view = get_class('oscar_accounts.dashboard.views', 'AccountTopUpView')
+        self.account_withdraw_view = get_class('oscar_accounts.dashboard.views', 'AccountWithdrawView')
+
+        self.transfer_list_view = get_class('oscar_accounts.dashboard.views', 'TransferListView')
+        self.transfer_detail_view = get_class('oscar_accounts.dashboard.views', 'TransferDetailView')
+
+        self.report_deferred_income = get_class('oscar_accounts.dashboard.views', 'DeferredIncomeReportView')
+        self.report_profit_loss = get_class('oscar_accounts.dashboard.views', 'ProfitLossReportView')
 
     def get_urls(self):
         urls = [
@@ -55,6 +60,3 @@ class AccountsDashboardApplication(Application):
                 name='report-profit-loss'),
         ]
         return self.post_process_urls(urls)
-
-
-application = AccountsDashboardApplication()

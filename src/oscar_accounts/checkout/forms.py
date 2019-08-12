@@ -13,7 +13,7 @@ class ValidAccountForm(forms.Form):
 
     def __init__(self, user, *args, **kwargs):
         self.user = user
-        super(ValidAccountForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def clean_code(self):
         code = self.cleaned_data['code'].strip().upper()
@@ -58,7 +58,7 @@ class AllocationForm(forms.Form):
         self.allocations = allocations
         self.max_allocation = self.get_max_amount()
         initial = {'amount': self.max_allocation}
-        super(AllocationForm, self).__init__(initial=initial, *args, **kwargs)
+        super().__init__(initial=initial, *args, **kwargs)
         if self.account.product_range:
             self.fields['amount'].help_text = (
                 "Restrictions apply to which products can be paid for")
