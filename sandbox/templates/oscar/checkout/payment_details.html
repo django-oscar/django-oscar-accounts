@@ -42,7 +42,7 @@
 		<form action="." method="post">
 			{% csrf_token %}
 			<input type="hidden" name="action" value="select_account" />
-			{% include 'partials/form_fields.html' with form=account_form %}
+			{% include 'oscar/partials/form_fields.html' with form=account_form %}
 			<button type="submit" class="btn btn-primary">{% trans "Check balance" %}</button>
 		</form>
 	{% endif %}
@@ -83,7 +83,7 @@
 			{{ account_form.as_p }}
 		</div>
 		<input type="hidden" name="action" value="allocate" />
-		{% include 'partials/form_fields.html' with form=allocation_form %}
+		{% include 'oscar/partials/form_fields.html' with form=allocation_form %}
 		<button type="submit" class="btn btn-primary btn-large">{% trans "Allocate" %}</button>{% trans "or" %}
 		<a href="{% url 'checkout:payment-details' %}">{% trans "cancel" %}</a>.
 	</form>

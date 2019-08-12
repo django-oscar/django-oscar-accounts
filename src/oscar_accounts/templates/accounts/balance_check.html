@@ -1,4 +1,4 @@
-{% extends "layout.html" %}
+{% extends "oscar/layout.html" %}
 {% load currency_filters %}
 {% load i18n %}
 
@@ -9,7 +9,7 @@
 {% block breadcrumbs %}
     <ul class="breadcrumb">
         <li>
-            <a href="{% url 'promotions:home' %}">{% trans 'Home' %}</a>
+            <a href="{% url 'home' %}">{% trans 'Home' %}</a>
             <span class="divider">/</span>
         </li>
         <li class="active">{% trans 'Accounts' %}</li>
@@ -25,7 +25,7 @@
     {% else %}
         <form action="." method="post" class="form-horizontal">
             {% csrf_token %}
-            {% include 'partials/form_fields.html' %}
+            {% include 'oscar/partials/form_fields.html' %}
             <button type="submit" class="btn btn-large">{% trans "Fetch account details" %}</button>
         </form>
     {% endif %}

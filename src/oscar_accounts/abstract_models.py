@@ -6,8 +6,7 @@ from django.db import models, transaction
 from django.db.models import Sum
 from django.urls import reverse
 from django.utils import six, timezone
-from django.utils.encoding import python_2_unicode_compatible
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from oscar.core.compat import AUTH_USER_MODEL
 from treebeard.mp_tree import MP_Node
 
@@ -18,7 +17,7 @@ class ActiveAccountManager(models.Manager):
 
     def get_queryset(self):
         now = timezone.now()
-        qs = super(ActiveAccountManager, self).get_queryset()
+        qs = super().get_queryset()
         return qs.filter(
             models.Q(start_date__lte=now) | models.Q(start_date=None)).filter(
                 models.Q(end_date__gte=now) | models.Q(end_date=None)
@@ -29,11 +28,10 @@ class ExpiredAccountManager(models.Manager):
 
     def get_queryset(self):
         now = timezone.now()
-        qs = super(ExpiredAccountManager, self).get_queryset()
+        qs = super().get_queryset()
         return qs.filter(end_date__lt=now)
 
 
-@python_2_unicode_compatible
 class AccountType(MP_Node):
     code = models.CharField(max_length=128, unique=True, null=True, blank=True)
     name = models.CharField(max_length=128)
@@ -51,7 +49,6 @@ class AccountType(MP_Node):
         return " / ".join(names)
 
 
-@python_2_unicode_compatible
 class Account(models.Model):
     # Metadata
     name = models.CharField(
@@ -252,9 +249,9 @@ class Account(models.Model):
             'end_date': '',
             'status': self.status,
             'balance': "%.2f" % self.balance,
-            'redemptions_url': reverse('account-redemptions',
+            'redemptions_url': reverse('oscar_accounts_api:account-redemptions',
                                        kwargs={'code': self.code}),
-            'refunds_url': reverse('account-refunds',
+            'refunds_url': reverse('oscar_accounts_api:account-refunds',
                                    kwargs={'code': self.code})}
 
         if self.start_date:
@@ -322,7 +319,6 @@ class PostingManager(models.Manager):
                 msg % (amount, source.id))
 
 
-@python_2_unicode_compatible
 class Transfer(models.Model):
     """
     A transfer of funds between two accounts.
@@ -378,10 +374,10 @@ class Transfer(models.Model):
             self.username = self.user.get_username()
         # We generate a transaction reference using the PK of the transfer so
         # we save the transfer first
-        super(Transfer, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
         if not self.reference:
             self.reference = self._generate_reference()
-            super(Transfer, self).save()
+            super().save()
 
     def _generate_reference(self):
         obj = hmac.new(key=settings.SECRET_KEY.encode(),
@@ -418,14 +414,13 @@ class Transfer(models.Model):
             'merchant_reference': self.merchant_reference,
             'description': self.description,
             'reverse_url': reverse(
-                'transfer-reverse',
+                'oscar_accounts_api:transfer-reverse',
                 kwargs={'reference': self.reference}),
             'refunds_url': reverse(
-                'transfer-refunds',
+                'oscar_accounts_api:transfer-refunds',
                 kwargs={'reference': self.reference})}
 
 
-@python_2_unicode_compatible
 class Transaction(models.Model):
     # Every transfer of money should create two rows in this table.
     # (a) the debit from the source account
@@ -452,7 +447,6 @@ class Transaction(models.Model):
         raise RuntimeError("Transactions cannot be deleted")
 
 
-@python_2_unicode_compatible
 class IPAddressRecord(models.Model):
     ip_address = models.GenericIPAddressField(_("IP address"), unique=True)
     total_failures = models.PositiveIntegerField(default=0)

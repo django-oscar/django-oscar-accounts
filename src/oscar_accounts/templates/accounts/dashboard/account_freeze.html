@@ -1,4 +1,4 @@
-{% extends 'dashboard/layout.html' %}
+{% extends 'oscar/dashboard/layout.html' %}
 {% load currency_filters %}
 {% load i18n %}
 
@@ -12,10 +12,10 @@
 		<a href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a>
     </li>
     <li>
-		<a href="{% url 'accounts-list' %}">{% trans "Accounts" %}</a>
+		<a href="{% url 'accounts_dashboard:accounts-list' %}">{% trans "Accounts" %}</a>
     </li>
     <li>
-        <a href="{% url 'accounts-detail' account.id %}">{{ account }}</a>
+        <a href="{% url 'accounts_dashboard:accounts-detail' account.id %}">{{ account }}</a>
     </li>
 	<li class="active">{% trans "Freeze" %}</li>
 </ul>
@@ -30,6 +30,6 @@
         {% csrf_token %}
         {{ form.as_p }}
         <button type="submit" class="btn btn-large btn-danger">{% trans "Freeze" %}</button>
-        {% trans "or" %} <a href="{% url 'accounts-list' %}">{% trans "cancel" %}</a>.
+        {% trans "or" %} <a href="{% url 'accounts_dashboard:accounts-list' %}">{% trans "cancel" %}</a>.
     </form>
 {% endblock dashboard_content %}

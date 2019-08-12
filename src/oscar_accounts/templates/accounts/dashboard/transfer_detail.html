@@ -1,4 +1,4 @@
-{% extends 'dashboard/layout.html' %}
+{% extends 'oscar/dashboard/layout.html' %}
 {% load currency_filters %}
 {% load i18n %}
 
@@ -12,7 +12,7 @@
 		<a href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a>
     </li>
     <li>
-		<a href="{% url 'accounts-list' %}">{% trans "Accounts" %}</a>
+		<a href="{% url 'accounts_dashboard:accounts-list' %}">{% trans "Accounts" %}</a>
     </li>
     <li>
 		<a href="{% url 'transfers-list' %}">{% trans "Transfers" %}</a>
@@ -37,11 +37,11 @@
                 </tr>
                 <tr>
                     <th>{% trans "Source" %}</th>
-                    <td><a href="{% url 'accounts-detail' transfer.source.id %}">{{ transfer.source }}</a></td>
+                    <td><a href="{% url 'accounts_dashboard:accounts-detail' transfer.source.id %}">{{ transfer.source }}</a></td>
                 </tr>
                 <tr>
                     <th>{% trans "Destination" %}</th>
-                    <td><a href="{% url 'accounts-detail' transfer.destination.id %}">{{ transfer.destination }}</a></td>
+                    <td><a href="{% url 'accounts_dashboard:accounts-detail' transfer.destination.id %}">{{ transfer.destination }}</a></td>
                 </tr>
                 <tr>
                     <th>{% trans "Amount" %}</th>

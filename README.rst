@@ -97,23 +97,10 @@ Install using pip:
 
 	pip install django-oscar-accounts
 
-and add `oscar_accounts` to `INSTALLED_APPS`.  Runnning ``manage.py migrate
+and add `oscar_accounts` to `INSTALLED_APPS`.  Running ``manage.py migrate
 oscar_accounts`` will create the appropriate database tables. To create initial
 some core accounts and account-types use ``manage.py oscar_accounts_init``.
 The names of these accounts can be controlled using settings (see below).
-
-If running with Oscar, add an additional path to your `TEMPLATE_DIRS`:
-
-.. code-block:: python
-
-    from accounts import TEMPLATE_DIR as ACCOUNTS_TEMPLATE_DIR
-
-    TEMPLATE_DIRS = (
-        ...
-        ACCOUNTS_TEMPLATE_DIR)
-
-This allows the templates to be customised by overriding blocks instead of
-replacing the entire template.
 
 In order to make the accounts accessible via the Oscar dashboard you need to
 append it to your `OSCAR_DASHBOARD_NAVIGATION`
@@ -151,13 +138,13 @@ Furthermore you need to add the url-pattern to your `urls.py`
 
 .. code-block:: python
 
-    from oscar_accounts.dashboard.app import application as accounts_app
+    from django.apps import apps
 
     # ...
 
     urlpatterns = [
         ...
-        url(r'^dashboard/accounts/', accounts_app.urls),
+        url(r'^dashboard/accounts/', apps.get_app_config('oscar_accounts').urls),
     ]
 
 
@@ -178,9 +165,11 @@ Create account instances using the manager:
     from decimal import Decimal
     import datetime
 
-    from django.contrib.auth.models import User
+    from django.contrib.auth import get_user_model
 
     from oscar_accounts import models
+
+    User = get_user_model()
 
     anonymous_account = models.Account.objects.create()
 

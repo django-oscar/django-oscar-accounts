@@ -2,12 +2,13 @@ import base64
 import json
 from decimal import Decimal as D
 
-from oscar_accounts import models
 from django import test
 from django.contrib.auth.models import User
-from django.urls import reverse
 from django.test.client import Client
+from django.urls import reverse
 
+from freezegun import freeze_time
+from oscar_accounts import models
 from oscar_accounts.setup import create_default_accounts
 
 USERNAME, PASSWORD = 'client', 'password'
@@ -44,6 +45,7 @@ def to_json(response):
     return json.loads(response.content.decode('utf-8'))
 
 
+@freeze_time('2019-01-01')
 class TestCreatingAnAccountErrors(test.TestCase):
 
     def setUp(self):
@@ -57,21 +59,21 @@ class TestCreatingAnAccountErrors(test.TestCase):
     def test_missing_dates(self):
         payload = self.payload.copy()
         del payload['start_date']
-        response = post(reverse('accounts'), payload)
+        response = post(reverse('oscar_accounts_api:accounts'), payload)
         self.assertEqual(400, response.status_code)
         self.assertTrue('message' in to_json(response))
 
     def test_timezone_naive_start_date(self):
         payload = self.payload.copy()
         payload['start_date'] = '2013-01-01T09:00:00'
-        response = post(reverse('accounts'), payload)
+        response = post(reverse('oscar_accounts_api:accounts'), payload)
         self.assertEqual(400, response.status_code)
         self.assertTrue('message' in to_json(response))
 
     def test_timezone_naive_end_date(self):
         payload = self.payload.copy()
         payload['end_date'] = '2013-06-01T09:00:00'
-        response = post(reverse('accounts'), payload)
+        response = post(reverse('oscar_accounts_api:accounts'), payload)
         self.assertEqual(400, response.status_code)
         self.assertTrue('message' in to_json(response))
 
@@ -79,21 +81,21 @@ class TestCreatingAnAccountErrors(test.TestCase):
         payload = self.payload.copy()
         payload['start_date'] = '2013-06-01T09:00:00+03:00'
         payload['end_date'] = '2013-01-01T09:00:00+03:00'
-        response = post(reverse('accounts'), payload)
+        response = post(reverse('oscar_accounts_api:accounts'), payload)
         self.assertEqual(400, response.status_code)
         self.assertTrue('message' in to_json(response))
 
     def test_invalid_amount(self):
         payload = self.payload.copy()
         payload['amount'] = 'silly'
-        response = post(reverse('accounts'), payload)
+        response = post(reverse('oscar_accounts_api:accounts'), payload)
         self.assertEqual(400, response.status_code)
         self.assertTrue('message' in to_json(response))
 
     def test_negative_amount(self):
         payload = self.payload.copy()
         payload['amount'] = '-100'
-        response = post(reverse('accounts'), payload)
+        response = post(reverse('oscar_accounts_api:accounts'), payload)
         self.assertEqual(400, response.status_code)
         self.assertTrue('message' in to_json(response))
 
@@ -101,7 +103,7 @@ class TestCreatingAnAccountErrors(test.TestCase):
         payload = self.payload.copy()
         payload['amount'] = '1.00'
         with self.settings(ACCOUNTS_MIN_LOAD_VALUE=D('25.00')):
-            response = post(reverse('accounts'), payload)
+            response = post(reverse('oscar_accounts_api:accounts'), payload)
         self.assertEqual(403, response.status_code)
         data = to_json(response)
         self.assertEqual('C101', data['code'])
@@ -110,12 +112,13 @@ class TestCreatingAnAccountErrors(test.TestCase):
         payload = self.payload.copy()
         payload['amount'] = '5000.00'
         with self.settings(ACCOUNTS_MAX_ACCOUNT_VALUE=D('500.00')):
-            response = post(reverse('accounts'), payload)
+            response = post(reverse('oscar_accounts_api:accounts'), payload)
         self.assertEqual(403, response.status_code)
         data = to_json(response)
         self.assertEqual('C102', data['code'])
 
 
+@freeze_time('2019-01-01')
 class TestSuccessfullyCreatingAnAccount(test.TestCase):
 
     def setUp(self):
@@ -128,7 +131,7 @@ class TestSuccessfullyCreatingAnAccount(test.TestCase):
         }
         # Submit request to create a new account, then fetch the detail
         # page that is returned.
-        self.create_response = post(reverse('accounts'), self.payload)
+        self.create_response = post(reverse('oscar_accounts_api:accounts'), self.payload)
         if 'Location' in self.create_response:
             self.detail_response = get(
                 self.create_response['Location'])
@@ -163,6 +166,7 @@ class TestSuccessfullyCreatingAnAccount(test.TestCase):
         self.assertTrue('refunds_url' in self.payload)
 
 
+@freeze_time('2019-01-01')
 class TestMakingARedemption(test.TestCase):
 
     def setUp(self):
@@ -173,7 +177,7 @@ class TestMakingARedemption(test.TestCase):
             'amount': '400.00',
             'account_type': 'Test accounts',
         }
-        self.create_response = post(reverse('accounts'), self.create_payload)
+        self.create_response = post(reverse('oscar_accounts_api:accounts'), self.create_payload)
         self.assertEqual(201, self.create_response.status_code)
         self.detail_response = get(self.create_response['Location'])
         redemption_url = to_json(self.detail_response)['redemptions_url']
@@ -219,12 +223,15 @@ class TestMakingARedemption(test.TestCase):
 class TestTransferView(test.TestCase):
 
     def test_returns_404_for_missing_transfer(self):
-        url = reverse('transfer', kwargs={'reference':
-                                          '12345678123456781234567812345678'})
+        url = reverse(
+            'oscar_accounts_api:transfer',
+            kwargs={'reference': '12345678123456781234567812345678'}
+        )
         response = get(url)
         self.assertEqual(404, response.status_code)
 
 
+@freeze_time('2019-01-01')
 class TestMakingARedemptionThenRefund(test.TestCase):
 
     def setUp(self):
@@ -236,7 +243,7 @@ class TestMakingARedemptionThenRefund(test.TestCase):
             'account_type': 'Test accounts',
         }
         self.create_response = post(
-            reverse('accounts'), self.create_payload)
+            reverse('oscar_accounts_api:accounts'), self.create_payload)
         self.detail_response = get(self.create_response['Location'])
 
         self.redeem_payload = {
@@ -267,6 +274,7 @@ class TestMakingARedemptionThenRefund(test.TestCase):
         self.assertEqual(201, self.refund_response.status_code)
 
 
+@freeze_time('2019-01-01')
 class TestMakingARedemptionThenReverse(test.TestCase):
 
     def setUp(self):
@@ -277,7 +285,7 @@ class TestMakingARedemptionThenReverse(test.TestCase):
             'amount': '400.00',
             'account_type': 'Test accounts',
         }
-        self.create_response = post(reverse('accounts'), self.create_payload)
+        self.create_response = post(reverse('oscar_accounts_api:accounts'), self.create_payload)
         self.detail_response = get(self.create_response['Location'])
         account_dict = to_json(self.detail_response)
         self.redeem_payload = {
@@ -297,6 +305,7 @@ class TestMakingARedemptionThenReverse(test.TestCase):
         self.assertEqual(201, self.reverse_response.status_code)
 
 
+@freeze_time('2019-01-01')
 class TestMakingARedemptionThenTransferRefund(test.TestCase):
 
     def setUp(self):
@@ -308,7 +317,7 @@ class TestMakingARedemptionThenTransferRefund(test.TestCase):
             'account_type': 'Test accounts',
         }
         self.create_response = post(
-            reverse('accounts'), self.create_payload)
+            reverse('oscar_accounts_api:accounts'), self.create_payload)
         self.detail_response = get(self.create_response['Location'])
         account_dict = to_json(self.detail_response)
 

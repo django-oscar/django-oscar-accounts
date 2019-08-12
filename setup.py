@@ -2,15 +2,15 @@
 from setuptools import find_packages, setup
 
 install_requires = [
-    'django>=1.11,<2.2',
-    'django-oscar>=1.6',
+    'django>=1.11,<2.3',
+    'django-oscar>=2.0',
     'python-dateutil>=2.6,<3.0',
 ]
 
 tests_require = [
     'django-webtest==1.9.3',
     'pytest-cov>=2.5,<2.6',
-    'pytest-django>=3.2,<3.3',
+    'pytest-django>=3.5,<3.6',
 ]
 
 
@@ -35,11 +35,10 @@ setup(
         'License :: OSI Approved :: BSD License',
         'Operating System :: Unix',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
     ],
     install_requires=install_requires,
     tests_require=tests_require,

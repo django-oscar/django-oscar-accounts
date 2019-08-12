@@ -26,7 +26,7 @@ class InvalidPayload(Exception):
 class ValidationError(Exception):
     def __init__(self, code, *args, **kwargs):
         self.code = code
-        super(ValidationError, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
 
 class JSONView(generic.View):
@@ -166,7 +166,7 @@ class AccountsView(JSONView):
                 msg=e.message)
         else:
             return self.created(
-                reverse('account', kwargs={'code': account.code}),
+                reverse('oscar_accounts_api:account', kwargs={'code': account.code}),
                 account.as_dict())
 
     def create_account(self, payload):
@@ -226,7 +226,7 @@ class AccountRedemptionsView(JSONView):
                 code=errors.CANNOT_CREATE_TRANSFER,
                 msg=e.message)
         return self.created(
-            reverse('transfer', kwargs={'reference': transfer.reference}),
+            reverse('oscar_accounts_api:transfer', kwargs={'reference': transfer.reference}),
             transfer.as_dict())
 
 
@@ -257,7 +257,7 @@ class AccountRefundsView(JSONView):
                 code=errors.CANNOT_CREATE_TRANSFER,
                 msg=e.message)
         return self.created(
-            reverse('transfer', kwargs={'reference': transfer.reference}),
+            reverse('oscar_accounts_api:transfer', kwargs={'reference': transfer.reference}),
             transfer.as_dict())
 
 
@@ -284,7 +284,7 @@ class TransferReverseView(JSONView):
                 code=errors.CANNOT_CREATE_TRANSFER,
                 msg=e.message)
         return self.created(
-            reverse('transfer', kwargs={'reference': transfer.reference}),
+            reverse('oscar_accounts_api:transfer', kwargs={'reference': transfer.reference}),
             transfer.as_dict())
 
 
@@ -322,5 +322,5 @@ class TransferRefundsView(JSONView):
                 code=errors.CANNOT_CREATE_TRANSFER,
                 msg=e.message)
         return self.created(
-            reverse('transfer', kwargs={'reference': transfer.reference}),
+            reverse('oscar_accounts_api:transfer', kwargs={'reference': transfer.reference}),
             transfer.as_dict())

@@ -1,10 +1,8 @@
 import os
 from decimal import Decimal as D
 
-from oscar import OSCAR_MAIN_TEMPLATE_DIR, get_core_apps
-from oscar.defaults import *  # noqa
-
-from oscar_accounts import TEMPLATE_DIR as ACCOUNTS_TEMPLATE_DIR
+import oscar
+from oscar.defaults import *    # noqa
 
 PROJECT_DIR = os.path.dirname(__file__)
 location = lambda x: os.path.join(os.path.dirname(os.path.realpath(__file__)), x)
@@ -62,7 +60,7 @@ MEDIA_URL = '/media/'
 # URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
 # trailing slash.
 # Examples: "http://foo.com/media/", "/media/".
-#ADMIN_MEDIA_PREFIX = '/media/admin/'
+# ADMIN_MEDIA_PREFIX = '/media/admin/'
 
 STATIC_URL = '/static/'
 STATIC_ROOT = location("static")
@@ -92,11 +90,7 @@ ROOT_URLCONF = 'urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [
-            location('templates'),
-            OSCAR_MAIN_TEMPLATE_DIR,
-            ACCOUNTS_TEMPLATE_DIR,
-        ],
+        'DIRS': [location('templates'),],
         'OPTIONS': {
             'loaders': [
                 'django.template.loaders.filesystem.Loader',
@@ -112,7 +106,6 @@ TEMPLATES = [
                 "django.contrib.messages.context_processors.messages",
                 # Oscar specific
                 'oscar.apps.search.context_processors.search_form',
-                'oscar.apps.promotions.context_processors.promotions',
                 'oscar.apps.checkout.context_processors.checkout',
                 'oscar.core.context_processors.metadata',
             ],
@@ -169,18 +162,13 @@ LOGGING = {
 
 
 INSTALLED_APPS = [
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.sites',
-    'django.contrib.messages',
-    'django.contrib.admin',
-    'django.contrib.flatpages',
-    'django.contrib.staticfiles',
+    'oscar_accounts.apps.AccountsConfig',
+    'oscar_accounts.dashboard.apps.AccountsDashboardConfig',
+    'sorl.thumbnail',
+] + oscar.INSTALLED_APPS
 
-    # External apps
-    'widget_tweaks',
-] + get_core_apps(['apps.shipping']) + ['oscar_accounts']
+INSTALLED_APPS[INSTALLED_APPS.index('oscar.apps.shipping')] = 'apps.shipping.apps.ShippingConfig'
+INSTALLED_APPS[INSTALLED_APPS.index('oscar.apps.checkout')] = 'apps.checkout.apps.CheckoutConfig'
 
 AUTHENTICATION_BACKENDS = (
     'oscar.apps.customer.auth_backends.EmailBackend',
@@ -204,26 +192,26 @@ USE_TZ = True
 # Accounts settings
 # =================
 
-OSCAR_DASHBOARD_NAVIGATION.append(
+OSCAR_DASHBOARD_NAVIGATION.append(      # noqa F405
     {
         'label': 'Accounts',
         'icon': 'icon-globe',
         'children': [
             {
                 'label': 'Accounts',
-                'url_name': 'accounts-list',
+                'url_name': 'accounts_dashboard:accounts-list',
             },
             {
                 'label': 'Transfers',
-                'url_name': 'transfers-list',
+                'url_name': 'accounts_dashboard:transfers-list',
             },
             {
                 'label': 'Deferred income report',
-                'url_name': 'report-deferred-income',
+                'url_name': 'accounts_dashboard:report-deferred-income',
             },
             {
                 'label': 'Profit/loss report',
-                'url_name': 'report-profit-loss',
+                'url_name': 'accounts_dashboard:report-profit-loss',
             },
         ]
     })
@@ -234,6 +222,6 @@ ACCOUNTS_MIN_LOAD_VALUE = D('30.00')
 ACCOUNTS_MAX_ACCOUNT_VALUE = D('1000.00')
 
 try:
-    from settings_local import *
+    from settings_local import *        # noqa
 except ImportError:
     pass
