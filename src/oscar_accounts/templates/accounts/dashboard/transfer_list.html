@@ -28,7 +28,7 @@
         <form class="form-inline" method="get" action=".">
             {% include 'oscar/dashboard/partials/form_fields_inline.html' %}
             <button type="submit" class="btn btn-primary">{% trans "Search" %}</button>
-            or <a href="{% url 'transfers-list' %}">{% trans "reset" %}</a>.
+            or <a href="{% url 'accounts_dashboard:transfers-list' %}">{% trans "reset" %}</a>.
         </form>
     </div>
 </div>

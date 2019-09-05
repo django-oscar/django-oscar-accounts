@@ -15,7 +15,7 @@
 		<a href="{% url 'accounts_dashboard:accounts-list' %}">{% trans "Accounts" %}</a>
     </li>
     <li>
-		<a href="{% url 'transfers-list' %}">{% trans "Transfers" %}</a>
+		<a href="{% url 'accounts_dashboard:transfers-list' %}">{% trans "Transfers" %}</a>
     </li>
 	<li class="active">{{ transfer.reference }}</li>
 </ul>
