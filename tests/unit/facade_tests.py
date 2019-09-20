@@ -1,12 +1,12 @@
 from decimal import Decimal as D
+from unittest import mock
 
 from django.db.models import Sum
 from django.test import TestCase, TransactionTestCase
 from oscar.test.factories import UserFactory
-import mock
 
-from oscar_accounts import facade, exceptions
-from oscar_accounts.models import Account, Transfer, Transaction
+from oscar_accounts import exceptions, facade
+from oscar_accounts.models import Account, Transaction, Transfer
 from oscar_accounts.test_factories import AccountFactory
 
 

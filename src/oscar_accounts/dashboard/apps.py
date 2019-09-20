@@ -1,27 +1,32 @@
 from django.conf.urls import url
-from oscar.core.application import Application
-
-from oscar_accounts.dashboard import views
+from oscar.core.application import OscarDashboardConfig
 
 
-class AccountsDashboardApplication(Application):
-    name = None
-    default_permissions = ['is_staff', ]
+class AccountsDashboardConfig(OscarDashboardConfig):
 
-    account_list_view = views.AccountListView
-    account_create_view = views.AccountCreateView
-    account_update_view = views.AccountUpdateView
-    account_transactions_view = views.AccountTransactionsView
-    account_freeze_view = views.AccountFreezeView
-    account_thaw_view = views.AccountThawView
-    account_top_up_view = views.AccountTopUpView
-    account_withdraw_view = views.AccountWithdrawView
+    name = 'oscar_accounts.dashboard'
+    label = 'accounts_dashboard'
 
-    transfer_list_view = views.TransferListView
-    transfer_detail_view = views.TransferDetailView
+    namespace = 'accounts_dashboard'
 
-    report_deferred_income = views.DeferredIncomeReportView
-    report_profit_loss = views.ProfitLossReportView
+    default_permissions = ['is_staff']
+
+    def ready(self):
+        from . import views
+        self.account_list_view = views.AccountListView
+        self.account_create_view = views.AccountCreateView
+        self.account_update_view = views.AccountUpdateView
+        self.account_transactions_view = views.AccountTransactionsView
+        self.account_freeze_view = views.AccountFreezeView
+        self.account_thaw_view = views.AccountThawView
+        self.account_top_up_view = views.AccountTopUpView
+        self.account_withdraw_view = views.AccountWithdrawView
+
+        self.transfer_list_view = views.TransferListView
+        self.transfer_detail_view = views.TransferDetailView
+
+        self.report_deferred_income = views.DeferredIncomeReportView
+        self.report_profit_loss = views.ProfitLossReportView
 
     def get_urls(self):
         urls = [
@@ -55,6 +60,3 @@ class AccountsDashboardApplication(Application):
                 name='report-profit-loss'),
         ]
         return self.post_process_urls(urls)
-
-
-application = AccountsDashboardApplication()

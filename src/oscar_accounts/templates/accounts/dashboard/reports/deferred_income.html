@@ -1,4 +1,4 @@
-{% extends 'dashboard/layout.html' %}
+{% extends 'oscar/dashboard/layout.html' %}
 {% load currency_filters %}
 {% load i18n %}
 
@@ -12,7 +12,7 @@
 		<a href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a>
     </li>
     <li>
-		<a href="{% url 'accounts-list' %}">{% trans "Accounts" %}</a>
+		<a href="{% url 'accounts_dashboard:accounts-list' %}">{% trans "Accounts" %}</a>
     </li>
 	<li class="active">{{ title }}</li>
 </ul>
@@ -26,7 +26,7 @@
     <div class="panel-heading">{% trans "Search" %}</div>
     <div class="panel-body">
         <form class="form-inline" action="." method="get">
-            {% include 'dashboard/partials/form_fields_inline.html' with form=form %}
+            {% include 'oscar/dashboard/partials/form_fields_inline.html' with form=form %}
             <button type="submit" class="btn btn-primary" data-loading-text="{% trans 'Fetching...' %}">{% trans "Fetch report" %}</button>
         </form>
     </div>

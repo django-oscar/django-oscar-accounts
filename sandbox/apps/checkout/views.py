@@ -1,5 +1,3 @@
-from decimal import Decimal as D
-
 from django import http
 from django.contrib import messages
 from django.urls import reverse
@@ -19,7 +17,7 @@ class PaymentDetailsView(views.PaymentDetailsView):
     # Override core methods
 
     def get_context_data(self, **kwargs):
-        ctx = super(PaymentDetailsView, self).get_context_data(**kwargs)
+        ctx = super().get_context_data(**kwargs)
 
         # Add variable to indicate if the user is blocked from paying with
         # accounts.
@@ -51,7 +49,7 @@ class PaymentDetailsView(views.PaymentDetailsView):
             return self.add_allocation(request)
         elif action == 'remove_allocation':
             return self.remove_allocation(request)
-        return super(PaymentDetailsView, self).post(request, *args, **kwargs)
+        return super().post(request, *args, **kwargs)
 
     def handle_payment(self, order_number, total, **kwargs):
         # Override payment method to use accounts to pay for the order

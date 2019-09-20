@@ -1,4 +1,4 @@
-{% extends 'dashboard/layout.html' %}
+{% extends 'oscar/dashboard/layout.html' %}
 {% load currency_filters %}
 {% load i18n %}
 
@@ -12,7 +12,7 @@
 		<a href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a>
     </li>
     <li>
-		<a href="{% url 'accounts-list' %}">{% trans "Accounts" %}</a>
+		<a href="{% url 'accounts_dashboard:accounts-list' %}">{% trans "Accounts" %}</a>
     </li>
     <li class="active">{{ account }}</li>
 </ul>
@@ -21,13 +21,13 @@
 {% block header %}
 <div class="page-header">
     <span class="pull-right">
-        <a class="btn btn-primary" href="{% url 'accounts-update' account.id %}">{% trans "Edit" %}</a>
-        <a href="{% url 'accounts-top-up' account.id %}" class="btn btn-primary">{% trans "Top-up" %}</a>
-        <a href="{% url 'accounts-withdraw' account.id %}" class="btn btn-primary">{% trans "Withdraw" %}</a>
+        <a class="btn btn-primary" href="{% url 'accounts_dashboard:accounts-update' account.id %}">{% trans "Edit" %}</a>
+        <a href="{% url 'accounts_dashboard:accounts-top-up' account.id %}" class="btn btn-primary">{% trans "Top-up" %}</a>
+        <a href="{% url 'accounts_dashboard:accounts-withdraw' account.id %}" class="btn btn-primary">{% trans "Withdraw" %}</a>
         {% if not account.is_frozen %}
-        <a href="{% url 'accounts-freeze' account.id %}" class="btn btn-danger">{% trans "Freeze" %}</a>
+        <a href="{% url 'accounts_dashboard:accounts-freeze' account.id %}" class="btn btn-danger">{% trans "Freeze" %}</a>
         {% else %}
-        <a href="{% url 'accounts-thaw' account.id %}" class="btn btn-success">{% trans "Thaw" %}</a>
+        <a href="{% url 'accounts_dashboard:accounts-thaw' account.id %}" class="btn btn-success">{% trans "Thaw" %}</a>
         {% endif %}
     </span>
 	<h1>{{ account }}</h1>
@@ -55,7 +55,7 @@
             <tbody>
                 {% for txn in transactions %}
                 <tr>
-                    <td><a href="{% url 'transfers-detail' txn.transfer.reference %}">{{ txn.transfer }}</a></td>
+                    <td><a href="{% url 'accounts_dashboard:transfers-detail' txn.transfer.reference %}">{{ txn.transfer }}</a></td>
                     <td>{{ txn.amount|currency }}</td>
                     <td>{{ txn.transfer.description|default:"-" }}</td>
                     <td>{{ txn.transfer.user|default:"-" }}</td>
@@ -64,7 +64,7 @@
                 {% endfor %}
             </tbody>
         </table>
-        {% include "dashboard/partials/pagination.html" %}
+        {% include "oscar/dashboard/partials/pagination.html" %}
         {% else %}
         <p>{% trans "No transactions." %}</p>
         {% endif %}

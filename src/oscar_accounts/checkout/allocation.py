@@ -1,5 +1,5 @@
-from decimal import Decimal as D
 import json
+from decimal import Decimal as D
 
 
 class Allocations(object):
