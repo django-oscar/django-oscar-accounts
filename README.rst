@@ -116,19 +116,19 @@ append it to your `OSCAR_DASHBOARD_NAVIGATION`
             'children': [
                 {
                     'label': 'Accounts',
-                    'url_name': 'accounts-list',
+                    'url_name': 'accounts_dashboard:accounts-list',
                 },
                 {
                     'label': 'Transfers',
-                    'url_name': 'transfers-list',
+                    'url_name': 'accounts_dashboard:transfers-list',
                 },
                 {
                     'label': 'Deferred income report',
-                    'url_name': 'report-deferred-income',
+                    'url_name': 'accounts_dashboard:report-deferred-income',
                 },
                 {
                     'label': 'Profit/loss report',
-                    'url_name': 'report-profit-loss',
+                    'url_name': 'accounts_dashboard:report-profit-loss',
                 },
             ]
         })
