@@ -97,7 +97,7 @@ Install using pip:
 
 	pip install django-oscar-accounts
 
-and add `oscar_accounts` to `INSTALLED_APPS`.  Running ``manage.py migrate
+and add `oscar_accounts.apps.AccountsConfig` and `oscar_accounts.dashboard.apps.AccountsDashboardConfig` to `INSTALLED_APPS`.  Running ``manage.py migrate
 oscar_accounts`` will create the appropriate database tables. To create initial
 some core accounts and account-types use ``manage.py oscar_accounts_init``.
 The names of these accounts can be controlled using settings (see below).
@@ -144,7 +144,7 @@ Furthermore you need to add the url-pattern to your `urls.py`
 
     urlpatterns = [
         ...
-        url(r'^dashboard/accounts/', apps.get_app_config('oscar_accounts').urls),
+        url(r'^dashboard/accounts/', apps.get_app_config('accounts_dashboard').urls),
     ]
 
 
