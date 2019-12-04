@@ -14,18 +14,15 @@ from oscar_accounts import exceptions
 
 
 class ActiveAccountManager(models.Manager):
-
     def get_queryset(self):
         now = timezone.now()
         qs = super().get_queryset()
         return qs.filter(
-            models.Q(start_date__lte=now) | models.Q(start_date=None)).filter(
-                models.Q(end_date__gte=now) | models.Q(end_date=None)
-        )
+            models.Q(start_date__lte=now) | models.Q(start_date=None)
+        ).filter(models.Q(end_date__gte=now) | models.Q(end_date=None))
 
 
 class ExpiredAccountManager(models.Manager):
-
     def get_queryset(self):
         now = timezone.now()
         qs = super().get_queryset()
@@ -37,6 +34,7 @@ class AccountType(MP_Node):
     name = models.CharField(max_length=128)
 
     class Meta:
+        app_label = "oscar_accounts"
         abstract = True
 
     def __str__(self):
@@ -51,18 +49,19 @@ class AccountType(MP_Node):
 
 class Account(models.Model):
     # Metadata
-    name = models.CharField(
-        max_length=128, unique=True, null=True, blank=True)
+    name = models.CharField(max_length=128, unique=True, null=True, blank=True)
     description = models.TextField(
-        null=True, blank=True, help_text=_(
-            "This text is shown to customers during checkout"))
+        null=True,
+        blank=True,
+        help_text=_("This text is shown to customers during checkout"),
+    )
     account_type = models.ForeignKey(
-        'AccountType', models.CASCADE, related_name='accounts', null=True)
+        "AccountType", models.CASCADE, related_name="accounts", null=True
+    )
 
     # Some accounts are not linked to a specific user but are activated by
     # entering a code at checkout.
-    code = models.CharField(
-        max_length=128, unique=True, null=True, blank=True)
+    code = models.CharField(max_length=128, unique=True, null=True, blank=True)
 
     # Each account can have multiple users who can use it for transactions.  In
     # most cases, there will only be one user and so we use a 'primary'
@@ -74,29 +73,29 @@ class Account(models.Model):
     # As a rule of thumb, you don't normally need to use both primary_user and
     # secondary_users within the same project - just one or the other.
     primary_user = models.ForeignKey(
-        AUTH_USER_MODEL, models.SET_NULL, related_name="accounts",
-        null=True, blank=True
+        AUTH_USER_MODEL, models.SET_NULL, related_name="accounts", null=True, blank=True
     )
     secondary_users = models.ManyToManyField(AUTH_USER_MODEL, blank=True)
 
     # Track the status of a account - this is often used so that expired
     # account can have their money transferred back to some parent account and
     # then be closed.
-    OPEN, FROZEN, CLOSED = 'Open', 'Frozen', 'Closed'
+    OPEN, FROZEN, CLOSED = "Open", "Frozen", "Closed"
     status = models.CharField(max_length=32, default=OPEN)
 
     # This is the limit to which the account can go into debt.  The default is
     # zero which means the account cannot run a negative balance.  A 'source'
     # account will have no credit limit meaning it can transfer funds to other
     # accounts without limit.
-    credit_limit = models.DecimalField(decimal_places=2, max_digits=12,
-                                       default=D('0.00'), null=True,
-                                       blank=True)
+    credit_limit = models.DecimalField(
+        decimal_places=2, max_digits=12, default=D("0.00"), null=True, blank=True
+    )
 
     # For performance, we keep a cached balance.  This can always be
     # recalculated from the account transactions.
-    balance = models.DecimalField(decimal_places=2, max_digits=12,
-                                  default=D('0.00'), null=True)
+    balance = models.DecimalField(
+        decimal_places=2, max_digits=12, default=D("0.00"), null=True
+    )
 
     # Accounts can have an date range to indicate when they are 'active'.  Note
     # that these dates are ignored when creating a transfer.  It is up to your
@@ -106,14 +105,18 @@ class Account(models.Model):
 
     # Accounts are sometimes restricted to only work on a specific range of
     # products.  This is the only link with Oscar.
-    product_range = models.ForeignKey('offer.Range', models.CASCADE, null=True, blank=True)
+    product_range = models.ForeignKey(
+        "offer.Range", models.CASCADE, null=True, blank=True
+    )
 
     # Allow accounts to be restricted for products only (ie can't be used to
     # pay for shipping)
     can_be_used_for_non_products = models.BooleanField(
         default=True,
-        help_text=("Whether this account can be used to pay for "
-                   "shipping and other charges"))
+        help_text=(
+            "Whether this account can be used to pay for " "shipping and other charges"
+        ),
+    )
 
     date_created = models.DateTimeField(auto_now_add=True)
 
@@ -122,6 +125,7 @@ class Account(models.Model):
     expired = ExpiredAccountManager()
 
     class Meta:
+        app_label = "oscar_accounts"
         abstract = True
 
     def __str__(self):
@@ -129,7 +133,7 @@ class Account(models.Model):
             return self.code
         if self.name:
             return self.name
-        return 'Anonymous'
+        return "Anonymous"
 
     def is_active(self):
         if self.start_date is None and self.end_date is None:
@@ -149,9 +153,9 @@ class Account(models.Model):
         return super(Account, self).save(*args, **kwargs)
 
     def _balance(self):
-        aggregates = self.transactions.aggregate(sum=Sum('amount'))
-        sum = aggregates['sum']
-        return D('0.00') if sum is None else sum
+        aggregates = self.transactions.aggregate(sum=Sum("amount"))
+        sum = aggregates["sum"]
+        return D("0.00") if sum is None else sum
 
     def num_transactions(self):
         return self.transactions.all().count()
@@ -189,7 +193,7 @@ class Account(models.Model):
             total = order_total
         if not self.product_range:
             return min(total, self.balance)
-        range_total = D('0.00')
+        range_total = D("0.00")
         for line in basket.all_lines():
             if self.product_range.contains_product(line.product):
                 range_total += line.line_price_incl_tax_and_discounts
@@ -244,20 +248,23 @@ class Account(models.Model):
 
     def as_dict(self):
         data = {
-            'code': self.code,
-            'start_date': '',
-            'end_date': '',
-            'status': self.status,
-            'balance': "%.2f" % self.balance,
-            'redemptions_url': reverse('oscar_accounts_api:account-redemptions',
-                                       kwargs={'code': self.code}),
-            'refunds_url': reverse('oscar_accounts_api:account-refunds',
-                                   kwargs={'code': self.code})}
+            "code": self.code,
+            "start_date": "",
+            "end_date": "",
+            "status": self.status,
+            "balance": "%.2f" % self.balance,
+            "redemptions_url": reverse(
+                "oscar_accounts_api:account-redemptions", kwargs={"code": self.code}
+            ),
+            "refunds_url": reverse(
+                "oscar_accounts_api:account-refunds", kwargs={"code": self.code}
+            ),
+        }
 
         if self.start_date:
-            data['start_date'] = self.start_date.isoformat()
+            data["start_date"] = self.start_date.isoformat()
         if self.end_date:
-            data['end_date'] = self.end_date.isoformat()
+            data["end_date"] = self.end_date.isoformat()
         return data
 
 
@@ -268,8 +275,17 @@ class PostingManager(models.Manager):
     Apparently, finance people refer to "posting a transaction"; hence why this
     """
 
-    def create(self, source, destination, amount, parent=None,
-               user=None, merchant_reference=None, description=None):
+    def create(
+        self,
+        source,
+        destination,
+        amount,
+        staff=None,
+        parent=None,
+        user=None,
+        merchant_reference=None,
+        description=None,
+    ):
         # Write out transfer (which involves multiple writes).  We use a
         # database transaction to ensure that all get written out correctly.
         self.verify_transfer(source, destination, amount, user)
@@ -278,15 +294,15 @@ class PostingManager(models.Manager):
                 source=source,
                 destination=destination,
                 amount=amount,
+                staff=staff,
                 parent=parent,
                 user=user,
                 merchant_reference=merchant_reference,
-                description=description)
+                description=description,
+            )
             # Create transaction records for audit trail
-            transfer.transactions.create(
-                account=source, amount=-amount)
-            transfer.transactions.create(
-                account=destination, amount=amount)
+            transfer.transactions.create(account=source, amount=-amount)
+            transfer.transactions.create(account=destination, amount=amount)
             # Update the cached balances on the accounts
             source.save()
             destination.save()
@@ -308,15 +324,13 @@ class PostingManager(models.Manager):
             raise exceptions.ClosedAccount("Source account has been closed")
         if not source.can_be_authorised_by(user):
             raise exceptions.AccountException(
-                "This user is not authorised to make transfers from "
-                "this account")
+                "This user is not authorised to make transfers from " "this account"
+            )
         if not destination.is_open():
-            raise exceptions.ClosedAccount(
-                "Destination account has been closed")
+            raise exceptions.ClosedAccount("Destination account has been closed")
         if not source.is_debit_permitted(amount):
             msg = "Unable to debit %.2f from account #%d:"
-            raise exceptions.InsufficientFunds(
-                msg % (amount, source.id))
+            raise exceptions.InsufficientFunds(msg % (amount, source.id))
 
 
 class Transfer(models.Model):
@@ -327,20 +341,24 @@ class Transfer(models.Model):
     number for it and who was the authorisor.  The financial details are help
     within the transactions.  Each transfer links to TWO account transactions
     """
+
     # We generate a reference for each transaction to avoid passing around
     # primary keys
     reference = models.CharField(max_length=64, unique=True, null=True)
 
-    source = models.ForeignKey('oscar_accounts.Account', models.CASCADE,
-                               related_name='source_transfers')
-    destination = models.ForeignKey('oscar_accounts.Account', models.CASCADE,
-                                    related_name='destination_transfers')
+    source = models.ForeignKey(
+        "oscar_accounts.Account", models.CASCADE, related_name="source_transfers"
+    )
+    destination = models.ForeignKey(
+        "oscar_accounts.Account", models.CASCADE, related_name="destination_transfers"
+    )
     amount = models.DecimalField(decimal_places=2, max_digits=12)
 
     # We keep track of related transfers (eg multiple refunds of the same
     # redemption) using a parent system
-    parent = models.ForeignKey('self', models.CASCADE, null=True,
-                               related_name='related_transfers')
+    parent = models.ForeignKey(
+        "self", models.CASCADE, null=True, related_name="related_transfers"
+    )
 
     # Optional meta-data about transfer
     merchant_reference = models.CharField(max_length=128, null=True)
@@ -349,7 +367,12 @@ class Transfer(models.Model):
     # We record who the user was who authorised this transaction.  As
     # transactions should never be deleted, we allow this field to be null and
     # also record some audit information.
-    user = models.ForeignKey(AUTH_USER_MODEL, models.SET_NULL, related_name="transfers", null=True)
+    user = models.ForeignKey(
+        AUTH_USER_MODEL, models.SET_NULL, related_name="transfers", null=True
+    )
+    staff = models.ForeignKey(
+        AUTH_USER_MODEL, models.SET_NULL, related_name="auth_transfers", null=True
+    )
     username = models.CharField(max_length=128)
 
     date_created = models.DateTimeField(auto_now_add=True)
@@ -362,8 +385,9 @@ class Transfer(models.Model):
         return self.reference
 
     class Meta:
+        app_label = "oscar_accounts"
         abstract = True
-        ordering = ('-date_created',)
+        ordering = ("-date_created",)
 
     def delete(self, *args, **kwargs):
         raise RuntimeError("Transfers cannot be deleted")
@@ -380,8 +404,9 @@ class Transfer(models.Model):
             super().save()
 
     def _generate_reference(self):
-        obj = hmac.new(key=settings.SECRET_KEY.encode(),
-                       msg=six.text_type(self.id).encode())
+        obj = hmac.new(
+            key=settings.SECRET_KEY.encode(), msg=six.text_type(self.id).encode()
+        )
         return obj.hexdigest().upper()
 
     @property
@@ -394,41 +419,47 @@ class Transfer(models.Model):
         """
         Return the maximum amount that can be refunded against this transfer
         """
-        aggregates = self.related_transfers.filter(
-            source=self.destination).aggregate(sum=Sum('amount'))
-        already_refunded = aggregates['sum']
+        aggregates = self.related_transfers.filter(source=self.destination).aggregate(
+            sum=Sum("amount")
+        )
+        already_refunded = aggregates["sum"]
         if already_refunded is None:
             return self.amount
         return self.amount - already_refunded
 
     def as_dict(self):
         return {
-            'reference': self.reference,
-            'source_code': self.source.code,
-            'source_name': self.source.name,
-            'destination_code': self.destination.code,
-            'destination_name': self.destination.name,
-            'amount': "%.2f" % self.amount,
-            'available_to_refund': "%.2f" % self.max_refund(),
-            'datetime': self.date_created.isoformat(),
-            'merchant_reference': self.merchant_reference,
-            'description': self.description,
-            'reverse_url': reverse(
-                'oscar_accounts_api:transfer-reverse',
-                kwargs={'reference': self.reference}),
-            'refunds_url': reverse(
-                'oscar_accounts_api:transfer-refunds',
-                kwargs={'reference': self.reference})}
+            "reference": self.reference,
+            "source_code": self.source.code,
+            "source_name": self.source.name,
+            "destination_code": self.destination.code,
+            "destination_name": self.destination.name,
+            "amount": "%.2f" % self.amount,
+            "available_to_refund": "%.2f" % self.max_refund(),
+            "datetime": self.date_created.isoformat(),
+            "merchant_reference": self.merchant_reference,
+            "description": self.description,
+            "reverse_url": reverse(
+                "oscar_accounts_api:transfer-reverse",
+                kwargs={"reference": self.reference},
+            ),
+            "refunds_url": reverse(
+                "oscar_accounts_api:transfer-refunds",
+                kwargs={"reference": self.reference},
+            ),
+        }
 
 
 class Transaction(models.Model):
     # Every transfer of money should create two rows in this table.
     # (a) the debit from the source account
     # (b) the credit to the destination account
-    transfer = models.ForeignKey('oscar_accounts.Transfer', models.CASCADE,
-                                 related_name="transactions")
-    account = models.ForeignKey('oscar_accounts.Account', models.CASCADE,
-                                related_name='transactions')
+    transfer = models.ForeignKey(
+        "oscar_accounts.Transfer", models.CASCADE, related_name="transactions"
+    )
+    account = models.ForeignKey(
+        "oscar_accounts.Account", models.CASCADE, related_name="transactions"
+    )
 
     # The sum of this field over the whole table should always be 0.
     # Credits should be positive while debits should be negative
@@ -436,11 +467,11 @@ class Transaction(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return u"Ref: %s, amount: %.2f" % (
-            self.transfer.reference, self.amount)
+        return u"Ref: %s, amount: %.2f" % (self.transfer.reference, self.amount)
 
     class Meta:
-        unique_together = ('transfer', 'account')
+        app_label = "oscar_accounts"
+        unique_together = ("transfer", "account")
         abstract = True
 
     def delete(self, *args, **kwargs):
@@ -465,6 +496,7 @@ class IPAddressRecord(models.Model):
     COOLING_OFF_PERIOD = 5 * 60
 
     class Meta:
+        app_label = "oscar_accounts"
         abstract = True
         verbose_name = _("IP address record")
         verbose_name_plural = _("IP address records")
@@ -487,7 +519,7 @@ class IPAddressRecord(models.Model):
         self.save()
 
     def is_blocked(self):
-        return (self.is_temporarily_blocked() or self.is_permanently_blocked())
+        return self.is_temporarily_blocked() or self.is_permanently_blocked()
 
     def is_temporarily_blocked(self):
         if self.consecutive_failures < self.FREEZE_THRESHOLD:
