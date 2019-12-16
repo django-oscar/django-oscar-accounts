@@ -10,7 +10,7 @@ install_requires = [
 tests_require = [
     'django-webtest==1.9.7',
     'pytest-cov>=2.5,<2.9',
-    'pytest-django>=3.5,<3.6',
+    'pytest-django>=3.5,<3.8',
 ]
 
 
