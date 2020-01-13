@@ -1,7 +1,7 @@
 django-oscar>=2.0,<2.1
 
 # Testing
-coverage==5.0
+coverage==5.0.3
 django-webtest==1.9.7
 factory-boy>=2.10,<2.13
 pytest-django>=3.5,<3.8
