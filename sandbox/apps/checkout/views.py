@@ -85,7 +85,7 @@ class PaymentDetailsView(views.PaymentDetailsView):
             messages.error(request,
                            "You are currently blocked from using accounts")
             return http.HttpResponseRedirect(
-                reverse('checkout:payment-deatils'))
+                reverse('checkout:payment-details'))
 
         # If account form has been submitted, validate it and show the
         # allocation form if the account has non-zero balance
