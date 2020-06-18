@@ -1,3 +1,4 @@
+import hashlib
 import hmac
 from decimal import Decimal as D
 
@@ -381,7 +382,8 @@ class Transfer(models.Model):
 
     def _generate_reference(self):
         obj = hmac.new(key=settings.SECRET_KEY.encode(),
-                       msg=six.text_type(self.id).encode())
+                       msg=six.text_type(self.id).encode(),
+                       digestmod=hashlib.md5)
         return obj.hexdigest().upper()
 
     @property
