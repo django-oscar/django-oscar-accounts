@@ -2,6 +2,10 @@
 Changelog
 =========
 
+2.1 (2020-07-13)
+----------------
+- Added support for Oscar 2.1 and Django 3.0.
+
 2.0 (2019-09-20)
 ----------------
 - Added support for Oscar 2.
