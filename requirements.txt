@@ -5,6 +5,6 @@ coverage==5.0.3
 django-webtest==1.9.7
 factory-boy>=2.10,<2.13
 pytest-django>=3.5,<3.9
-tox>=2.9,<3.15
+tox>=2.9,<3.18
 freezegun>=0.3,<0.4
 sorl-thumbnail
