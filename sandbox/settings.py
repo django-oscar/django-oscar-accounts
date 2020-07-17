@@ -167,8 +167,8 @@ INSTALLED_APPS = [
     'sorl.thumbnail',
 ] + oscar.INSTALLED_APPS
 
-INSTALLED_APPS[INSTALLED_APPS.index('oscar.apps.shipping')] = 'apps.shipping.apps.ShippingConfig'
-INSTALLED_APPS[INSTALLED_APPS.index('oscar.apps.checkout')] = 'apps.checkout.apps.CheckoutConfig'
+INSTALLED_APPS[INSTALLED_APPS.index('oscar.apps.shipping.apps.ShippingConfig')] = 'apps.shipping.apps.ShippingConfig'
+INSTALLED_APPS[INSTALLED_APPS.index('oscar.apps.checkout.apps.CheckoutConfig')] = 'apps.checkout.apps.CheckoutConfig'
 
 AUTHENTICATION_BACKENDS = (
     'oscar.apps.customer.auth_backends.EmailBackend',

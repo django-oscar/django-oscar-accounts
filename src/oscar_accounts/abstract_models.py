@@ -6,7 +6,7 @@ from django.conf import settings
 from django.db import models, transaction
 from django.db.models import Sum
 from django.urls import reverse
-from django.utils import six, timezone
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from oscar.core.compat import AUTH_USER_MODEL
 from treebeard.mp_tree import MP_Node
@@ -382,7 +382,7 @@ class Transfer(models.Model):
 
     def _generate_reference(self):
         obj = hmac.new(key=settings.SECRET_KEY.encode(),
-                       msg=six.text_type(self.id).encode(),
+                       msg=str(self.id).encode(),
                        digestmod=hashlib.md5)
         return obj.hexdigest().upper()
 
