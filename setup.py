@@ -25,7 +25,7 @@ setup(
     packages=find_packages('src'),
     include_package_data=True,
     classifiers=[
-        'Development Status :: 5 - Stable',
+        'Development Status :: 5 - Production',
         'Environment :: Web Environment',
         'Framework :: Django',
         'Framework :: Django :: 2.2',
