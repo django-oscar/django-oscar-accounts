@@ -2,8 +2,8 @@
 Changelog
 =========
 
-2.1 (TBD)
----------
+2.1 (2020-07-23)
+----------------
 - Added support for Oscar 2.1, Django 2.2 and Django 3.0.
 - Dropped support for Django 2.1 and lower.
 - Dropped support for Python 3.5.
