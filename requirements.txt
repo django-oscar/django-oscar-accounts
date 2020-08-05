@@ -10,5 +10,5 @@ freezegun>=0.3,<0.4
 sorl-thumbnail
 
 # Linting
-isort>=5.1,<5.2
+isort>=5.1,<5.4
 flake8>=3.8,<3.9
