@@ -3,7 +3,7 @@ django-oscar>=2.1,<2.2
 # Testing
 coverage==5.3
 django-webtest==1.9.7
-factory-boy>=2.10,<3.1
+factory-boy>=2.10,<3.2
 pytest-django>=3.5,<3.11
 tox>=3.17,<3.21
 freezegun>=0.3,<1.1
