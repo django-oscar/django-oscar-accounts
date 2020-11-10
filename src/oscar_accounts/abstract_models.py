@@ -351,7 +351,7 @@ class Transfer(models.Model):
     # transactions should never be deleted, we allow this field to be null and
     # also record some audit information.
     user = models.ForeignKey(AUTH_USER_MODEL, models.SET_NULL, related_name="transfers", null=True)
-    username = models.CharField(max_length=128)
+    username = models.CharField(max_length=150)
 
     date_created = models.DateTimeField(auto_now_add=True)
 
