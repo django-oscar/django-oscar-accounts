@@ -210,7 +210,7 @@ class Account(models.Model):
     @property
     def is_editable(self):
         """
-        Test whether this account can be edite within the dashboard
+        Test whether this account can be edited within the dashboard
         """
         return self.code is not None
 
