@@ -14,6 +14,7 @@ class TestAnAccount(TestCase):
 
     def setUp(self):
         self.account = Account()
+        self.account.save()
 
     def test_is_open_by_default(self):
         self.assertEqual(Account.OPEN, self.account.status)
