@@ -148,6 +148,24 @@ Furthermore you need to add the url-pattern to your `urls.py`
     ]
 
 
+In order to integrate the checkout payment steps, you should:
+
+- first fork the checkout app in your app through ``manage.py oscar_fork_app checkout my_app``
+- in the `INSTALLED_APPS`, replace `oscar.apps.checkout.apps.CheckoutConfig` by `my_app.checkout.apps.CheckoutConfig`
+- create a `my_app/checkout/views.py` file and copy the content from the `sandbox/checkout/views.py` file in this repo
+- copy the content of the `sandbox/templates/oscar/checkout/` folder in your app `templates/oscar/checkout` folder
+
+
+You should also set-up a cronjob that calls::
+
+    ./manage.py close_expired_accounts
+
+to close any expired accounts and transfer their funds to the 'expired'
+account.
+
+
+
+
 You should also set-up a cronjob that calls::
 
     ./manage.py close_expired_accounts
