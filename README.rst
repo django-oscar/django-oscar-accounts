@@ -163,16 +163,6 @@ You should also set-up a cronjob that calls::
 to close any expired accounts and transfer their funds to the 'expired'
 account.
 
-
-
-
-You should also set-up a cronjob that calls::
-
-    ./manage.py close_expired_accounts
-
-to close any expired accounts and transfer their funds to the 'expired'
-account.
-
 API
 ---
 
