@@ -6,7 +6,7 @@ django-webtest==1.9.7
 factory-boy>=2.10,<3.2
 pytest-django>=3.5,<4.2
 tox>=3.17,<3.21
-freezegun>=0.3,<1.1
+freezegun>=0.3,<1.2
 sorl-thumbnail
 
 # Linting
