@@ -1,0 +1,19 @@
+version: 2
+updates:
+- package-ecosystem: pip
+  directory: "/"
+  schedule:
+    interval: monthly
+    time: "11:00"
+  open-pull-requests-limit: 10
+  ignore:
+  - dependency-name: django
+    versions:
+    - ">= 3.a, < 4"
+  - dependency-name: coverage
+    versions:
+    - 5.3.1
+    - "5.4"
+  - dependency-name: tox
+    versions:
+    - 3.21.3
