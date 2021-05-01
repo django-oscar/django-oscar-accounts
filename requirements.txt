@@ -11,4 +11,4 @@ sorl-thumbnail
 
 # Linting
 isort>=5.1,<5.7
-flake8>=3.8,<3.9
+flake8>=3.8,<3.10
