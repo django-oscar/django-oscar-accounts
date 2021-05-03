@@ -476,38 +476,16 @@ class IPAddressRecord(models.Model):
         return self.ip_address
 
     def increment_failures(self):
-        """This object must be in the database before calling this function.
-
-        Increments total_failures and consecutive_failures by one.
-        Updates the time of the latest failure.
-        Saves these changes to the database but doesn't save any other changes you may have made to the object.
-
-        Changed in version 2.2
-        """
         self.total_failures += 1
         self.consecutive_failures += 1
         self.date_last_failure = timezone.now()
         self.save(update_fields=['total_failures', 'consecutive_failures', 'date_last_failure'])
 
     def increment_blocks(self):
-        """This object must be in the database before calling this function.
-
-        Increments total_blocks by one.
-        Saves these changes to the database but doesn't save any other changes you may have made to the object.
-
-        Changed in version 2.2
-        """
         self.total_blocks += 1
         self.save(update_fields=['total_blocks'])
 
     def reset(self):
-        """This object must be in the database before calling this function.
-
-        Resets consecutive_failures to zero.
-        Saves these changes to the database but doesn't save any other changes you may have made to the object.
-
-        Changed in version 2.2
-        """
         self.consecutive_failures = 0
         self.save(update_fields=['consecutive_failures'])
 
