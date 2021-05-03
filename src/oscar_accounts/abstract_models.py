@@ -237,14 +237,8 @@ class Account(models.Model):
         return (self.end_date - from_date).days
 
     def close(self):
-        """This object must be in the database before calling this function.
-
-        Only account with zero balance can be closed
-
-        Saves these changes to the database but doesn't save any other changes you may have made to the object.
-
-        Changed in version 2.2
-        """
+        # Only account with zero balance can be closed
+        # Saves these changes to the database but doesn't save any other changes you may have made to the object.
         if self.balance > 0:
             raise exceptions.AccountNotEmpty()
         self.status = self.__class__.CLOSED
