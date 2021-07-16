@@ -147,7 +147,7 @@ class Account(models.Model):
             self.code = self.code.upper()
         # Ensure the balance is always correct when saving
         self.balance = self._balance()
-        return super(Account, self).save(*args, **kwargs)
+        return super().save(*args, **kwargs)
 
     def _balance(self):
         aggregates = self.transactions.aggregate(sum=Sum('amount'))
@@ -238,10 +238,11 @@ class Account(models.Model):
 
     def close(self):
         # Only account with zero balance can be closed
+        # Saves these changes to the database but doesn't save any other changes you may have made to the object.
         if self.balance > 0:
             raise exceptions.AccountNotEmpty()
         self.status = self.__class__.CLOSED
-        self.save()
+        self.save(update_fields=['status'])
 
     def as_dict(self):
         data = {
@@ -378,7 +379,7 @@ class Transfer(models.Model):
         super().save(*args, **kwargs)
         if not self.reference:
             self.reference = self._generate_reference()
-            super().save()
+            super().save(update_fields=['reference'])
 
     def _generate_reference(self):
         obj = hmac.new(key=settings.SECRET_KEY.encode(),
@@ -478,15 +479,15 @@ class IPAddressRecord(models.Model):
         self.total_failures += 1
         self.consecutive_failures += 1
         self.date_last_failure = timezone.now()
-        self.save()
+        self.save(update_fields=['total_failures', 'consecutive_failures', 'date_last_failure'])
 
     def increment_blocks(self):
         self.total_blocks += 1
-        self.save()
+        self.save(update_fields=['total_blocks'])
 
     def reset(self):
         self.consecutive_failures = 0
-        self.save()
+        self.save(update_fields=['consecutive_failures'])
 
     def is_blocked(self):
         return (self.is_temporarily_blocked() or self.is_permanently_blocked())
