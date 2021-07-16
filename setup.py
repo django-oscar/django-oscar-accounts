@@ -2,7 +2,7 @@
 from setuptools import find_packages, setup
 
 install_requires = [
-    'django>=2.2,<3.1',
+    'django>=2.2,<3.3',
     'django-oscar>=2.0',
     'python-dateutil>=2.6,<3.0',
 ]
