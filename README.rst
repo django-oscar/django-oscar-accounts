@@ -27,8 +27,7 @@ If your project manages money, you should be using a library like this.  Your
 finance people will thank you.
 
 
-.. image:: https://travis-ci.org/django-oscar/django-oscar-accounts.svg?branch=master
-    :target: https://travis-ci.org/django-oscar/django-oscar-accounts
+.. image:: https://github.com/django-oscar/django-oscar-accounts/workflows/Tests/badge.svg
 
 .. image:: http://codecov.io/github/django-oscar/django-oscar-accounts/coverage.svg?branch=master
     :alt: Coverage
