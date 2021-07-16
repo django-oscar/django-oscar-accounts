@@ -1,4 +1,4 @@
-django-oscar>=2.1,<2.2
+django-oscar>=2.1,<3.2
 
 # Testing
 coverage==5.3
