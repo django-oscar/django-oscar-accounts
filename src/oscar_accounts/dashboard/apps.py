@@ -1,4 +1,4 @@
-from django.conf.urls import url
+from django.urls import path, re_path
 from oscar.core.application import OscarDashboardConfig
 
 
@@ -30,33 +30,21 @@ class AccountsDashboardConfig(OscarDashboardConfig):
 
     def get_urls(self):
         urls = [
-            url(r'^$',
-                self.account_list_view.as_view(),
-                name='accounts-list'),
-            url(r'^create/$', self.account_create_view.as_view(),
-                name='accounts-create'),
-            url(r'^(?P<pk>\d+)/update/$', self.account_update_view.as_view(),
-                name='accounts-update'),
-            url(r'^(?P<pk>\d+)/$', self.account_transactions_view.as_view(),
-                name='accounts-detail'),
-            url(r'^(?P<pk>\d+)/freeze/$', self.account_freeze_view.as_view(),
-                name='accounts-freeze'),
-            url(r'^(?P<pk>\d+)/thaw/$', self.account_thaw_view.as_view(),
-                name='accounts-thaw'),
-            url(r'^(?P<pk>\d+)/top-up/$', self.account_top_up_view.as_view(),
-                name='accounts-top-up'),
-            url(r'^(?P<pk>\d+)/withdraw/$', self.account_withdraw_view.as_view(),
-                name='accounts-withdraw'),
-            url(r'^transfers/$', self.transfer_list_view.as_view(),
-                name='transfers-list'),
-            url(r'^transfers/(?P<reference>[A-Z0-9]{32})/$',
+            path('', self.account_list_view.as_view(), name='accounts-list'),
+            path('create/', self.account_create_view.as_view(), name='accounts-create'),
+            path('<int:pk>/update/', self.account_update_view.as_view(), name='accounts-update'),
+            path('<int:pk>/', self.account_transactions_view.as_view(), name='accounts-detail'),
+            path('<int:pk>/freeze/', self.account_freeze_view.as_view(), name='accounts-freeze'),
+            path('<int:pk>/thaw/', self.account_thaw_view.as_view(), name='accounts-thaw'),
+            path('<int:pk>/top-up/', self.account_top_up_view.as_view(), name='accounts-top-up'),
+            path('<int:pk>/withdraw/', self.account_withdraw_view.as_view(), name='accounts-withdraw'),
+            path('transfers/', self.transfer_list_view.as_view(), name='transfers-list'),
+            re_path(
+                r'^transfers/(?P<reference>[A-Z0-9]{32})/$',
                 self.transfer_detail_view.as_view(),
-                name='transfers-detail'),
-            url(r'^reports/deferred-income/$',
-                self.report_deferred_income.as_view(),
-                name='report-deferred-income'),
-            url(r'^reports/profit-loss/$',
-                self.report_profit_loss.as_view(),
-                name='report-profit-loss'),
+                name='transfers-detail'
+            ),
+            path('reports/deferred-income/', self.report_deferred_income.as_view(), name='report-deferred-income'),
+            path('reports/profit-loss/', self.report_profit_loss.as_view(), name='report-profit-loss'),
         ]
         return self.post_process_urls(urls)

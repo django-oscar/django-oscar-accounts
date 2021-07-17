@@ -84,7 +84,7 @@
 		</div>
 		<input type="hidden" name="action" value="allocate" />
 		{% include 'oscar/partials/form_fields.html' with form=allocation_form %}
-		<button type="submit" class="btn btn-primary btn-large">{% trans "Allocate" %}</button>{% trans "or" %}
+		<button type="submit" class="btn btn-primary btn-lg">{% trans "Allocate" %}</button>{% trans "or" %}
 		<a href="{% url 'checkout:payment-details' %}">{% trans "cancel" %}</a>.
 	</form>
 {% endif %}
@@ -119,7 +119,7 @@
 
 
 {% if to_allocate == 0 %}
-	<a href="{% url 'checkout:preview' %}" class="btn btn-primary btn-large">{% trans "Continue" %}</a>
+	<a href="{% url 'checkout:preview' %}" class="btn btn-primary btn-lg">{% trans "Continue" %}</a>
 {% else %}
 <p>{% trans "Order total" %}: {% if order_total.is_tax_known %}{{ order_total.incl_tax|currency }}{% else %}{{ order_total.excl_tax|currency }}{% endif %}. {% trans "You need to allocate another" %}
 	{{ to_allocate|currency }}</p>

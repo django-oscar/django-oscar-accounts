@@ -1,14 +1,3 @@
-django-oscar>=2.1,<2.2
-
-# Testing
-coverage==5.3
-django-webtest==1.9.7
-factory-boy>=2.10,<3.2
-pytest-django>=3.5,<4.2
-tox>=3.17,<3.21
-freezegun>=0.3,<1.1
-sorl-thumbnail
-
 # Linting
-isort>=5.1,<5.7
-flake8>=3.8,<3.9
+isort>=5.9,<5.10
+flake8>=3.9,<3.10

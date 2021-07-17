@@ -7,18 +7,14 @@
 {% endblock %}
 
 {% block breadcrumbs %}
-    <ul class="breadcrumb">
-        <li>
-            <a href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a>
-        </li>
-        <li>
-            <a href="{% url 'accounts_dashboard:accounts-list' %}">{% trans "Accounts" %}</a>
-        </li>
-        <li>
-            <a href="{% url 'accounts_dashboard:accounts-detail' account.id %}">{{ account }}</a>
-        </li>
-        <li class="active">{% trans "Withdraw" %}</li>
-    </ul>
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'accounts_dashboard:accounts-list' %}">{% trans "Accounts" %}</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'accounts_dashboard:accounts-detail' account.id %}">{{ account }}</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{% trans "Withdraw" %}</li>
+    </ol>
+</nav>
 {% endblock %}
 
 {% block header %}
@@ -30,26 +26,20 @@
 {% block dashboard_content %}
     {% include 'accounts/dashboard/partials/account_detail.html' %}
 
-    <div class="panel panel-default">
-        <div class="panel-body">
-
+    <div class="card card-body">
         {% if account.is_open %}
             <form action="." method="post">
                 {% csrf_token %}
-                <legend>{% trans "Transaction" %}</legend>
+                <h2>{% trans "Transaction" %}</h2>
                 {% if form.source_account %}
                     {% include 'oscar/partials/form_field.html' with field=form.source_account %}
                 {% endif %}
                 {% include 'oscar/partials/form_field.html' with field=form.amount %}
-                <button type="submit" class="btn btn-large btn-success">{% trans "Withdraw" %}</button>
+                <button type="submit" class="btn btn-lg btn-success">{% trans "Withdraw" %}</button>
                 or <a href="{% url 'accounts_dashboard:accounts-detail' account.id %}">{% trans "cancel" %}</a>.
             </form>
         {% else %}
-        <div class="panel-body">
             <p>{% trans "This account's funds cannot be withdrawn." %}</p>
-        </div>
         {% endif %}
     </div>
-</div>
-
 {% endblock dashboard_content %}

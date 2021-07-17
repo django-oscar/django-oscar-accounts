@@ -7,18 +7,14 @@
 {% endblock %}
 
 {% block breadcrumbs %}
-<ul class="breadcrumb">
-    <li>
-		<a href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a>
-    </li>
-    <li>
-		<a href="{% url 'accounts_dashboard:accounts-list' %}">{% trans "Accounts" %}</a>
-    </li>
-    <li>
-        <a href="{% url 'accounts_dashboard:accounts-detail' account.id %}">{{ account }}</a>
-    </li>
-    <li class="active">{% trans "Top up" %}</li>
-</ul>
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'accounts_dashboard:accounts-list' %}">{% trans "Accounts" %}</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'accounts_dashboard:accounts-detail' account.id %}">{{ account }}</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{% trans "Top up" %}</li>
+    </ol>
+</nav>
 {% endblock %}
 
 {% block headertext %}{% trans "Top up account?" %}{% endblock %}
@@ -26,22 +22,20 @@
 {% block dashboard_content %}
     {% include 'accounts/dashboard/partials/account_detail.html' %}
 
-<div class="panel panel-default">
-    <div class="panel-body">
-        {% if account.is_open %}
-        <form action="." method="post">
-            {% csrf_token %}
-            <legend>{% trans "Transaction" %}</legend>
-            {% if form.source_account %}
-                {% include 'oscar/partials/form_field.html' with field=form.source_account %}
-            {% endif %}
-            {% include 'oscar/partials/form_field.html' with field=form.amount %}
-            <button type="submit" class="btn btn-large btn-success">{% trans "Top-up" %}</button>
-                or <a href="{% url 'accounts_dashboard:accounts-detail' account.id %}">{% trans "cancel" %}</a>.
-        </form>
-        {% else %}
-        <p>{% trans "This account cannot be topped-up." %}</p>
+<div class="card card-body">
+    {% if account.is_open %}
+    <form action="." method="post">
+        {% csrf_token %}
+        <h2>{% trans "Transaction" %}</h2>
+        {% if form.source_account %}
+            {% include 'oscar/partials/form_field.html' with field=form.source_account %}
         {% endif %}
-    </div>
+        {% include 'oscar/partials/form_field.html' with field=form.amount %}
+        <button type="submit" class="btn btn-lg btn-success">{% trans "Top-up" %}</button>
+            or <a href="{% url 'accounts_dashboard:accounts-detail' account.id %}">{% trans "cancel" %}</a>.
+    </form>
+    {% else %}
+    <p>{% trans "This account cannot be topped-up." %}</p>
+    {% endif %}
 </div>
 {% endblock dashboard_content %}

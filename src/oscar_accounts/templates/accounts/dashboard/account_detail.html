@@ -7,20 +7,18 @@
 {% endblock %}
 
 {% block breadcrumbs %}
-<ul class="breadcrumb">
-    <li>
-		<a href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a>
-    </li>
-    <li>
-		<a href="{% url 'accounts_dashboard:accounts-list' %}">{% trans "Accounts" %}</a>
-    </li>
-    <li class="active">{{ account }}</li>
-</ul>
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'accounts_dashboard:accounts-list' %}">{% trans "Accounts" %}</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{{ account }}</li>
+    </ol>
+</nav>
 {% endblock %}
 
 {% block header %}
 <div class="page-header">
-    <span class="pull-right">
+    <div class="float-right">
         <a class="btn btn-primary" href="{% url 'accounts_dashboard:accounts-update' account.id %}">{% trans "Edit" %}</a>
         <a href="{% url 'accounts_dashboard:accounts-top-up' account.id %}" class="btn btn-primary">{% trans "Top-up" %}</a>
         <a href="{% url 'accounts_dashboard:accounts-withdraw' account.id %}" class="btn btn-primary">{% trans "Withdraw" %}</a>
@@ -29,46 +27,45 @@
         {% else %}
         <a href="{% url 'accounts_dashboard:accounts-thaw' account.id %}" class="btn btn-success">{% trans "Thaw" %}</a>
         {% endif %}
-    </span>
-	<h1>{{ account }}</h1>
+    </div>
+    <h1>{{ account }}</h1>
 </div>
 {% endblock header %}
 
 {% block dashboard_content %}
+    {% include 'accounts/dashboard/partials/account_detail.html' %}
 
-{% include 'accounts/dashboard/partials/account_detail.html' %}
-
-<div class="panel panel-default">
-    <div class="panel-heading">{% trans "Transaction overview" %}</div>
-    <div class="panel-body">
-        {% if transactions %}
-        <table id="" class="table">
-            <thead>
-                <tr>
-                    <th>{% trans "Transfer" %}</th>
-                    <th>{% trans "Amount" %}</th>
-                    <th>{% trans "Description" %}</th>
-                    <th>{% trans "Authorised by" %}</th>
-                    <th>{% trans "Date" %}</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for txn in transactions %}
-                <tr>
-                    <td><a href="{% url 'accounts_dashboard:transfers-detail' txn.transfer.reference %}">{{ txn.transfer }}</a></td>
-                    <td>{{ txn.amount|currency }}</td>
-                    <td>{{ txn.transfer.description|default:"-" }}</td>
-                    <td>{{ txn.transfer.user|default:"-" }}</td>
-                    <td>{{ txn.date_created }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        {% include "oscar/dashboard/partials/pagination.html" %}
-        {% else %}
-        <p>{% trans "No transactions." %}</p>
-        {% endif %}
+    <div class="table-header">
+        <h3>{% trans "Transaction overview" %}</h3>
     </div>
-</div>
 
+    {% if transactions %}
+    <table class="table table-striped table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>{% trans "Transfer" %}</th>
+                <th>{% trans "Amount" %}</th>
+                <th>{% trans "Description" %}</th>
+                <th>{% trans "Authorised by" %}</th>
+                <th>{% trans "Date" %}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for txn in transactions %}
+            <tr>
+                <td><a href="{% url 'accounts_dashboard:transfers-detail' txn.transfer.reference %}">{{ txn.transfer }}</a></td>
+                <td>{{ txn.amount|currency }}</td>
+                <td>{{ txn.transfer.description|default:"-" }}</td>
+                <td>{{ txn.transfer.user|default:"-" }}</td>
+                <td>{{ txn.date_created }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% include "oscar/dashboard/partials/pagination.html" %}
+    {% else %}
+    <table class="table table-striped table-bordered table-hover">
+        <tr><td>{% trans "No transactions." %}</td></tr>
+    </table>
+    {% endif %}
 {% endblock dashboard_content %}

@@ -90,7 +90,7 @@ ROOT_URLCONF = 'urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [location('templates'),],
+        'DIRS': [location('templates')],
         'OPTIONS': {
             'loaders': [
                 'django.template.loaders.filesystem.Loader',
@@ -195,7 +195,7 @@ USE_TZ = True
 OSCAR_DASHBOARD_NAVIGATION.append(      # noqa F405
     {
         'label': 'Accounts',
-        'icon': 'icon-globe',
+        'icon': 'fas fa-globe',
         'children': [
             {
                 'label': 'Accounts',

@@ -7,41 +7,46 @@
 {% endblock %}
 
 {% block breadcrumbs %}
-    <ul class="breadcrumb">
-        <li>
-            <a href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a>
-        </li>
-        <li>
-            <a href=".">{% trans "Accounts" %}</a>
-        </li>
-        <li class="active">{{ title }}</li>
-    </ul>
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'accounts_dashboard:accounts-list' %}">{% trans "Accounts" %}</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{{ title }}</li>
+    </ol>
+</nav>
 {% endblock %}
 
 {% block header %}
-    <div class="page-header">
-        <a id="create_new_account" href="{% url 'accounts_dashboard:accounts-create' %}" class="btn btn-large btn-primary pull-right">{% trans "Create a new " %} {{ unit_name|lower }}</a></p>
+<div class="page-header">
+    <a id="create_new_account" href="{% url 'accounts_dashboard:accounts-create' %}" class="btn btn-primary float-right">
+        <i class="fas fa-plus-circle"></i>
+        {% trans "Create a new " %} {{ unit_name|lower }}
+    </a>
     <h1>{{ title }}</h1>
 </div>
 {% endblock header %}
 
 {% block dashboard_content %}
-<div class="panel panel-default">
-    <div class="panel-heading">{% trans "Search" %}</div>
-    <div class="panel-body">
-        <form method="get" action="." class="form-inline">
-            {% include 'oscar/dashboard/partials/form_fields_inline.html' %}
-            <button type="submit" class="btn btn-primary">{% trans "Search" %}</button>
-            {% trans "or" %} <a href="{% url 'accounts_dashboard:accounts-list' %}">{% trans "reset" %}</a>.
+    <div class="table-header">
+        <h3><i class="fas fa-search"></i> {% trans "Search" %}</h3>
+    </div>
+
+    <div class="card card-body">
+        <form method="get" class="form-inline">
+            {% include "oscar/dashboard/partials/form_fields_inline.html" with form=form %}
+            <button type="submit" class="btn btn-primary mr-2" data-loading-text="{% trans 'Searching...' %}">
+                {% trans "Search" %}
+            </button>
+            <a href="{% url 'accounts_dashboard:accounts-list' %}" class="btn btn-secondary">{% trans "Reset" %}</a>
         </form>
     </div>
-</div>
 
+    <div class="table-header">
+        <h2><i class="fas fa-file"></i> {{ queryset_description }}</h2>
+    </div>
 
-<div class="panel panel-default">
-    <div class="panel-heading">{{ queryset_description }}</div>
     {% if accounts.count %}
-        <table class="table table-striped panel-body">
+        <table class="table table-striped table-bordered table-hover">
             <tr>
                 <th>{% trans "Name" %}</th>
                 <th>{% trans "Code" %}</th>
@@ -88,10 +93,8 @@
         </table>
         {% include "oscar/partials/pagination.html" %}
     {% else %}
-        <div class="panel-body">
-            <p>{% trans "No results found." %}</p>
-        </div>
+    <table class="table table-striped table-bordered table-hover">
+        <tr><td>{% trans "No results found." %}</td></tr>
+    </table>
     {% endif %}
-</div>
-
 {% endblock dashboard_content %}

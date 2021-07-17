@@ -111,7 +111,7 @@ append it to your `OSCAR_DASHBOARD_NAVIGATION`
     OSCAR_DASHBOARD_NAVIGATION.append(
         {
             'label': 'Accounts',
-            'icon': 'icon-globe',
+            'icon': 'fas fa-globe',
             'children': [
                 {
                     'label': 'Accounts',
@@ -143,7 +143,7 @@ Furthermore you need to add the url-pattern to your `urls.py`
 
     urlpatterns = [
         ...
-        url(r'^dashboard/accounts/', apps.get_app_config('accounts_dashboard').urls),
+        path('dashboard/accounts/', apps.get_app_config('accounts_dashboard').urls),
     ]
 
 
