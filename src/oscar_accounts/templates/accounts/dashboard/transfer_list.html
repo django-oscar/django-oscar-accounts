@@ -7,36 +7,38 @@
 {% endblock %}
 
 {% block breadcrumbs %}
-<ul class="breadcrumb">
-    <li>
-    	<a href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a>
-    </li>
-    <li>
-	    <a href="{% url 'accounts_dashboard:accounts-list' %}">{% trans "Accounts" %}</a>
-    </li>
-	<li class="active">{% trans "Transfers" %}</li>
-</ul>
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'accounts_dashboard:accounts-list' %}">{% trans "Accounts" %}</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{% trans "Transfers" %}</li>
+    </ol>
+</nav>
 {% endblock %}
 
 {% block headertext %}{% trans "Transfers" %}{% endblock %}
 
 {% block dashboard_content %}
+    <div class="table-header">
+        <h3><i class="fas fa-search"></i> {% trans "Search" %}</h3>
+    </div>
 
-<div class="panel panel-default">
-    <div class="panel-heading">{% trans "Search" %}</div>
-    <div class="panel-body">
-        <form class="form-inline" method="get" action=".">
-            {% include 'oscar/dashboard/partials/form_fields_inline.html' %}
-            <button type="submit" class="btn btn-primary">{% trans "Search" %}</button>
-            or <a href="{% url 'accounts_dashboard:transfers-list' %}">{% trans "reset" %}</a>.
+    <div class="card card-body">
+        <form method="get" class="form-inline">
+            {% include "oscar/dashboard/partials/form_fields_inline.html" with form=form %}
+            <button type="submit" class="btn btn-primary mr-2" data-loading-text="{% trans 'Searching...' %}">
+                {% trans "Search" %}
+            </button>
+            <a href="{% url 'accounts_dashboard:transfers-list' %}" class="btn btn-secondary">{% trans "Reset" %}</a>
         </form>
     </div>
-</div>
 
-<div class="panel panel-default">
-    <div class="panel-heading">{{ queryset_description }}</div>
+    <div class="table-header">
+        <h2><i class="fas fa-file"></i> {{ queryset_description }}</h2>
+    </div>
+
     {% if transfers %}
-        <table class="table table-striped panel-body">
+        <table class="table table-striped table-bordered table-hover">
             <tr>
                 <th>{% trans "Reference" %}</th>
                 <th>{% trans "Source" %}</th>
@@ -62,10 +64,9 @@
         </table>
         {% include "oscar/partials/pagination.html" %}
     {% else %}
-        <div class="panel-body">
-            <p>{% trans "No transfers found." %}</p>
-        </div>
+    <table class="table table-striped table-bordered table-hover">
+        <tr><td>{% trans "No transfers found." %}</td></tr>
+    </table>
     {% endif %}
-</div>
 
 {% endblock dashboard_content %}

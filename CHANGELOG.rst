@@ -2,6 +2,14 @@
 Changelog
 =========
 
+3.0 (2021-07-17)
+----------------
+- Added support for Oscar 3.0 and 3.1, Django 3.1 and 3.2.
+- Dropped support for Oscar 2.1 and lower.
+- Dropped support for Django 3.0.
+- Added support for Python 3.8 and 3.9.
+- Dropped support for Python 3.6.
+
 2.1 (2020-07-23)
 ----------------
 - Added support for Oscar 2.1, Django 2.2 and Django 3.0.

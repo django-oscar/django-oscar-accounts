@@ -4,7 +4,7 @@ import factory
 from oscar.core.loading import get_model
 
 
-class AccountFactory(factory.DjangoModelFactory):
+class AccountFactory(factory.django.DjangoModelFactory):
     start_date = None
     end_date = None
 
@@ -12,7 +12,7 @@ class AccountFactory(factory.DjangoModelFactory):
         model = get_model('oscar_accounts', 'Account')
 
 
-class TransferFactory(factory.DjangoModelFactory):
+class TransferFactory(factory.django.DjangoModelFactory):
     source = factory.SubFactory(AccountFactory)
     destination = factory.SubFactory(AccountFactory)
 
@@ -26,7 +26,7 @@ class TransferFactory(factory.DjangoModelFactory):
         return instance
 
 
-class TransactionFactory(factory.DjangoModelFactory):
+class TransactionFactory(factory.django.DjangoModelFactory):
     amount = D('10.00')
     transfer = factory.SubFactory(
         TransferFactory, amount=factory.SelfAttribute('..amount'))

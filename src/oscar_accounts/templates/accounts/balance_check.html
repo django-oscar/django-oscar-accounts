@@ -7,13 +7,12 @@
 {% endblock %}
 
 {% block breadcrumbs %}
-    <ul class="breadcrumb">
-        <li>
-            <a href="{% url 'home' %}">{% trans 'Home' %}</a>
-            <span class="divider">/</span>
-        </li>
-        <li class="active">{% trans 'Accounts' %}</li>
-    </ul>
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'home' %}">{% trans 'Home' %}</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{% trans 'Accounts' %}</li>
+    </ol>
+</nav>
 {% endblock %}
 
 {% block headertext %}{% trans 'Check balance of giftcard' %}{% endblock %}
@@ -23,10 +22,10 @@
     {% if is_blocked %}
         <p>{% trans "Your IP address is currently blocked.  Please try again later." %}</p>
     {% else %}
-        <form action="." method="post" class="form-horizontal">
+        <form method="post" class="form-horizontal">
             {% csrf_token %}
             {% include 'oscar/partials/form_fields.html' %}
-            <button type="submit" class="btn btn-large">{% trans "Fetch account details" %}</button>
+            <button type="submit" class="btn btn-lg">{% trans "Fetch account details" %}</button>
         </form>
     {% endif %}
 

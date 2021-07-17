@@ -7,22 +7,20 @@
 {% endblock %}
 
 {% block breadcrumbs %}
-    <ul class="breadcrumb">
-        <li>
-            <a href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a>
-        </li>
-        <li>
-            <a href="{% url 'accounts_dashboard:accounts-list' %}">{% trans "Accounts" %}</a>
-        </li>
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'accounts_dashboard:accounts-list' %}">{% trans "Accounts" %}</a></li>
         {% if account %}
-            <li>
+            <li class="breadcrumb-item">
                 <a href="{% url 'accounts_dashboard:accounts-detail' account.id %}">{{ account }}</a>
             </li>
-            <li class="active">{% trans "Update" %}</li>
+            <li class="breadcrumb-item active" aria-current="page">{% trans "Update" %}</li>
         {% else %}
-            <li class="active">{% trans "Create" %}</li>
+            <li class="breadcrumb-item active" aria-current="page">{% trans "Create" %}</li>
         {% endif %}
-    </ul>
+    </ol>
+</nav>
 {% endblock %}
 
 {% block headertext %}{{ title }}{% endblock %}
@@ -31,47 +29,44 @@
 
 {% if account %}
 {% include 'accounts/dashboard/partials/account_detail.html' %}
-<h2>{% trans "Edit this account" %}</h2>
 {% endif %}
 
-<div class="panel panel-default">
-    <div class="panel-heading">{% trans "Edit" %}</div>
-    <div class="panel-body">
-        <form action="." method="post">
-            {% csrf_token %}
-            <span class="help-block">{{ form.non_field_errors }}</span>
-            {% include 'oscar/dashboard/partials/form_field.html' with field=form.name %}
-            {% include 'oscar/dashboard/partials/form_field.html' with field=form.description %}
-            {% if form.account_type %}
-                {% include 'oscar/partials/form_field.html' with field=form.account_type %}
+<div class="card card-body">
+    <h2>{% trans "Edit this account" %}</h2>
+    <form action="." method="post">
+        {% csrf_token %}
+        <span class="help-block">{{ form.non_field_errors }}</span>
+        {% include 'oscar/dashboard/partials/form_field.html' with field=form.name %}
+        {% include 'oscar/dashboard/partials/form_field.html' with field=form.description %}
+        {% if form.account_type %}
+            {% include 'oscar/partials/form_field.html' with field=form.account_type %}
+        {% endif %}
+
+        {% if form.initial_amount %}
+            <legend>{% trans "Initial transaction" %}</legend>
+            {% if form.source_account %}
+                {% include 'oscar/dashboard/partials/form_field.html' with field=form.source_account %}
             {% endif %}
+            {% include 'oscar/dashboard/partials/form_field.html' with field=form.initial_amount %}
+        {% endif %}
 
-            {% if form.initial_amount %}
-                <legend>{% trans "Initial transaction" %}</legend>
-                {% if form.source_account %}
-                    {% include 'oscar/dashboard/partials/form_field.html' with field=form.source_account %}
-                {% endif %}
-                {% include 'oscar/dashboard/partials/form_field.html' with field=form.initial_amount %}
-            {% endif %}
+        <legend>{% trans "Restrictions" %}</legend>
+        <h4>{% trans "Restrict WHEN the account can be used" %}</h4>
+            {% include 'oscar/dashboard/partials/form_field.html' with field=form.start_date %}
+            {% include 'oscar/dashboard/partials/form_field.html' with field=form.end_date %}
+        <h4>{% trans "Restrict WHO can use the account" %}</h4>
+            {% include 'oscar/dashboard/partials/form_field.html' with field=form.primary_user %}
+            {% include 'oscar/dashboard/partials/form_field.html' with field=form.secondary_users %}
+        <h4>{% trans "Restrict WHAT can be bought" %}</h4>
+            {% include 'oscar/dashboard/partials/form_field.html' with field=form.product_range %}
+            {% include 'oscar/dashboard/partials/form_field.html' with field=form.can_be_used_for_non_products %}
 
-            <legend>{% trans "Restrictions" %}</legend>
-            <h4>{% trans "Restrict WHEN the account can be used" %}</h4>
-                {% include 'oscar/dashboard/partials/form_field.html' with field=form.start_date %}
-                {% include 'oscar/dashboard/partials/form_field.html' with field=form.end_date %}
-            <h4>{% trans "Restrict WHO can use the account" %}</h4>
-                {% include 'oscar/dashboard/partials/form_field.html' with field=form.primary_user %}
-                {% include 'oscar/dashboard/partials/form_field.html' with field=form.secondary_users %}
-            <h4>{% trans "Restrict WHAT can be bought" %}</h4>
-                {% include 'oscar/dashboard/partials/form_field.html' with field=form.product_range %}
-                {% include 'oscar/dashboard/partials/form_field.html' with field=form.can_be_used_for_non_products %}
-
-            <div class="form-actions">
-                <button class="btn btn-primary btn-large" type="submit">{% trans "Save" %}</button>
-                {% trans "or" %}
-                <a href="{% url 'accounts_dashboard:accounts-list' %}">{% trans "cancel" %}</a>
-            </div>
-        </form>
-    </div>
+        <div class="form-actions">
+            <button class="btn btn-primary btn-lg" type="submit">{% trans "Save" %}</button>
+            {% trans "or" %}
+            <a href="{% url 'accounts_dashboard:accounts-list' %}">{% trans "cancel" %}</a>
+        </div>
+    </form>
 </div>
 
 {% endblock dashboard_content %}

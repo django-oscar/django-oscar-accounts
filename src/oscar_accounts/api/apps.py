@@ -1,4 +1,4 @@
-from django.conf.urls import url
+from django.urls import path, re_path
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.csrf import csrf_exempt
 from oscar.core.application import OscarConfig
@@ -26,27 +26,29 @@ class AccountsAPIConfig(OscarConfig):
 
     def get_urls(self):
         urls = [
-            url(r'^accounts/$',
-                self.accounts_view.as_view(),
-                name='accounts'),
-            url(r'^accounts/(?P<code>[A-Z0-9]+)/$',
-                self.account_view.as_view(),
-                name='account'),
-            url(r'^accounts/(?P<code>[A-Z0-9]+)/redemptions/$',
+            path('accounts/', self.accounts_view.as_view(), name='accounts'),
+            path('accounts/<str:code>/', self.account_view.as_view(), name='account'),
+            path(
+                'accounts/<str:code>/redemptions/',
                 self.account_redemptions_view.as_view(),
-                name='account-redemptions'),
-            url(r'^accounts/(?P<code>[A-Z0-9]+)/refunds/$',
-                self.account_refunds_view.as_view(),
-                name='account-refunds'),
-            url(r'^transfers/(?P<reference>[A-Z0-9]{32})/$',
+                name='account-redemptions'
+            ),
+            path('accounts/<str:code>/refunds/', self.account_refunds_view.as_view(), name='account-refunds'),
+            re_path(
+                r'^transfers/(?P<reference>[A-Z0-9]{32})/$',
                 self.transfer_view.as_view(),
-                name='transfer'),
-            url(r'^transfers/(?P<reference>[A-Z0-9]{32})/reverse/$',
+                name='transfer'
+            ),
+            re_path(
+                r'^transfers/(?P<reference>[A-Z0-9]{32})/reverse/$',
                 self.transfer_reverse_view.as_view(),
-                name='transfer-reverse'),
-            url(r'^transfers/(?P<reference>[A-Z0-9]{32})/refunds/$',
+                name='transfer-reverse'
+            ),
+            re_path(
+                r'^transfers/(?P<reference>[A-Z0-9]{32})/refunds/$',
                 self.transfer_refunds_view.as_view(),
-                name='transfer-refunds'),
+                name='transfer-refunds'
+            ),
         ]
         return self.post_process_urls(urls)
 
