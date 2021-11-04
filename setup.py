@@ -13,7 +13,7 @@ tests_require = [
     'freezegun>=1.1,<1.2',
     'sorl-thumbnail',
     'factory-boy>=3.2,<3.3',
-    'coverage>=5.5,<5.6',
+    'coverage>=5.5,<6.2',
     'tox>=3.17,<3.25',
 ]
 
