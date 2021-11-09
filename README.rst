@@ -96,13 +96,13 @@ Install using pip:
 
 	pip install django-oscar-accounts
 
-and add `oscar_accounts.apps.AccountsConfig` and `oscar_accounts.dashboard.apps.AccountsDashboardConfig` to `INSTALLED_APPS`.  Running ``manage.py migrate
-oscar_accounts`` will create the appropriate database tables. To create initial
-some core accounts and account-types use ``manage.py oscar_accounts_init``.
+and add ``oscar_accounts.apps.AccountsConfig`` and ``oscar_accounts.dashboard.apps.AccountsDashboardConfig`` to
+``INSTALLED_APPS``.  Running ``manage.py migrate oscar_accounts`` will create the appropriate database tables.
+To create initial some core accounts and account-types use ``manage.py oscar_accounts_init``.
 The names of these accounts can be controlled using settings (see below).
 
 In order to make the accounts accessible via the Oscar dashboard you need to
-append it to your `OSCAR_DASHBOARD_NAVIGATION`
+append it to your ``OSCAR_DASHBOARD_NAVIGATION``
 
 .. code-block:: python
 
@@ -133,7 +133,7 @@ append it to your `OSCAR_DASHBOARD_NAVIGATION`
         })
 
 
-Furthermore you need to add the url-pattern to your `urls.py`
+Furthermore you need to add the url-pattern to your ``urls.py``
 
 .. code-block:: python
 
@@ -204,12 +204,12 @@ Reverse transfers:
                    description="Just an example")
 
 If the proposed transfer is invalid, an exception will be raised.  All
-exceptions are subclasses of `oscar_accounts.exceptions.AccountException`.
+exceptions are subclasses of ``oscar_accounts.exceptions.AccountException``.
 Your client code should look for exceptions of this type and handle them
 appropriately.
 
-Client code should only use the `oscar_accounts.models.Budget` class and the
-two functions from `oscar_accounts.facade` - nothing else should be required.
+Client code should only use the ``oscar_accounts.models.Budget`` class and the
+two functions from ``oscar_accounts.facade`` - nothing else should be required.
 
 Error handling
 --------------
@@ -311,7 +311,7 @@ encapsulate your business logic and error handling.  Here's an example:
 As you can see, there is some careful handling of the scenario where not all
 transfers can be executed.
 
-If you using Oscar then ensure that you create an `OrderSource` instance for
+If you using Oscar then ensure that you create an ``OrderSource`` instance for
 every transfer (rather than aggregating them all into one).  This will provide
 better audit information.  Here's some example code:
 
@@ -344,16 +344,16 @@ parentheses.
 
   - **Sales**
 
-    - Redemptions (`ACCOUNTS_REDEMPTIONS_NAME`) - where money is
+    - Redemptions (``ACCOUNTS_REDEMPTIONS_NAME``) - where money is
       transferred to when an account is used to pay for something.
-    - Lapsed (`ACCOUNTS_LAPSED_NAME`) - where money is transferred to
+    - Lapsed (``ACCOUNTS_LAPSED_NAME``) - where money is transferred to
       when an account expires.  This is done by the
       'close_expired_accounts' management command.  The name of this
-      account can be set using the `ACCOUNTS_LAPSED_NAME`.
+      account can be set using the ``ACCOUNTS_LAPSED_NAME``.
 
   - **Cash**
 
-    - "Bank" (`ACCOUNTS_BANK_NAME`) - the source account for creating new
+    - "Bank" (``ACCOUNTS_BANK_NAME``) - the source account for creating new
       accounts that are paid for by the customer (eg a giftcard).  This
       account will not have a credit limit and will normally have a
       negative balance as money is only transferred out.
@@ -413,13 +413,13 @@ Settings
 There are settings to control the naming and initial unpaid and deferred income
 account types:
 
-* `ACCOUNTS_MIN_LOAD_VALUE` The minimum value that can be used to create an
+* ``ACCOUNTS_MIN_LOAD_VALUE`` The minimum value that can be used to create an
   account (or for a top-up)
 
-* `ACCOUNTS_MAX_INITIAL_VALUE` The maximum value that can be transferred to an
+* ``ACCOUNTS_MAX_INITIAL_VALUE`` The maximum value that can be transferred to an
   account.
 
-* `OSCAR_ACCOUNTS_DASHBOARD_ITEMS_PER_PAGE` The amount of items per page that show in dashboard(default=20).
+* ``OSCAR_ACCOUNTS_DASHBOARD_ITEMS_PER_PAGE`` The amount of items per page that show in dashboard(default=20).
 
 Contributing
 ------------
