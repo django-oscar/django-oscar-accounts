@@ -14,7 +14,7 @@ tests_require = [
     'sorl-thumbnail',
     'factory-boy>=3.2,<3.3',
     'coverage>=5.5,<6.4',
-    'tox>=3.17,<3.26',
+    'tox>=3.17,<4.5',
 ]
 
 
