@@ -39,6 +39,7 @@ class AccountType(MP_Node):
 
     class Meta:
         abstract = True
+        app_label = 'oscar_accounts'
 
     def __str__(self):
         return self.name
@@ -124,6 +125,7 @@ class Account(models.Model):
 
     class Meta:
         abstract = True
+        app_label = 'oscar_accounts'
 
     def __str__(self):
         if self.code:
@@ -366,6 +368,7 @@ class Transfer(models.Model):
     class Meta:
         abstract = True
         ordering = ('-date_created',)
+        app_label = 'oscar_accounts'
 
     def delete(self, *args, **kwargs):
         raise RuntimeError("Transfers cannot be deleted")
@@ -443,6 +446,7 @@ class Transaction(models.Model):
             self.transfer.reference, self.amount)
 
     class Meta:
+        app_label = 'oscar_accounts'
         unique_together = ('transfer', 'account')
         abstract = True
 
@@ -471,6 +475,7 @@ class IPAddressRecord(models.Model):
         abstract = True
         verbose_name = _("IP address record")
         verbose_name_plural = _("IP address records")
+        app_label = 'oscar_accounts'
 
     def __str__(self):
         return self.ip_address
