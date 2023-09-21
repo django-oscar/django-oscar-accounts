@@ -146,6 +146,7 @@ class Account(models.Model):
         if self.code:
             self.code = self.code.upper()
         # Ensure the balance is always correct when saving
+        return super().save(*args, **kwargs)
         self.balance = self._balance()
         return super().save(*args, **kwargs)
 
@@ -160,6 +161,10 @@ class Account(models.Model):
     @property
     def has_credit_limit(self):
         return self.credit_limit is not None
+
+    @property
+    def realbalance(self):
+        return self._balance()
 
     def is_debit_permitted(self, amount):
         """
@@ -380,6 +385,10 @@ class Transfer(models.Model):
         if not self.reference:
             self.reference = self._generate_reference()
             super().save(update_fields=['reference'])
+        self.destination.balance += self.amount
+        self.destination.save()
+        self.source.balance -= self.amount
+        self.source.save()
 
     def _generate_reference(self):
         obj = hmac.new(key=settings.SECRET_KEY.encode(),
