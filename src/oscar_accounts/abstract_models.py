@@ -198,7 +198,7 @@ class Account(models.Model):
         range_total = D('0.00')
         for line in basket.all_lines():
             if self.product_range.contains_product(line.product):
-                range_total += line.line_price_incl_tax_and_discounts
+                range_total += line.line_price_incl_tax_incl_discounts
         if self.can_be_used_for_non_products:
             range_total += shipping_total
         return min(range_total, self.balance)
