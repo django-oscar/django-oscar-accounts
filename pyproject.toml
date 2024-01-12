@@ -1,6 +1,7 @@
 [project]
 # version = "0.0.1"  # Remove any existing version parameter.
 dynamic = ["version"]
+name = "django-oscar-accounts"
 [tool.setuptools_scm]
 
 [build-system]
