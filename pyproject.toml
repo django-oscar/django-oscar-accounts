@@ -1,10 +1,6 @@
-[project]
-# version = "0.0.1"  # Remove any existing version parameter.
-dynamic = ["version"]
-name = "django-oscar-accounts"
 [tool.setuptools_scm]
 
 [build-system]
-requires = [
-    "setuptools>=64",
-    "setuptools-scm>=8.0"]
+requires = ["setuptools>=64", "setuptools-scm>=8.0"]
+build-backend = "setuptools.build_meta"
+
